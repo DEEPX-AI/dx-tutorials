@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DX Model Zoo</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --fg: #212529;
+      --muted: #495057;
+      --border: #dee2e6;
+      --accent: #0d6efd;
+      --card: #ffffff;
+      --thead: #e9ecef;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+    }
+    h1 {
+      margin: 0 0 28px 0;
+      font-size: 2rem;
+      color: #343a40;
+    }
+    h2.task-title {
+      margin: 32px 0 12px 0;
+      font-size: 1.5rem;
+      color: #343a40;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--border);
+    }
+    .table-container {
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,.3);
+      background: var(--card);
+      margin-bottom: 22px;
+    }
+    table.model-zoo-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.92rem;
+      table-layout: auto;
+    }
+    table.model-zoo-table th, table.model-zoo-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: center;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    table.model-zoo-table thead th {
+      background: #c0c0c0;
+      color: var(--muted);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    table.model-zoo-table tbody tr:nth-of-type(even) {
+      background-color: #e6e6e0;
+    }
+    table.model-zoo-table tbody tr:hover {
+      background-color: #f3f5f7;
+    }
+    table.model-zoo-table a {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    table.model-zoo-table a:hover { text-decoration: underline; }
+    table.model-zoo-table td div {
+      border-bottom: 1px solid #d0d0d0;
+      padding-bottom: 3px;
+      margin-bottom: 3px;
+    }
+    table.model-zoo-table td div:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+    @media (max-width: 768px) {
+      table.model-zoo-table th, table.model-zoo-table td {
+        padding: 8px 10px;
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>DX Model Zoo</h1>
+  <h2 class="task-title">Image Classification</h2>
+<div class="table-container"><table border="1" class="dataframe model-zoo-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Task</th>
+      <th>Name</th>
+      <th>Dataset</th>
+      <th>Input Resolution</th>
+      <th>Operations</th>
+      <th>Parameters</th>
+      <th>License</th>
+      <th>Metric</th>
+      <th>Raw Accuracy</th>
+      <th>NPU Accuracy</th>
+      <th>FPS</th>
+      <th>FPS/Watt</th>
+      <th>Source</th>
+      <th>Compiled</th>
+      <th>onnx</th>
+      <th>json</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Image Classification</td>
+      <td>AlexNet-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.72</td>
+      <td>61.1</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>56.54</td>
+      <td>56.34</td>
+      <td>680</td>
+      <td>1,425.54</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.alexnet.html#torchvision.models.alexnet" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/AlexNet-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/AlexNet-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/AlexNet-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>DenseNet121-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>3.19</td>
+      <td>8.04</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>74.43</td>
+      <td>73.53</td>
+      <td>263</td>
+      <td>336.52</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.densenet121.html#torchvision.models.densenet121" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/DenseNet121-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/DenseNet121-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/DenseNet121-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>DenseNet161-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>8.43</td>
+      <td>28.86</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>77.11</td>
+      <td>76.69</td>
+      <td>74</td>
+      <td>119.37</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.densenet161.html#torchvision.models.densenet161" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/DenseNet161-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/DenseNet161-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/DenseNet161-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>EfficientNetB2-1</td>
+      <td>ImageNet</td>
+      <td>288x288x3</td>
+      <td>1.6</td>
+      <td>9.08</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>80.61</td>
+      <td>79.24</td>
+      <td>752</td>
+      <td>774.66</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.efficientnet_b2.html#torchvision.models.efficientnet_b2" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/EfficientNetB2-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/EfficientNetB2-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/EfficientNetB2-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>EfficientNetV2S-1</td>
+      <td>ImageNet</td>
+      <td>384X384x3</td>
+      <td>9.47</td>
+      <td>21.38</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>84.24</td>
+      <td>79.41</td>
+      <td>437</td>
+      <td>192.92</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.efficientnet_v2_s.html#torchvision.models.efficientnet_v2_s" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/EfficientNetV2S-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/EfficientNetV2S-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/EfficientNetV2S-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>HarDNet39DS-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>4.26</td>
+      <td>17.56</td>
+      <td>MIT</td>
+      <td>Top1</td>
+      <td>72.08</td>
+      <td>71.4</td>
+      <td>2,788</td>
+      <td>2,519.00</td>
+      <td><a href="https://github.com/PingoLH/Pytorch-HarDNet/tree/master" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/HarDNet39DS-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/HarDNet39DS-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/HarDNet39DS-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>MobileNetV1-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.58</td>
+      <td>4.22</td>
+      <td>Apache-2.0</td>
+      <td>Top1</td>
+      <td>69.49</td>
+      <td>68.77</td>
+      <td>5,148</td>
+      <td>2,743.36</td>
+      <td><a href="https://github.com/KOMOSYS/image_classification" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/MobileNetV1-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/MobileNetV1-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/MobileNetV1-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>MobileNetV2-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.32</td>
+      <td>3.49</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>72.14</td>
+      <td>71.82</td>
+      <td>3,667</td>
+      <td>3,201.44</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v2.html#torchvision.models.mobilenet_v2https://pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v2.html#torchvision.models.mobilenet_v2" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/MobileNetV2-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/MobileNetV2-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/MobileNetV2-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>MobileNetV3L-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.23</td>
+      <td>5.47</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>75.25</td>
+      <td>71.35</td>
+      <td>2,702</td>
+      <td>3,199.59</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v3_large.html#torchvision.models.mobilenet_v3_large" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/MobileNetV3L-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/MobileNetV3L-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/MobileNetV3L-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>RegNetX400MF-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.42</td>
+      <td>5.48</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>74.88</td>
+      <td>74.44</td>
+      <td>1,492</td>
+      <td>2,259.62</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.regnet_x_400mf.html#torchvision.models.regnet_x_400mf" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/RegNetX400MF-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/RegNetX400MF-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/RegNetX400MF-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>RegNetX800MF-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.81</td>
+      <td>7.24</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>77.52</td>
+      <td>77.19</td>
+      <td>1,099</td>
+      <td>1,369.13</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.regnet_x_800mf.html#torchvision.models.regnet_x_800mf" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/RegNetX800MF-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/RegNetX800MF-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/RegNetX800MF-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>RegNetY200MF-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.21</td>
+      <td>3.15</td>
+      <td>MIT</td>
+      <td>Top1</td>
+      <td>70.36</td>
+      <td>70.12</td>
+      <td>2,592</td>
+      <td>4,298.96</td>
+      <td><a href="https://github.com/facebookresearch/pycls/blob/main/MODEL_ZOO.md" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/RegNetY200MF-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/RegNetY200MF-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/RegNetY200MF-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>RegNetY400MF-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.41</td>
+      <td>4.33</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>75.78</td>
+      <td>75.41</td>
+      <td>1,853</td>
+      <td>2,286.38</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.regnet_y_400mf.html#torchvision.models.regnet_y_400mf" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/RegNetY400MF-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/RegNetY400MF-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/RegNetY400MF-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>RegNetY800MF-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.85</td>
+      <td>6.42</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>78.83</td>
+      <td>78.53</td>
+      <td>1,218</td>
+      <td>1,334.79</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.regnet_y_800mf.html#torchvision.models.regnet_y_800mf" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/RegNetY800MF-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/RegNetY800MF-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/RegNetY800MF-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>RepVGGA1-1</td>
+      <td>ImageNet</td>
+      <td>320X320x3</td>
+      <td>4.83</td>
+      <td>12.79</td>
+      <td>MIT</td>
+      <td>Top1</td>
+      <td>75.28</td>
+      <td>9.72</td>
+      <td>1,631</td>
+      <td>577.49</td>
+      <td><a href="https://github.com/DingXiaoH/RepVGG" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/RepVGGA1-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/RepVGGA1-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/RepVGGA1-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>ResNet101-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>7.8</td>
+      <td>44.55</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>81.9</td>
+      <td>81.63</td>
+      <td>682</td>
+      <td>269.41</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.resnet101.html#torchvision.models.resnet101" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/ResNet101-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/ResNet101-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/ResNet101-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>ResNet18-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>1.82</td>
+      <td>11.69</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>69.75</td>
+      <td>69.66</td>
+      <td>2,746</td>
+      <td>1,095.21</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html#torchvision.models.resnet18" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/ResNet18-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/ResNet18-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/ResNet18-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>ResNet34-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>3.67</td>
+      <td>21.79</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>73.3</td>
+      <td>73.22</td>
+      <td>1,369</td>
+      <td>513.35</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.resnet34.html#torchvision.models.resnet34" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/ResNet34-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/ResNet34-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/ResNet34-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>ResNet50-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>4.27</td>
+      <td>25.0</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>80.85</td>
+      <td>80.67</td>
+      <td>1,056</td>
+      <td>454.56</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.resnet50.html#torchvision.models.resnet50" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/ResNet50-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/ResNet50-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/ResNet50-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>ResNeXt26_32x4d-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>2.49</td>
+      <td>15.37</td>
+      <td>MIT</td>
+      <td>Top1</td>
+      <td>75.85</td>
+      <td>75.8</td>
+      <td>856</td>
+      <td>596.68</td>
+      <td><a href="https://github.com/osmr/imgclsmob/tree/master/pytorch" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/ResNeXt26_32x4d-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/ResNeXt26_32x4d-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/ResNeXt26_32x4d-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>ResNeXt50_32x4d-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>4.27</td>
+      <td>25.0</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>81.19</td>
+      <td>81.04</td>
+      <td>497</td>
+      <td>343.54</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.resnext50_32x4d.html#torchvision.models.resnext50_32x4d" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/ResNeXt50_32x4d-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/ResNeXt50_32x4d-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/ResNeXt50_32x4d-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>SqueezeNet1_0-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.83</td>
+      <td>1.25</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>58.09</td>
+      <td>57.88</td>
+      <td>2,127</td>
+      <td>1,650.05</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.squeezenet1_0.html#torchvision.models.squeezenet1_0" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/SqueezeNet1_0-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/SqueezeNet1_0-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/SqueezeNet1_0-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>SqueezeNet1_1-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>0.36</td>
+      <td>1.24</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>58.18</td>
+      <td>58.09</td>
+      <td>3,239</td>
+      <td>4,080.14</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.squeezenet1_1.html#torchvision.models.squeezenet1_1" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/SqueezeNet1_1-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/SqueezeNet1_1-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/SqueezeNet1_1-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>VGG11-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>7.63</td>
+      <td>132.86</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>69.03</td>
+      <td>68.86</td>
+      <td>305</td>
+      <td>254.78</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg11.html#torchvision.models.vgg11" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/VGG11-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/VGG11-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/VGG11-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>VGG11BN-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>7.63</td>
+      <td>132.86</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>70.37</td>
+      <td>70.16</td>
+      <td>306</td>
+      <td>249.73</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg11_bn.html#torchvision.models.vgg11_bn" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/VGG11BN-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/VGG11BN-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/VGG11BN-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>VGG13-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>11.34</td>
+      <td>133.05</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>69.93</td>
+      <td>69.77</td>
+      <td>283</td>
+      <td>168.23</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg13.html#torchvision.models.vgg13" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/VGG13-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/VGG13-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/VGG13-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>VGG13BN-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>11.34</td>
+      <td>133.05</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>71.55</td>
+      <td>71.52</td>
+      <td>282</td>
+      <td>187.92</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg13_bn.html#torchvision.models.vgg13_bn" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/VGG13BN-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/VGG13BN-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/VGG13BN-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>VGG19BN-1</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>19.69</td>
+      <td>143.67</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>74.24</td>
+      <td>74.11</td>
+      <td>237</td>
+      <td>128.59</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg19_bn.html#torchvision.models.vgg19_bn" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/VGG19BN-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/VGG19BN-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/VGG19BN-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>WideResNet101-2</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>22.81</td>
+      <td>126.82</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>82.52</td>
+      <td>82.32</td>
+      <td>210</td>
+      <td>80.19</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.wide_resnet101_2.html#torchvision.models.wide_resnet101_2" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/WideResNet101-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/WideResNet101-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/WideResNet101-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image Classification</td>
+      <td>WideResNet50-2</td>
+      <td>ImageNet</td>
+      <td>224x224x3</td>
+      <td>11.43</td>
+      <td>68.85</td>
+      <td>BSD 3-Clause</td>
+      <td>Top1</td>
+      <td>81.61</td>
+      <td>81.45</td>
+      <td>382</td>
+      <td>186.07</td>
+      <td><a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.wide_resnet50_2.html#torchvision.models.wide_resnet50_2" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/WideResNet50-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/WideResNet50-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/WideResNet50-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 class="task-title">Object Detection</h2>
+<div class="table-container"><table border="1" class="dataframe model-zoo-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Task</th>
+      <th>Name</th>
+      <th>Dataset</th>
+      <th>Input Resolution</th>
+      <th>Operations</th>
+      <th>Parameters</th>
+      <th>License</th>
+      <th>Metric</th>
+      <th>Raw Accuracy</th>
+      <th>NPU Accuracy</th>
+      <th>FPS</th>
+      <th>FPS/Watt</th>
+      <th>Source</th>
+      <th>Compiled</th>
+      <th>onnx</th>
+      <th>json</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Object Detection</td>
+      <td>SSDMV1-1</td>
+      <td>VOC2007Detection</td>
+      <td>300X300x3</td>
+      <td>1.55</td>
+      <td>9.48</td>
+      <td>MIT</td>
+      <td>mAP50</td>
+      <td>67.59</td>
+      <td>67.674</td>
+      <td>1,892</td>
+      <td>1,263.31</td>
+      <td><a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/SSDMV1-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/SSDMV1-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/SSDMV1-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>SSDMV2Lite-1</td>
+      <td>VOC2007Detection</td>
+      <td>300x300x3</td>
+      <td>0.7</td>
+      <td>3.38</td>
+      <td>MIT</td>
+      <td>mAP50</td>
+      <td>68.704</td>
+      <td>68.647</td>
+      <td>1,631</td>
+      <td>1,561.85</td>
+      <td><a href="https://github.com/qfgaohao/pytorch-ssd" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/SSDMV2Lite-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/SSDMV2Lite-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/SSDMV2Lite-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV3-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>81.13</td>
+      <td>62.02</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>46.654</td>
+      <td>46.437</td>
+      <td>55</td>
+      <td>20.75</td>
+      <td><a href="https://github.com/ultralytics/yolov3/" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV3-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV3-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV3-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV5L-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>57.1</td>
+      <td>46.64</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>48.74</td>
+      <td>48.367</td>
+      <td>79</td>
+      <td>35.31</td>
+      <td><a href="https://github.com/ultralytics/yolov5" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV5L-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV5L-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV5L-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV5M-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>26.07</td>
+      <td>21.27</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>45.082</td>
+      <td>44.717</td>
+      <td>155</td>
+      <td>71.34</td>
+      <td><a href="https://github.com/ultralytics/yolov5" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV5M-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV5M-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV5M-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV5N-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>2.71</td>
+      <td>1.97</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>28.081</td>
+      <td>27.616</td>
+      <td>259</td>
+      <td>503.86</td>
+      <td><a href="https://github.com/ultralytics/yolov5" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV5N-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV5N-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV5N-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV5S-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>9.1</td>
+      <td>7.33</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>37.451</td>
+      <td>37.134</td>
+      <td>260</td>
+      <td>206.70</td>
+      <td><a href="https://github.com/ultralytics/yolov5" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV5S-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV5S-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV5S-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV7-2</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>55.28</td>
+      <td>36.92</td>
+      <td>GPL-3.0</td>
+      <td>mAP50</td>
+      <td>50.862</td>
+      <td>50.677</td>
+      <td>90</td>
+      <td>31.26</td>
+      <td><a href="https://github.com/WongKinYiu/yolov7" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV7E6-1</td>
+      <td>COCO</td>
+      <td>1280x1280x3</td>
+      <td>269.21</td>
+      <td>97.27</td>
+      <td>GPL-3.0</td>
+      <td>mAP50</td>
+      <td>55.58</td>
+      <td>55.398</td>
+      <td>15</td>
+      <td>6.32</td>
+      <td><a href="https://github.com/WongKinYiu/yolov7" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7E6-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7E6-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7E6-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV7Tiny-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>7.01</td>
+      <td>6.24</td>
+      <td>GPL-3.0</td>
+      <td>mAP50</td>
+      <td>37.289</td>
+      <td>37.061</td>
+      <td>254</td>
+      <td>223.28</td>
+      <td><a href="https://github.com/WongKinYiu/yolov7" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7Tiny-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7Tiny-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7Tiny-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOV8L-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>85.13</td>
+      <td>43.69</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>52.572</td>
+      <td>51.946</td>
+      <td>51</td>
+      <td>20.74</td>
+      <td><a href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV8L-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV8L-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV8L-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOv9-C-2</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>53.92</td>
+      <td>25.31</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>52.856</td>
+      <td>52.28</td>
+      <td>64</td>
+      <td>34.08</td>
+      <td><a href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOv9-C-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOv9-C-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOv9-C-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOv9-S-2</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>14.51</td>
+      <td>7.13</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>46.683</td>
+      <td>44.576</td>
+      <td>104</td>
+      <td>106.88</td>
+      <td><a href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOv9-S-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOv9-S-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOv9-S-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOv9-T-2</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>4.56</td>
+      <td>2.03</td>
+      <td>AGPL-3.0</td>
+      <td>mAP50</td>
+      <td>38.268</td>
+      <td>36.249</td>
+      <td>110</td>
+      <td>213.23</td>
+      <td><a href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOv9-T-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOv9-T-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOv9-T-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Object Detection</td>
+      <td>YOLOXS-1</td>
+      <td>COCO</td>
+      <td>640x640x3</td>
+      <td>14.41</td>
+      <td>8.96</td>
+      <td>Apache-2.0</td>
+      <td>mAP50</td>
+      <td>40.29</td>
+      <td>40.049</td>
+      <td>268</td>
+      <td>126.84</td>
+      <td><a href="https://github.com/Megvii-BaseDetection/YOLOX" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOXS-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOXS-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOXS-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 class="task-title">Segmentation</h2>
+<div class="table-container"><table border="1" class="dataframe model-zoo-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Task</th>
+      <th>Name</th>
+      <th>Dataset</th>
+      <th>Input Resolution</th>
+      <th>Operations</th>
+      <th>Parameters</th>
+      <th>License</th>
+      <th>Metric</th>
+      <th>Raw Accuracy</th>
+      <th>NPU Accuracy</th>
+      <th>FPS</th>
+      <th>FPS/Watt</th>
+      <th>Source</th>
+      <th>Compiled</th>
+      <th>onnx</th>
+      <th>json</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Segmentation</td>
+      <td>BiSeNetV1-1</td>
+      <td>CitySpace</td>
+      <td>1280x2048x3</td>
+      <td>118.98</td>
+      <td>13.27</td>
+      <td>MIT</td>
+      <td>mIoU</td>
+      <td>75.367</td>
+      <td>75.049</td>
+      <td>19</td>
+      <td>15.17</td>
+      <td><a href="https://github.com/CoinCheung/BiSeNet" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/BiSeNetV1-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/BiSeNetV1-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/BiSeNetV1-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Segmentation</td>
+      <td>BiSeNetV2-1</td>
+      <td>CitySpace</td>
+      <td>1280x2048x3</td>
+      <td>99.14</td>
+      <td>3.35</td>
+      <td>MIT</td>
+      <td>mIoU</td>
+      <td>74.925</td>
+      <td>74.109</td>
+      <td>31</td>
+      <td>19.69</td>
+      <td><a href="https://github.com/CoinCheung/BiSeNet" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/BiSeNetV2-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/BiSeNetV2-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/BiSeNetV2-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Segmentation</td>
+      <td>DeepLabV3PlusMobilenet-1</td>
+      <td>VOCSegmentation</td>
+      <td>512x512x3</td>
+      <td>26.62</td>
+      <td>5.8</td>
+      <td>MIT</td>
+      <td>mIoU</td>
+      <td>68.473</td>
+      <td>68.109</td>
+      <td>227</td>
+      <td>72.54</td>
+      <td><a href="https://github.com/jfzhang95/pytorch-deeplab-xception" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/DeepLabV3PlusMobilenet-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/DeepLabV3PlusMobilenet-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/DeepLabV3PlusMobilenet-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 class="task-title">Face ID</h2>
+<div class="table-container"><table border="1" class="dataframe model-zoo-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Task</th>
+      <th>Name</th>
+      <th>Dataset</th>
+      <th>Input Resolution</th>
+      <th>Operations</th>
+      <th>Parameters</th>
+      <th>License</th>
+      <th>Metric</th>
+      <th>Raw Accuracy</th>
+      <th>NPU Accuracy</th>
+      <th>FPS</th>
+      <th>FPS/Watt</th>
+      <th>Source</th>
+      <th>Compiled</th>
+      <th>onnx</th>
+      <th>json</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Face ID</td>
+      <td>YOLOV5M_Face-1</td>
+      <td>WiderFace</td>
+      <td>640x640x3</td>
+      <td>25.84</td>
+      <td>22.0</td>
+      <td>GPL-3.0</td>
+      <td>
+        <div>AP(Easy)</div>
+        <div>AP(Med)</div>
+        <div>AP(Hard)</div>
+      </td>
+      <td>
+        <div>95.507</div>
+        <div>94.027</div>
+        <div>85.649</div>
+      </td>
+      <td>
+        <div>95.44</div>
+        <div>93.95</div>
+        <div>85.664</div>
+      </td>
+      <td>144</td>
+      <td>65.74</td>
+      <td><a href="https://github.com/deepcam-cn/yolov5-face" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV5M_Face-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV5M_Face-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV5M_Face-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Face ID</td>
+      <td>YOLOV5S_Face-1</td>
+      <td>WiderFace</td>
+      <td>640x640x3</td>
+      <td>8.53</td>
+      <td>8.07</td>
+      <td>GPL-3.0</td>
+      <td>
+        <div>AP(Easy)</div>
+        <div>AP(Med)</div>
+        <div>AP(Hard)</div>
+      </td>
+      <td>
+        <div>94.57</div>
+        <div>92.94</div>
+        <div>83.698</div>
+      </td>
+      <td>
+        <div>94.635</div>
+        <div>93.003</div>
+        <div>83.828</div>
+      </td>
+      <td>351</td>
+      <td>219.79</td>
+      <td><a href="https://github.com/deepcam-cn/yolov5-face" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV5S_Face-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV5S_Face-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV5S_Face-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Face ID</td>
+      <td>YOLOV7_Face-1</td>
+      <td>WiderFace</td>
+      <td>640x640x3</td>
+      <td>54.63</td>
+      <td>38.55</td>
+      <td>GPL-3.0</td>
+      <td>
+        <div>AP(Easy)</div>
+        <div>AP(Med)</div>
+        <div>AP(Hard)</div>
+      </td>
+      <td>96.925<br>95.689<br>88.337</td>
+      <td>96.965<br>95.724<br>88.29</td>
+      <td>85</td>
+      <td>29.03</td>
+      <td><a href="https://github.com/derronqi/yolov7-face" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7_Face-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7_Face-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7_Face-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Face ID</td>
+      <td>YOLOV7_W6_Face-1</td>
+      <td>WiderFace</td>
+      <td>960x960x3</td>
+      <td>100.21</td>
+      <td>74.44</td>
+      <td>GPL-3.0</td>
+      <td>
+        <div>AP(Easy)</div>
+        <div>AP(Med)</div>
+        <div>AP(Hard)</div>
+      </td>
+      <td>96.41<br>95.091<br>88.61</td>
+      <td>96.442<br>95.128<br>88.677</td>
+      <td>43</td>
+      <td>19.31</td>
+      <td><a href="https://github.com/derronqi/yolov7-face" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7_W6_Face-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7_W6_Face-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7_W6_Face-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Face ID</td>
+      <td>YOLOV7_W6_TTA_Face-1</td>
+      <td>WiderFace</td>
+      <td>1280x1280x3</td>
+      <td>178.16</td>
+      <td>77.96</td>
+      <td>GPL-3.0</td>
+      <td>
+        <div>AP(Easy)</div>
+        <div>AP(Med)</div>
+        <div>AP(Hard)</div>
+      </td>
+      <td>95.89<br>94.929<br>89.952</td>
+      <td>95.994<br>95.043<br>90.254</td>
+      <td>24</td>
+      <td>9.49</td>
+      <td><a href="https://github.com/derronqi/yolov7-face" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7_W6_TTA_Face-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7_W6_TTA_Face-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7_W6_TTA_Face-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Face ID</td>
+      <td>YOLOV7s_Face-1</td>
+      <td>WiderFace</td>
+      <td>640x640x3</td>
+      <td>9.35</td>
+      <td>6.26</td>
+      <td>GPL-3.0</td>
+      <td>
+        <div>AP(Easy)</div>
+        <div>AP(Med)</div>
+        <div>AP(Hard)</div>
+      </td>
+      <td>94.86<br>93.3<br>85.304</td>
+      <td>94.885<br>93.252<br>85.234</td>
+      <td>274</td>
+      <td>186.95</td>
+      <td><a href="https://github.com/derronqi/yolov7-face" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/YOLOV7s_Face-1.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/YOLOV7s_Face-1.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/YOLOV7s_Face-1.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 class="task-title">Image De-noising</h2>
+<div class="table-container"><table border="1" class="dataframe model-zoo-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Task</th>
+      <th>Name</th>
+      <th>Dataset</th>
+      <th>Input Resolution</th>
+      <th>Operations</th>
+      <th>Parameters</th>
+      <th>License</th>
+      <th>Metric</th>
+      <th>Raw Accuracy</th>
+      <th>NPU Accuracy</th>
+      <th>FPS</th>
+      <th>FPS/Watt</th>
+      <th>Source</th>
+      <th>Compiled</th>
+      <th>onnx</th>
+      <th>json</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Image De-noising</td>
+      <td>DnCNN-2</td>
+      <td>BSD68</td>
+      <td>512x512x1</td>
+      <td>145.8</td>
+      <td>0.56</td>
+      <td>Not Specified</td>
+      <td>
+        <div>PSNR</div>
+        <div>SSIM</div>
+      </td>
+      <td>31.709<br>0.8905</td>
+      <td>31.709<br>0.8905</td>
+      <td>52</td>
+      <td>13.37</td>
+      <td><a href="https://github.com/cszn/DnCNN" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/DnCNN-2.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/DnCNN-2.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/DnCNN-2.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image De-noising</td>
+      <td>DnCNN-3</td>
+      <td>BSD68</td>
+      <td>512x512x1</td>
+      <td>145.8</td>
+      <td>0.56</td>
+      <td>Not Specified</td>
+      <td>
+        <div>PSNR</div>
+        <div>SSIM</div>
+      </td>
+      <td>29.1919<br>0.8276</td>
+      <td>29.1919<br>0.8276</td>
+      <td>52</td>
+      <td>13.68</td>
+      <td><a href="https://github.com/cszn/DnCNN" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/DnCNN-3.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/DnCNN-3.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/DnCNN-3.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+    <tr>
+      <td>Image De-noising</td>
+      <td>DnCNN-4</td>
+      <td>BSD68</td>
+      <td>512x512x1</td>
+      <td>145.8</td>
+      <td>0.56</td>
+      <td>Not Specified</td>
+      <td>
+        <div>PSNR</div>
+        <div>SSIM</div>
+      </td>
+      <td>26.1882<br>0.7184</td>
+      <td>26.1882<br>0.7184</td>
+      <td>38</td>
+      <td>11.31</td>
+      <td><a href="https://github.com/cszn/DnCNN" target="_blank" rel="noopener noreferrer" title="Source"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>\n       <polyline points="15 3 21 3 21 9"></polyline>\n       <line x1="10" y1="14" x2="21" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/dxnn/2_0_0/DnCNN-4.dxnn" target="_blank" rel="noopener noreferrer" title="Compiled"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/onnx/DnCNN-4.onnx" target="_blank" rel="noopener noreferrer" title="onnx"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+      <td><a href="https://sdk.deepx.ai/modelzoo/json/DnCNN-4.json" target="_blank" rel="noopener noreferrer" title="json"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>\n        <polyline points="7 10 12 15 17 10"></polyline>\n        <line x1="12" y1="15" x2="12" y2="3"></line>\n    </svg></a></td>
+    </tr>
+  </tbody>
+</table></div>
+</body>
+</html>
