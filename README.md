@@ -31,7 +31,6 @@ dx-tutorials
 │   │   └── dx_stream.ipynb
 │   └── T05-DX-Compiler
 │       └── dx_compiler.ipynb
-├── orangepi5p.md
 ├── README.md
 ├── requirements.txt
 ├── run-jupyter-lab.sh
