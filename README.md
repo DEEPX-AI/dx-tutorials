@@ -7,6 +7,7 @@
 
 Our goal is to provide clear, step-by-step guides to help you become more productive and efficient in your data science and development workflows using the DEEPX SDK.
 
+> This tutorials are based on dx-all-suite v2.2.0, released in January 2026.
 
 ## 📚  Table of Contents
 * **Tutorial-01 (Getting Started)**: Learn how to install the DEEPX SDK and verify the installation.
@@ -29,7 +30,13 @@ dx-tutorials
 │   │   └── e2e_ai_workflow.ipynb
 │   ├── T04-DX-STREAM
 │   │   └── dx_stream.ipynb
-│   └── T05-DX-Compiler
+│   ├── T05-DX-Compiler
+│   │   └── dx_compiler.ipynb
+│   ├── T10-DEMO-PaddleOCRv5
+│   │   └── dx_compiler.ipynb
+│   ├── T11-DEMO-VIT-CLIP
+│   │   └── dx_compiler.ipynb
+│   └── T12-DEMO-Mono-Depth
 │       └── dx_compiler.ipynb
 ├── README.md
 ├── requirements.txt
