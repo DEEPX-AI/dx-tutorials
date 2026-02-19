@@ -2,7 +2,11 @@
 ## How to get/install kernel header for NPU driver installation:
 - There are two options - local build or pre-built package
    ```bash
-   # Option 1: local build
+   # Option 1 (Recommended): install the prebuilt package under the /opt directory
+   ls linux-headers-current-rockchip-rk3588_*.deb
+   sudo apt install ./linux-headers-current-rockchip-rk3588_*.deb
+
+   # Option 2: local build
    sudo apt update
    sudo apt install git build-essential bison flex libssl-dev dwarves
 
@@ -12,13 +16,13 @@
    cd output/debs
    sudo dpkg -i linux-headers-current-rockchip-rk3588_1.2.0_arm64.deb
 
-   # Option 2: use a prebuilt package
+   # Option 3: download & install a prebuilt package
    wget https://github.com/user-attachments/files/22798846/linux-headers-6.1.x.tar.gz
    tar xzvf linux-headers-6.1.x.tar.gz
    sudo dpkg -i linux-headers-current-rockchip-rk3588_1.2.0_arm64.deb
    ```
 
-# DX-STREAM issues
+# DX-STREAM issues (Optional: Just try this when you meet Gstreamer version conflict issues)
 ## How to fix GStreamer version conflicts:
 1. Check and unhold all GStreamer packages:
    ```bash
