@@ -10,11 +10,15 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 > This tutorials are based on dx-all-suite v2.2.0, released in January 2026.
 
 ## 📚  Table of Contents
+* **Tutorial-00 (JupyterLab QuickStart)**: JupterLab overview.
 * **Tutorial-01 (Getting Started)**: Learn how to install the DEEPX SDK and verify the installation.
 * **Tutorial-02 (DX-APP)**: Introduction to DX-APP and demonstrations on running inference with image, video, and camera inputs.
 * **Tutorial-03 (E2E AI workflow)**: Hands-on practice implementing a Forklift-Worker detector using YOLOv7.
 * **Tutorial-04 (DX-STREAM)**: Explore DX-STREAM and practice integrating it with the Forklift-Worker detector.
 * **Tutorial-05 (DX-Compiler)**: Learn how to use DX-Compiler and practice compiling various AI models with different preprocessing options.
+* **Tutorial-06 (DX-Runtime)**: WIP...
+* **Tutorial-10 (DEMO-PaddleOCRv5)**: Implementing an E2E pipeline for PaddleOCRv5 on DEEPX NPU (A step-by-step guide).
+* **Tutorial-11 (DEMO-CLIP)**: WIP...
 * ... (More to come!)
 
 
@@ -22,6 +26,8 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 ```text
 dx-tutorials
 ├── notebooks
+│   ├── T00-JupyterLab-QuickStart
+│   │   └── jupyterlab_quickstart.ipynb
 │   ├── T01-Getting-Started
 │   │   └── getting_started.ipynb
 │   ├── T02-DX-APP
@@ -32,12 +38,8 @@ dx-tutorials
 │   │   └── dx_stream.ipynb
 │   ├── T05-DX-Compiler
 │   │   └── dx_compiler.ipynb
-│   ├── T10-DEMO-PaddleOCRv5
-│   │   └── dx_compiler.ipynb
-│   ├── T11-DEMO-VIT-CLIP
-│   │   └── dx_compiler.ipynb
-│   └── T12-DEMO-Mono-Depth
-│       └── dx_compiler.ipynb
+│   └── T10-DEMO-PaddleOCRv5
+│       └── paddleocr.ipynb
 ├── README.md
 ├── requirements.txt
 ├── run-jupyter-lab.sh
