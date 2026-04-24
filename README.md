@@ -7,7 +7,7 @@
 
 Our goal is to provide clear, step-by-step guides to help you become more productive and efficient in your data science and development workflows using the DEEPX SDK.
 
-> This tutorials are based on dx-all-suite v2.2.2, released in February 2026.
+> This tutorials are based on dx-all-suite v2.3.0, released in April 2026.
 
 ## 📚  Table of Contents
 * **Tutorial-00 (JupyterLab QuickStart)**: JupterLab overview.
