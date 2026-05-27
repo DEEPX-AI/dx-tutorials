@@ -98,5 +98,11 @@ Understanding the different PCIe generations helps illustrate the performance bo
 *By upgrading from Gen2 to Gen3, you effectively double the available bandwidth, allowing devices like the DX-M1 module or fast NVMe drives to operate much closer to their maximum potential.*
 
 
-## Dual HAT case (made by SeeedStudio)
-Need to set additional configuraitons. Refer to [this wiki page](https://wiki.seeedstudio.com/raspberry_pi_5_uses_pcie_hat_dual_hat/)
+## Dual HAT case (made by Seeed Studio)
+Need to set additional configuraitons.
+   ```bash
+   dtparam=pciex1
+   dtparam=pciex1_gen=3
+   dtoverlay=pciex1-compat-pi5,no-mip,mmio-hi 
+   ```
+For more details, refer to [this wiki page](https://wiki.seeedstudio.com/raspberry_pi_5_uses_pcie_hat_dual_hat/).
