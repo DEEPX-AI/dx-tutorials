@@ -96,3 +96,7 @@ Understanding the different PCIe generations helps illustrate the performance bo
 | **Gen3** (Upgraded) | 8.0 GT/s | **~985 MB/s** | 128b/130b (~1.5% overhead) |
 
 *By upgrading from Gen2 to Gen3, you effectively double the available bandwidth, allowing devices like the DX-M1 module or fast NVMe drives to operate much closer to their maximum potential.*
+
+
+## Dual HAT case (made by SeeedStudio)
+Need to set additional configuraitons. Refer to [this wiki page](https://wiki.seeedstudio.com/raspberry_pi_5_uses_pcie_hat_dual_hat/)
