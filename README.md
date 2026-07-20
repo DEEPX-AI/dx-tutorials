@@ -53,26 +53,32 @@ dx-tutorials
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install python3-venv build-essential python3-dev git-all ffmpeg tree
+sudo apt-get install python3-venv build-essential python3-dev git-all ffmpeg tree curl
 ```
 
-### 2. Download this dx-tutorials repo
+### 2. Install uv
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+uv --version
+```
+
+### 3. Download this dx-tutorials repo
 ```bash
 git clone https://github.com/dx-maxkim/dx-tutorials.git
 cd dx-tutorials
 ```
 
 
-### 3. Create/Activate a python3 virtual environment
+### 4. Create/Activate a Python virtual environment with uv
 ```bash
-python3 -m venv .venv
+uv venv
 source .venv/bin/activate
 ```
 
-### 4. Install required pip packages:
+### 5. Install required packages from requirements.txt with uv
 ```bash
-pip install -U pip
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 
