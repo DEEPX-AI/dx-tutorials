@@ -4,7 +4,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 RESOURCE_DIR="${SCRIPT_DIR}/assets"
-ARCHIVE_PATH="${SCRIPT_DIR}/yolo-multi.tar.gz"
+ARCHIVE_PATH="${SCRIPT_DIR}/archive.tar.gz"
 DOWNLOAD_URL="https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolo-multi.tar.gz"
 
 mkdir -p "${RESOURCE_DIR}"
