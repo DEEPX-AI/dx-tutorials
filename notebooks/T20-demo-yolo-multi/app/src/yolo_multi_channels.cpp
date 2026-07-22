@@ -50,22 +50,6 @@
 
 static bool g_full_screan = false;
 
-static void notifyLauncherReady()
-{
-    const char* readyPath = std::getenv("DX_LAUNCHER_READY_FILE");
-    if (readyPath == nullptr || *readyPath == '\0')
-    {
-        return;
-    }
-
-    // Readiness notification must never prevent the demo from running.
-    std::ofstream out(readyPath);
-    if (out)
-    {
-        out << "ready\n";
-    }
-}
-
 /**
  * @brief AppConfig Definition
  *      application_type : 0 (single), 1 (multi)
@@ -1778,23 +1762,11 @@ DXRT_TRY_CATCH_BEGIN
 
 #if __riscv
         std::cout << "press 'q' and enter to exit. " << std::endl;
-        static bool launcherReadyNotified = false;
-        if (!launcherReadyNotified)
-        {
-            notifyLauncherReady();
-            launcherReadyNotified = true;
-        }
         int key = getchar();
 #else
         cv::imshow(DISPLAY_WINDOW_NAME, outFrame);
 
         int key = cv::waitKey(1);
-        static bool launcherReadyNotified = false;
-        if (!launcherReadyNotified)
-        {
-            notifyLauncherReady();
-            launcherReadyNotified = true;
-        }
 #endif
         if(key == 0x1B || key == 0x71 || g_exitRequested) //'ESC' or 'q' or EXIT button
         {

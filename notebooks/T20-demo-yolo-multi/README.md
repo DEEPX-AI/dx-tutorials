@@ -2,6 +2,8 @@
 
 This tutorial explains how to build and run a multi-channel YOLO object detection demo on a DEEPX NPU.
 
+![yolo-multi demo](assets/yolo-multi-sc.png)
+
 ## Project layout
 
 ```text
