@@ -7,7 +7,7 @@
 
 Our goal is to provide clear, step-by-step guides to help you become more productive and efficient in your data science and development workflows using the DEEPX SDK.
 
-> This tutorials are based on dx-all-suite v2.3.0, released in April 2026.
+> This tutorials are based on dx-all-suite v2.4.0, released in July 2026.
 
 ## 📚  Table of Contents
 * **Tutorial-00 (JupyterLab QuickStart)**: JupterLab overview.
@@ -18,7 +18,6 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 * **Tutorial-05 (DX-Compiler)**: Learn how to use DX-Compiler and practice compiling various AI models with different preprocessing options.
 * **Tutorial-06 (DX-Runtime)**: WIP...
 * **Tutorial-10 (DEMO-PaddleOCRv5)**: Implementing an E2E pipeline for PaddleOCRv5 on DEEPX NPU (A step-by-step guide).
-* **Tutorial-11 (DEMO-CLIP)**: WIP...
 * **Tutorial-20 (DEMO-YOLO-Multi)**: Understand, build, and run the multi-channel YOLO C++ demo on DEEPX NPU.
 * **Tutorial-21 (DEMO-YOLO26-OD-Pose-Seg)**: Run YOLO26 object detection, pose estimation, and instance segmentation in one C++ application.
 * **Tutorial-22 (DEMO-CLIP-Single)**: Compare camera or video frames with text queries using CLIP in a C++ application.
