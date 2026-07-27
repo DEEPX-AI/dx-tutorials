@@ -132,7 +132,6 @@ struct AppArgs {
     int width = 1280;
     int height = 720;
     int fps = 30;
-    std::string decoder = "mppjpegdec";
     bool debug_seg_timing = false;
     int debug_timing_interval_ms = 1000;
     bool debug_seg_bbox_only = false;
@@ -165,8 +164,6 @@ void printUsage(const char* argv0, const AppArgs& defaults) {
         << defaults.height << ")\n"
         << "      --fps <N>               Requested camera FPS (default: "
         << defaults.fps << ")\n"
-        << "      --decoder <NAME>        Camera decoder hint (default: "
-        << defaults.decoder << ")\n"
         << "      --debug-seg-timing      Print segmentation worker timing by stage\n"
         << "      --debug-timing-interval-ms <N>\n"
         << "                              Timing report interval in ms (default: "
@@ -212,8 +209,6 @@ AppArgs parseArgs(int argc, char* argv[]) {
          cxxopts::value<int>(args.height)->default_value(std::to_string(args.height)))
         ("fps", "Requested camera FPS.",
          cxxopts::value<int>(args.fps)->default_value(std::to_string(args.fps)))
-        ("decoder", "Accepted for CLI compatibility; unused without OpenCV GStreamer.",
-         cxxopts::value<std::string>(args.decoder)->default_value(args.decoder))
         ("debug-seg-timing", "Print segmentation worker timing by stage.",
          cxxopts::value<bool>(args.debug_seg_timing)->default_value("false"))
         ("debug-timing-interval-ms", "Timing report interval in milliseconds.",
@@ -263,20 +258,36 @@ void requireFile(const std::string& label, const std::string& path) {
 
 int parseCameraIndex(const std::string& device) {
     if (device.empty()) {
-        return 0;
+        throw std::runtime_error(
+            "Camera device is empty. Use a non-negative index or /dev/videoN.");
     }
+
+    std::string index_text;
     if (std::all_of(device.begin(), device.end(), [](unsigned char ch) { return std::isdigit(ch); })) {
-        return std::stoi(device);
-    }
-    const std::string prefix = "/dev/video";
-    if (device.rfind(prefix, 0) == 0) {
-        std::string suffix = device.substr(prefix.size());
-        if (!suffix.empty() &&
-            std::all_of(suffix.begin(), suffix.end(), [](unsigned char ch) { return std::isdigit(ch); })) {
-            return std::stoi(suffix);
+        index_text = device;
+    } else {
+        const std::string prefix = "/dev/video";
+        if (device.rfind(prefix, 0) != 0) {
+            throw std::runtime_error(
+                "Invalid camera device '" + device +
+                "'. Use a non-negative index or /dev/videoN.");
+        }
+
+        index_text = device.substr(prefix.size());
+        if (index_text.empty() ||
+            !std::all_of(index_text.begin(), index_text.end(),
+                         [](unsigned char ch) { return std::isdigit(ch); })) {
+            throw std::runtime_error(
+                "Invalid camera device '" + device +
+                "'. Use a non-negative index or /dev/videoN.");
         }
     }
-    return 0;
+
+    try {
+        return std::stoi(index_text);
+    } catch (const std::exception&) {
+        throw std::runtime_error("Camera index is out of range: " + device);
+    }
 }
 
 cv::Mat ensureBgr3(const cv::Mat& frame) {
@@ -1461,9 +1472,6 @@ void CaptureThread::run() {
             }
             runVideo();
         } else {
-            std::cout << "[INFO] OpenCV GStreamer input is disabled for this demo build." << std::endl;
-            std::cout << "[INFO] Ignoring --decoder=" << args_.decoder
-                      << "; using V4L2 camera input." << std::endl;
             runCamera();
         }
     } catch (const std::exception& e) {

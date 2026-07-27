@@ -299,9 +299,8 @@ std::vector<std::uint8_t> preprocess_frame(const cv::Mat& frame,
     return input;
 }
 
-int scaled_argmax_size(int logits_size, int target_size, double scale) {
+int scaled_argmax_size(int target_size, double scale) {
     int scaled = static_cast<int>(std::round(target_size * scale));
-    scaled = std::max(logits_size, scaled);
     scaled = std::min(target_size, scaled);
     return std::max(1, scaled);
 }
@@ -311,8 +310,8 @@ cv::Mat compute_argmax_mask(const float* data,
                             int target_width,
                             int target_height,
                             double scale) {
-    const int output_width = scaled_argmax_size(info.width, target_width, scale);
-    const int output_height = scaled_argmax_size(info.height, target_height, scale);
+    const int output_width = scaled_argmax_size(target_width, scale);
+    const int output_height = scaled_argmax_size(target_height, scale);
     cv::Mat scaled_mask(output_height, output_width, CV_32SC1);
 
     const float scale_x = output_width > 1
@@ -625,8 +624,9 @@ public:
         slider_->setValue(static_cast<int>(
             std::round(initial_scale * kArgmaxScaleStepsPerUnit)));
         slider_->setToolTip("PIDNet argmax scale: 0.10 to 1.00 (step: 0.05)");
-        slider_->setFixedWidth(800);
-        controls_layout->addWidget(slider_);
+        slider_->setMinimumWidth(180);
+        slider_->setMaximumWidth(420);
+        controls_layout->addWidget(slider_, 1);
 
         argmax_scale_->store(slider_scale(slider_->value()));
 

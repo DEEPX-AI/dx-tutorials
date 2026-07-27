@@ -137,7 +137,7 @@ The compact slider is located in the control bar below the video, next to the hi
 
 It covers `0.10` through `1.00` in increments of `0.05`.
 
-- **0.1:** performs argmax near the native logits resolution. It is faster but produces coarser boundaries.
+- **0.1:** performs argmax at 10% of the displayed frame size. It is faster but produces coarser boundaries.
 - **0.4:** provides the default balance between boundary detail and CPU post-processing cost.
 - **1.0:** interpolates logits to the full frame size before argmax. It provides the finest boundaries but requires the most CPU work.
 

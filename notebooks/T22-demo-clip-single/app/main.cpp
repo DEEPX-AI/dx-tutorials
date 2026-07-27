@@ -330,7 +330,7 @@ int similarityToBarValue(float score)
         const float t = (score - kHighlightMinScore) / 0.05F;
         return static_cast<int>(std::lround(280.0F + 340.0F * t));
     }
-    const float t = (score - kHighlightMinScore + 0.05F) / 0.05F;
+    const float t = (score - (kHighlightMinScore + 0.05F)) / 0.05F;
     return static_cast<int>(std::lround(620.0F + 380.0F * t));
 }
 
@@ -377,17 +377,10 @@ protected:
             opened = capture.open(input_);
         }
 
-        cv::Mat fallback;
         if (!opened) {
-            const fs::path fallback_path = resolvePath("assets/images/img-encoder-sample-1.png");
-            fallback = cv::imread(fallback_path.string());
-            if (fallback.empty()) {
-                emit captureError(QString("Input %1 is unavailable and the fallback image is missing")
-                                      .arg(QString::fromStdString(input_)));
-                return;
-            }
-            cv::resize(fallback, fallback, cv::Size(width_, height_));
-            std::cout << "Input " << input_ << " not available, using test image" << std::endl;
+            emit captureError(
+                QString("Failed to open input: %1").arg(QString::fromStdString(input_)));
+            return;
         } else if (!video_file) {
             capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
             capture.set(cv::CAP_PROP_FRAME_WIDTH, width_);
@@ -402,15 +395,12 @@ protected:
                 frame_seconds = 1.0 / source_fps;
             }
         }
-        uint64_t frame_count = 0;
         bool saved_black = false;
         bool saved_nonblack = false;
         while (!stop_requested_.load()) {
             const auto started = std::chrono::steady_clock::now();
             cv::Mat frame;
-            if (!opened) {
-                frame = fallback.clone();
-            } else if (!capture.read(frame) || frame.empty()) {
+            if (!capture.read(frame) || frame.empty()) {
                 if (video_file) {
                     capture.set(cv::CAP_PROP_POS_FRAMES, 0);
                 }
@@ -420,7 +410,6 @@ protected:
             if (video_file && (frame.cols != width_ || frame.rows != height_)) {
                 cv::resize(frame, frame, cv::Size(width_, height_));
             }
-            ++frame_count;
             if (!saved_black && isNearlyBlack(frame)) {
                 saved_black = true;
                 cv::imwrite("debug_camera_black_frame.png", frame);

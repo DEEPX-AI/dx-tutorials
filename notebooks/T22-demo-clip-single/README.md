@@ -27,8 +27,7 @@ T22-demo-clip-single/
 ├── assets/
 │   ├── clip-single-sc.png    # Tutorial screenshot
 │   ├── models/               # DXNN, ONNX, and BPE files
-│   ├── videos/               # Video input files
-│   └── images/               # Optional fallback image
+│   └── videos/               # Video input files
 └── app/
     ├── CMakeLists.txt
     ├── build.sh
@@ -73,10 +72,8 @@ assets/
 │   ├── ViT-L-14-quickgelu-dfn2b-text.onnx
 │   ├── ViT-L-14-quickgelu-dfn2b-text.onnx.data
 │   └── bpe_simple_vocab_16e6.txt.gz
-├── videos/
-│   └── CLIP-demo.mp4
-└── images/
-    └── img-encoder-sample-1.png   # Optional camera fallback
+└── videos/
+    └── CLIP-demo.mp4
 ```
 
 The ONNX `.data` file is required when the text encoder uses external tensor data.
