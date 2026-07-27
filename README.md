@@ -7,7 +7,7 @@
 
 Our goal is to provide clear, step-by-step guides to help you become more productive and efficient in your data science and development workflows using the DEEPX SDK.
 
-> This tutorials are based on dx-all-suite v2.3.0, released in April 2026.
+> This tutorials are based on dx-all-suite v2.4.0, released in July 2026.
 
 ## 📚  Table of Contents
 * **Tutorial-00 (JupyterLab QuickStart)**: JupterLab overview.
@@ -18,7 +18,11 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 * **Tutorial-05 (DX-Compiler)**: Learn how to use DX-Compiler and practice compiling various AI models with different preprocessing options.
 * **Tutorial-06 (DX-Runtime)**: WIP...
 * **Tutorial-10 (DEMO-PaddleOCRv5)**: Implementing an E2E pipeline for PaddleOCRv5 on DEEPX NPU (A step-by-step guide).
-* **Tutorial-11 (DEMO-CLIP)**: WIP...
+* **Tutorial-20 (DEMO-YOLO-Multi)**: Understand, build, and run the multi-channel YOLO C++ demo on DEEPX NPU.
+* **Tutorial-21 (DEMO-YOLO26-OD-Pose-Seg)**: Run YOLO26 object detection, pose estimation, and instance segmentation in one C++ application.
+* **Tutorial-22 (DEMO-CLIP-Single)**: Compare camera or video frames with text queries using CLIP in a C++ application.
+* **Tutorial-23 (DEMO-Hand-Landmarks)**: Track 21 hand landmarks from camera or video input in a C++ application.
+* **Tutorial-24 (DEMO-PIDNet-Cityscapes)**: Run PIDNet semantic segmentation with a live argmax-scale control in a Qt5 C++ application.
 * ... (More to come!)
 
 
@@ -38,8 +42,18 @@ dx-tutorials
 │   │   └── dx_stream.ipynb
 │   ├── T05-DX-Compiler
 │   │   └── dx_compiler.ipynb
-│   └── T10-DEMO-PaddleOCRv5
-│       └── paddleocr.ipynb
+│   ├── T10-DEMO-PaddleOCRv5
+│   │   └── paddleocr.ipynb
+│   ├── T20-demo-yolo-multi
+│   │   └── yolo_multi.ipynb
+│   ├── T21-demo-yolo26-od-pos-seg
+│   │   └── yolo26_od_pose_seg.ipynb
+│   ├── T22-demo-clip-single
+│   │   └── clip_single.ipynb
+│   ├── T23-demo-hand-landmarks
+│   │   └── hand_landmarks.ipynb
+│   └── T24-demo-pidnet-cityscrape
+│       └── pidnet_cityscapes.ipynb
 ├── README.md
 ├── requirements.txt
 ├── run-jupyter-lab.sh
@@ -53,26 +67,32 @@ dx-tutorials
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install python3-venv build-essential python3-dev git-all ffmpeg tree
+sudo apt-get install python3-venv build-essential python3-dev git-all ffmpeg tree curl
 ```
 
-### 2. Download this dx-tutorials repo
+### 2. Install uv
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+uv --version
+```
+
+### 3. Download this dx-tutorials repo
 ```bash
 git clone https://github.com/dx-maxkim/dx-tutorials.git
 cd dx-tutorials
 ```
 
 
-### 3. Create/Activate a python3 virtual environment
+### 4. Create/Activate a Python virtual environment with uv
 ```bash
-python3 -m venv .venv
+uv venv
 source .venv/bin/activate
 ```
 
-### 4. Install required pip packages:
+### 5. Install required packages from requirements.txt with uv
 ```bash
-pip install -U pip
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 
