@@ -2,8 +2,8 @@
 
 ## How to install Intel GPU driver - Ubuntu
 
-### For Ubuntu Desktop 24.04:
-For Ubuntu 25.10 and 24.04, we offer the intel-graphics Personal Package Archive (PPA). This PPA provides early access to the latest packages, along with additional tools and features, such as EU debugging. Follow these steps to install the intel-graphics PPA and the required compute and media packages.
+### For Ubuntu Desktop 26.04, 25.10, or 24.04:
+Intel offers the intel-graphics Personal Package Archive (PPA). This PPA provides early access to the latest packages, along with additional tools and features, such as EU debugging. Follow these steps to install the intel-graphics PPA and the required compute and media packages.
 
 1. Refresh the local package index and install the package for managing software repositories.
 ```sh
@@ -23,7 +23,7 @@ sudo apt-get install -y libze-intel-gpu1 libze1 intel-metrics-discovery intel-op
 
 4. Install the media-related packages.
 ```sh
-sudo apt-get install -y intel-media-va-driver-non-free libmfx-gen1 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo gstreamer1.0-vaapi
+sudo apt-get install -y intel-media-va-driver-non-free libmfx-gen1.2 libvpl2 libvpl-tools libva-glx2 va-driver-all vainfo gstreamer1.0-vaapi
 ```
 
 5. Install the Intel GPU tool.
@@ -45,6 +45,4 @@ sudo gpasswd -a ${USER} render
 newgrp render
 ```
 
-### For Ubuntu Desktop 22.04:
-
-Refer to https://dgpu-docs.intel.com/driver/client/overview.html#ubuntu-22.04
+Refer to [Intel guidance (Installing Packages from Ubuntu PPA)](https://dgpu-docs.intel.com/installation-guides/installing-packages-from-the-intel-ppa.html)
