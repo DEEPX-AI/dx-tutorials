@@ -79,7 +79,7 @@ uv --version
 
 ### 3. Download this dx-tutorials repo
 ```bash
-git clone --depth 1 --single-branch https://github.com/dx-maxkim/dx-tutorials.git
+git clone --depth 1 --single-branch https://github.com/DEEPX-AI/dx-tutorials.git
 cd dx-tutorials
 ```
 
