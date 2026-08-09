@@ -17,7 +17,7 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 * **Tutorial-04 (DX-STREAM)**: Explore DX-STREAM and practice integrating it with the Forklift-Worker detector.
 * **Tutorial-05 (DX-Compiler)**: Learn how to use DX-Compiler and practice compiling various AI models with different preprocessing options.
 * **Tutorial-06 (DX-Runtime)**: WIP...
-* **Tutorial-10 (DEMO-PaddleOCRv5)**: Implementing an E2E pipeline for PaddleOCRv5 on DEEPX NPU (A step-by-step guide).
+* **Tutorial-10 (DEMO-PaddleOCR)**: Implementing an E2E pipeline for PaddleOCR on DEEPX NPU (A step-by-step guide).
 * **Tutorial-20 (DEMO-YOLO-Multi)**: Understand, build, and run the multi-channel YOLO C++ demo on DEEPX NPU.
 * **Tutorial-21 (DEMO-YOLO26-OD-Pose-Seg)**: Run YOLO26 object detection, pose estimation, and instance segmentation in one C++ application.
 * **Tutorial-22 (DEMO-CLIP-Single)**: Compare camera or video frames with text queries using CLIP in a C++ application.
@@ -42,8 +42,8 @@ dx-tutorials
 │   │   └── dx_stream.ipynb
 │   ├── T05-DX-Compiler
 │   │   └── dx_compiler.ipynb
-│   ├── T10-DEMO-PaddleOCRv5
-│   │   └── paddleocr.ipynb
+│   ├── T10-DEMO-PaddleOCR
+│   │   └── paddleocr_v6.ipynb
 │   ├── T20-demo-yolo-multi
 │   │   └── yolo_multi.ipynb
 │   ├── T21-demo-yolo26-od-pos-seg
