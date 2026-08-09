@@ -34,10 +34,10 @@ The exact model tensor sizes are checked at runtime. The sizes above describe th
 ## Project layout
 
 ```text
-T24-demo-pidnet-cityscrape/
+T24-demo-pidnet-cityscrapes/
 ├── README.md
 ├── pidnet_cityscapes.ipynb
-├── get_resources.sh          # Empty resource-download placeholder
+├── get_resources.sh          # Downloads and extracts the required resources
 ├── assets/
 │   ├── models/               # PIDNet model
 │   └── videos/               # Video input files
@@ -78,7 +78,14 @@ dxrt-cli -s
 
 ## 1. Prepare resources
 
-`get_resources.sh` is intentionally empty. Add its download logic later or place the files manually at these paths:
+Run the resource setup script from the tutorial directory:
+
+```bash
+cd notebooks/T24-demo-pidnet-cityscapes
+./get_resources.sh
+```
+
+The script downloads and extracts the PIDNet model and sample video into `assets/`. If every required file is already available and non-empty, it skips the download. After a successful extraction, it removes the downloaded archive.
 
 ```text
 assets/
@@ -93,7 +100,7 @@ The default model accepts a UINT8 `[1, 1024, 2048, 3]` tensor and produces FLOAT
 ## 2. Build the application
 
 ```bash
-cd notebooks/T24-demo-pidnet-cityscrape/app
+cd notebooks/T24-demo-pidnet-cityscrapes/app
 ./build.sh
 ```
 
@@ -108,7 +115,7 @@ Use a clean build when needed:
 ## 3. Run with a camera
 
 ```bash
-cd notebooks/T24-demo-pidnet-cityscrape/app
+cd notebooks/T24-demo-pidnet-cityscrapes/app
 ./run_camera.sh
 ```
 
@@ -121,7 +128,7 @@ The default camera index is `0`, with a requested size of 1280 x 720 at 30 FPS. 
 ## 4. Run with a video
 
 ```bash
-cd notebooks/T24-demo-pidnet-cityscrape/app
+cd notebooks/T24-demo-pidnet-cityscrapes/app
 ./run_video.sh
 ```
 
@@ -183,7 +190,7 @@ Start JupyterLab from the repository root:
 ./run-jupyter-lab.sh
 ```
 
-Open `notebooks/T24-demo-pidnet-cityscrape/pidnet_cityscapes.ipynb` and run the cells in order.
+Open `notebooks/T24-demo-pidnet-cityscrapes/pidnet_cityscapes.ipynb` and run the cells in order.
 
 ## Troubleshooting
 

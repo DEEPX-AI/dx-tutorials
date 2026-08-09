@@ -395,8 +395,7 @@ protected:
                 frame_seconds = 1.0 / source_fps;
             }
         }
-        bool saved_black = false;
-        bool saved_nonblack = false;
+
         while (!stop_requested_.load()) {
             const auto started = std::chrono::steady_clock::now();
             cv::Mat frame;
@@ -409,13 +408,6 @@ protected:
             }
             if (video_file && (frame.cols != width_ || frame.rows != height_)) {
                 cv::resize(frame, frame, cv::Size(width_, height_));
-            }
-            if (!saved_black && isNearlyBlack(frame)) {
-                saved_black = true;
-                cv::imwrite("debug_camera_black_frame.png", frame);
-            } else if (!saved_nonblack && !isNearlyBlack(frame)) {
-                saved_nonblack = true;
-                cv::imwrite("debug_camera_nonblack_frame.png", frame);
             }
             emit frameReady(frame.clone());
 

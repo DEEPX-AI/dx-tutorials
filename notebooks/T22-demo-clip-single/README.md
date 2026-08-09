@@ -23,7 +23,7 @@ Text embeddings are computed when the application starts and cached under `.cach
 T22-demo-clip-single/
 ├── README.md
 ├── clip_single.ipynb
-├── get_resources.sh          # Empty resource-download placeholder
+├── get_resources.sh          # Downloads and extracts the required resources
 ├── assets/
 │   ├── clip-single-sc.png    # Tutorial screenshot
 │   ├── models/               # DXNN, ONNX, and BPE files
@@ -63,7 +63,14 @@ If DXRT or ONNX Runtime is installed in a non-standard location, pass `DXRT_INST
 
 ## Resources
 
-`get_resources.sh` is intentionally empty. Add the download logic later or place the files manually as follows:
+Run the resource setup script from the tutorial directory:
+
+```bash
+cd notebooks/T22-demo-clip-single
+./get_resources.sh
+```
+
+The script downloads and extracts the required models, tokenizer vocabulary, and sample video into `assets/`. If every required file is already available and non-empty, it skips the download. After a successful extraction, it removes the downloaded archive.
 
 ```text
 assets/

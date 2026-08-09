@@ -38,7 +38,7 @@ uv pip install --python <dx-tutorials>/.venv/bin/python \
 Run from a graphical JupyterLab terminal:
 
 ```bash
-cd notebooks/T10-PaddleOCRv5/app
+cd notebooks/T10-PaddleOCR/app
 ./run_camera.sh
 ```
 
@@ -54,7 +54,7 @@ Press `q` or `Esc` in the OpenCV window to exit. Use `./run_camera.sh --help` to
 
 The application uses Pillow with a CJK-capable font because OpenCV's built-in
 `putText` renderer does not support these Unicode characters. By default, it
-uses the bundled `assets/NotoSansJP-VariableFont_wght.ttf` font.
+uses the bundled `assets/simfang.ttf` font.
 
 If you remove the bundled font, install the recommended system fallback on
 Debian or Raspberry Pi OS:

@@ -7,8 +7,8 @@ SCRIPT_DIR=$(realpath "$(dirname "$0")")
 cd "${SCRIPT_DIR}"
 exec ./build/hand_landmarks \
     --camera 0 \
-    --width 640 \
-    --height 480 \
+    --width 1280 \
+    --height 720 \
     --fps 30 \
     --landmark-only \
     "$@"

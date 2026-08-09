@@ -3,14 +3,14 @@
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Status](https://img.shields.io/badge/Status-Active-success)
 
-**Welcome!** This repository contains a growing collection of hands-on Jupyter Lab tutorials designed for learners of all levels getting started with DEEPX products. Whether you're just getting started or looking to master advanced features, you will find valuable resources here.
+**Welcome!** This repository contains a growing collection of hands-on JupyterLab tutorials designed for learners of all levels getting started with DEEPX products. Whether you're just getting started or looking to master advanced features, you will find valuable resources here.
 
 Our goal is to provide clear, step-by-step guides to help you become more productive and efficient in your data science and development workflows using the DEEPX SDK.
 
-> This tutorials are based on dx-all-suite v2.4.0, released in July 2026.
+> These tutorials are based on dx-all-suite v2.4.0, released in July 2026.
 
 ## 📚  Table of Contents
-* **Tutorial-00 (JupyterLab QuickStart)**: JupterLab overview.
+* **Tutorial-00 (JupyterLab QuickStart)**: JupyterLab overview.
 * **Tutorial-01 (Getting Started)**: Learn how to install the DEEPX SDK and verify the installation.
 * **Tutorial-02 (DX-APP)**: Introduction to DX-APP and demonstrations on running inference with image, video, and camera inputs.
 * **Tutorial-03 (E2E AI workflow)**: Hands-on practice implementing a Forklift-Worker detector using YOLOv7.
@@ -96,31 +96,13 @@ uv pip install -r requirements.txt
 ```
 
 
-## 🚀 Usages
+## 🚀 Usage
 
 ### Run jupyter-lab
 To start the tutorial environment, run the provided script:
 ```bash
 ./run-jupyter-lab.sh
 ```
-
-### External connection (Optional)
-<details> <summary><b>Click here to configure remote access</b></summary>
-If you are running this on a remote server and want to access it from your local browser:
-
-1. Generate the config file:
-    ```bash
-    jupyter-lab --generate-config
-    ```
-
-2. Edit the config file (vi ~/.jupyter/jupyter_lab_config.py) and add:
-    ```bash
-    c.ServerApp.ip = '0.0.0.0'
-    c.ServerApp.token = ''
-    c.ServerApp.password = ''
-    c.ServerApp.open_browser = False
-    ```
-</details>
 
 ## 💡 Troubleshooting
 ![FAQ](https://img.shields.io/badge/FAQ-Read-blue?style=flat-square&logo=github) ![Issues](https://img.shields.io/badge/Issues-Report-red?style=flat-square&logo=github)

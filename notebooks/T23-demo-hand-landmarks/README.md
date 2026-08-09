@@ -2,7 +2,7 @@
 
 This tutorial builds and runs a Qt-based C++ application that tracks 21 landmarks on each detected hand. It accepts camera or video input and runs palm detection followed by hand landmark inference on a DEEPX NPU.
 
-![hand landmarks demo](assets/hands-landmarks-sc.png)
+![hand landmarks demo](assets/hand-landmarks-sc.png)
 
 ## Model provenance
 
@@ -31,7 +31,7 @@ Only the palm and hand-landmark stages are included in this application.
 T23-demo-hand-landmarks/
 ├── README.md
 ├── hand_landmarks.ipynb
-├── get_resources.sh          # Empty resource-download placeholder
+├── get_resources.sh          # Downloads and extracts the required resources
 ├── assets/
 │   ├── models/               # Palm and hand-landmark models
 │   └── videos/               # Video input files
@@ -72,7 +72,14 @@ dxrt-cli -s
 
 ## 1. Prepare resources
 
-`get_resources.sh` is intentionally empty. Add its download logic later or place the files manually at these paths:
+Run the resource setup script from the tutorial directory:
+
+```bash
+cd notebooks/T23-demo-hand-landmarks
+./get_resources.sh
+```
+
+The script downloads and extracts the two models and sample video into `assets/`. If every required file is already available and non-empty, it skips the download. After a successful extraction, it removes the downloaded archive.
 
 ```text
 assets/

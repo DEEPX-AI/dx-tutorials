@@ -17,7 +17,7 @@ The full-screen window uses a 2 x 2 layout:
 T21-demo-yolo26-od-pos-seg/
 ├── yolo26_od_pose_seg.ipynb  # Tutorial and executable examples
 ├── README.md                 # Quick-start guide
-├── get_resources.sh         # Resource downloader placeholder
+├── get_resources.sh         # Downloads and extracts the required resources
 ├── assets/
 │   ├── models/              # Detection, pose, and segmentation models
 │   ├── yolo26.png           # Static fourth-panel image
@@ -65,7 +65,14 @@ dxrt-cli -s
 
 ## 1. Prepare resources
 
-`get_resources.sh` is intentionally empty. Add the download and extraction commands when the resource archive is available.
+Run the resource setup script from the tutorial directory:
+
+```bash
+cd notebooks/T21-demo-yolo26-od-pos-seg
+./get_resources.sh
+```
+
+The script downloads and extracts the models, demo image, and sample video into `assets/`. If every required file is already available and non-empty, it skips the download. After a successful extraction, it removes the downloaded archive.
 
 The application expects these default files:
 
@@ -77,7 +84,7 @@ assets/
 │   └── yolo26s-seg.dxnn
 ├── yolo26.png
 └── videos/
-    └── <input-video>
+    └── dance-960-540.mp4
 ```
 
 Custom model and image paths can be passed with `--model`, `--model-pose`, `--model-seg`, and `--demo-image`.

@@ -25,7 +25,7 @@ public:
 
     PostprocessorPtr<DetectionResult> createPostprocessor(
         int input_width, int input_height, bool is_ort_configured = false) {
-        return std::make_unique<YOLOv26Postprocessor>(
+        return std::make_unique<YOLO26Postprocessor>(
             input_width, input_height,
             score_threshold_, nms_threshold_,
             is_ort_configured

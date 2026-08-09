@@ -15,9 +15,9 @@
 
 namespace dxapp {
 
-class YOLOv26Postprocessor : public IPostprocessor<DetectionResult> {
+class YOLO26Postprocessor : public IPostprocessor<DetectionResult> {
 public:
-    YOLOv26Postprocessor(int input_width = 640, int input_height = 640,
+    YOLO26Postprocessor(int input_width = 640, int input_height = 640,
                          float score_threshold = 0.3f,
                          float nms_threshold = 0.45f,
                          bool is_ort_configured = false)
@@ -39,7 +39,7 @@ public:
         return results;
     }
 
-    std::string getModelName() const override { return "YOLOv26"; }
+    std::string getModelName() const override { return "YOLO26"; }
 
 private:
     static void scaleBox(std::vector<float>& box, const PreprocessContext& ctx) {
@@ -66,7 +66,7 @@ private:
         box[3] = std::clamp(box[3], 0.0f, height);
     }
 
-    YOLOv26PostProcess impl_;
+    YOLO26PostProcess impl_;
 };
 
 }  // namespace dxapp

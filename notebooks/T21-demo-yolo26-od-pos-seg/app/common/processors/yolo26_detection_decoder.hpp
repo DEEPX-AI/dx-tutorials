@@ -49,9 +49,9 @@ struct AnchorlessYOLOResult {
 // ============================================================================
 // Postprocess class
 // ============================================================================
-class YOLOv26PostProcess {
+class YOLO26PostProcess {
 public:
-    YOLOv26PostProcess(int input_w, int input_h,
+    YOLO26PostProcess(int input_w, int input_h,
                        float score_threshold, float nms_threshold,
                        bool is_ort_configured)
         : input_width_(input_w), input_height_(input_h),

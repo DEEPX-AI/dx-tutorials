@@ -2,10 +2,12 @@
 
 set -euo pipefail
 
-export ROOT_PATH=$(pwd)
+SCRIPT_DIR=$(realpath "$(dirname "$0")")
+export ROOT_PATH="${SCRIPT_DIR}"
+cd "${ROOT_PATH}"
 
 # Virtual Env Name
-VENV_DIR=".venv"
+VENV_DIR="${ROOT_PATH}/.venv"
 
 if ! command -v uv >/dev/null 2>&1; then
     {
@@ -44,24 +46,19 @@ if ! command -v uv >/dev/null 2>&1; then
     exit 127
 fi
 
-# Check if the virtual env exists
+# Create the virtual environment when it does not exist.
 if [ ! -d "$VENV_DIR" ]; then
     echo "--- No '$VENV_DIR'. Create a new virtual env! ---"
-
-    # Create a virtual env
     uv venv "$VENV_DIR"
-
-    # Activate
-    source "$VENV_DIR/bin/activate"
-
-    # Install required packages
-    echo "--- Install packages from requirements.txt with uv ---"
-    uv pip install -r requirements.txt
-
-    echo "--- Complete! ---"
 else
     echo "--- Reusing the existing virtual env '$VENV_DIR'! ---"
-    source "$VENV_DIR/bin/activate"
 fi
+
+# Always synchronize the required packages. This also updates an existing
+# environment when requirements.txt changes between tutorial releases.
+source "$VENV_DIR/bin/activate"
+echo "--- Synchronize packages from requirements.txt with uv ---"
+uv pip install -r "${ROOT_PATH}/requirements.txt"
+echo "--- Environment is ready! ---"
 
 jupyter lab

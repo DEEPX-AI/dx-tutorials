@@ -187,11 +187,11 @@ AppArgs parseArgs(int argc, char* argv[]) {
         "Qt5 2x2 YOLO26-S demo: object detection, pose, instance segmentation, demo image.");
 
     options.add_options()
-        ("model", "YOLOv26 detection .dxnn",
+        ("model", "YOLO26 detection .dxnn",
          cxxopts::value<std::string>(args.model)->default_value(args.model))
-        ("model-pose", "YOLOv26 pose .dxnn",
+        ("model-pose", "YOLO26 pose .dxnn",
          cxxopts::value<std::string>(args.model_pose)->default_value(args.model_pose))
-        ("model-seg", "YOLOv26 segmentation .dxnn",
+        ("model-seg", "YOLO26 segmentation .dxnn",
          cxxopts::value<std::string>(args.model_seg)->default_value(args.model_seg))
         ("demo-image", "Image shown in the bottom-right panel.",
          cxxopts::value<std::string>(args.demo_image)->default_value(args.demo_image))
