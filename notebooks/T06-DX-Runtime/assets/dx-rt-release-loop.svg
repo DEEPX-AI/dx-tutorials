@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><style>.t{font:700 28px sans-serif;fill:#0f172a}.h{font:700 18px sans-serif;fill:#0f172a}.b{font:15px sans-serif;fill:#334155}.box{stroke:#334155;stroke-width:2;rx:50}.arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="500" fill="#f8fafc"/><text x="600" y="44" text-anchor="middle" class="t">Production runtime validation loop</text>
+  <rect x="70" y="115" width="180" height="100" fill="#dbeafe" class="box"/><text x="160" y="155" text-anchor="middle" class="h">1. Contract</text><text x="160" y="183" text-anchor="middle" class="b">shape · dtype · layout</text>
+  <rect x="315" y="115" width="180" height="100" fill="#dcfce7" class="box"/><text x="405" y="155" text-anchor="middle" class="h">2. Baseline</text><text x="405" y="183" text-anchor="middle" class="b">fixed workload</text>
+  <rect x="560" y="115" width="180" height="100" fill="#fef3c7" class="box"/><text x="650" y="155" text-anchor="middle" class="h">3. Profile</text><text x="650" y="183" text-anchor="middle" class="b">find bottleneck</text>
+  <rect x="805" y="115" width="180" height="100" fill="#ede9fe" class="box"/><text x="895" y="155" text-anchor="middle" class="h">4. Tune one item</text><text x="895" y="183" text-anchor="middle" class="b">measure again</text>
+  <path d="M250 165 H310" class="arrow"/><path d="M495 165 H555" class="arrow"/><path d="M740 165 H800" class="arrow"/>
+  <rect x="435" y="315" width="330" height="110" fill="#fee2e2" class="box"/><text x="600" y="355" text-anchor="middle" class="h">5. Release evidence</text><text x="600" y="383" text-anchor="middle" class="b">accuracy · latency · FPS · CPU · memory · thermal</text>
+  <path d="M895 220 V270 H600 V310" class="arrow"/>
+  <path d="M435 370 H160 V220" class="arrow"/>
+  <text x="950" y="350" text-anchor="middle" class="h">Compare, do not guess</text><text x="950" y="380" text-anchor="middle" class="b">same model · same input · same duration</text>
+  <text x="600" y="475" text-anchor="middle" class="b">A fast dummy-input benchmark proves runtime performance only. It does not prove application accuracy.</text>
+</svg>

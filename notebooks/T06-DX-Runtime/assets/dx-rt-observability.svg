@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><style>.t{font:700 28px sans-serif;fill:#0f172a}.h{font:700 19px sans-serif;fill:#0f172a}.b{font:16px sans-serif;fill:#334155}.s{font:14px sans-serif;fill:#475569}.box{stroke:#334155;stroke-width:2;rx:14}.arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="570" fill="#f8fafc"/><text x="600" y="44" text-anchor="middle" class="t">Observe first, then tune the measured bottleneck</text>
+  <rect x="55" y="105" width="245" height="105" fill="#dbeafe" class="box"/><text x="178" y="143" text-anchor="middle" class="h">Application metrics</text><text x="178" y="175" text-anchor="middle" class="b">latency, throughput, drops</text>
+  <rect x="355" y="105" width="245" height="105" fill="#dcfce7" class="box"/><text x="478" y="143" text-anchor="middle" class="h">DX-RT profiler</text><text x="478" y="175" text-anchor="middle" class="b">H2D, NPU, D2H, CPU</text>
+  <rect x="655" y="105" width="245" height="105" fill="#fef3c7" class="box"/><text x="778" y="143" text-anchor="middle" class="h">Device status</text><text x="778" y="175" text-anchor="middle" class="b">utilization, memory, thermal</text>
+  <rect x="955" y="105" width="190" height="105" fill="#ede9fe" class="box"/><text x="1050" y="143" text-anchor="middle" class="h">Host tools</text><text x="1050" y="175" text-anchor="middle" class="b">CPU and system load</text>
+  <path d="M300 158 H350" class="arrow"/><path d="M600 158 H650" class="arrow"/><path d="M900 158 H950" class="arrow"/>
+  <rect x="120" y="285" width="960" height="105" fill="#e0f2fe" class="box"/>
+  <text x="600" y="325" text-anchor="middle" class="h">Classify the bottleneck</text>
+  <text x="600" y="357" text-anchor="middle" class="b">queue wait · input format · transfer · NPU compute · output format · CPU operators</text>
+  <path d="M600 215 V280" class="arrow"/>
+  <rect x="120" y="440" width="220" height="80" fill="#fff" class="box"/><text x="230" y="474" text-anchor="middle" class="h">Buffers / async</text><text x="230" y="499" text-anchor="middle" class="s">queue or idle gap</text>
+  <rect x="405" y="440" width="220" height="80" fill="#fff" class="box"/><text x="515" y="474" text-anchor="middle" class="h">Core / device binding</text><text x="515" y="499" text-anchor="middle" class="s">resource placement</text>
+  <rect x="690" y="440" width="220" height="80" fill="#fff" class="box"/><text x="800" y="474" text-anchor="middle" class="h">NFH / CPU accel</text><text x="800" y="499" text-anchor="middle" class="s">supported builds only</text>
+  <rect x="975" y="440" width="105" height="80" fill="#fff" class="box"/><text x="1028" y="474" text-anchor="middle" class="h">Model</text><text x="1028" y="499" text-anchor="middle" class="s">revisit</text>
+  <path d="M600 390 V415 H230 V435" class="arrow"/><path d="M600 390 V435" class="arrow"/><path d="M600 390 V415 H800 V435" class="arrow"/><path d="M600 390 V415 H1028 V435" class="arrow"/>
+</svg>

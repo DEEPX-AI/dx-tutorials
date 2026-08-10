@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><style>.t{font:700 28px sans-serif;fill:#0f172a}.h{font:700 20px sans-serif;fill:#0f172a}.b{font:16px sans-serif;fill:#334155}.s{font:14px sans-serif;fill:#475569}.line{stroke:#334155;stroke-width:2;marker-end:url(#a)}.box{stroke:#334155;stroke-width:2;rx:10}</style></defs>
+  <rect width="1200" height="600" fill="#f8fafc"/><text x="600" y="44" text-anchor="middle" class="t">Choose an execution mode from the workload</text>
+  <text x="45" y="105" class="h">Synchronous: one request blocks until its output is ready</text>
+  <line x1="80" y1="160" x2="1120" y2="160" class="line"/>
+  <rect x="110" y="125" width="235" height="70" fill="#dbeafe" class="box"/><text x="228" y="168" text-anchor="middle" class="b">Run frame 1</text>
+  <rect x="390" y="125" width="235" height="70" fill="#dbeafe" class="box"/><text x="508" y="168" text-anchor="middle" class="b">Run frame 2</text>
+  <rect x="670" y="125" width="235" height="70" fill="#dbeafe" class="box"/><text x="788" y="168" text-anchor="middle" class="b">Run frame 3</text>
+  <text x="45" y="235" class="s">Simple ownership and latency reasoning; the caller waits after each request.</text>
+  <text x="45" y="305" class="h">Asynchronous: submit jobs first, then collect each job by ID</text>
+  <line x1="80" y1="360" x2="1120" y2="360" class="line"/>
+  <rect x="110" y="325" width="150" height="70" fill="#dcfce7" class="box"/><text x="185" y="368" text-anchor="middle" class="b">Submit 1</text>
+  <rect x="275" y="325" width="150" height="70" fill="#dcfce7" class="box"/><text x="350" y="368" text-anchor="middle" class="b">Submit 2</text>
+  <rect x="440" y="325" width="150" height="70" fill="#dcfce7" class="box"/><text x="515" y="368" text-anchor="middle" class="b">Submit 3</text>
+  <rect x="625" y="325" width="150" height="70" fill="#fef3c7" class="box"/><text x="700" y="368" text-anchor="middle" class="b">Wait job 1</text>
+  <rect x="790" y="325" width="150" height="70" fill="#fef3c7" class="box"/><text x="865" y="368" text-anchor="middle" class="b">Wait job 2</text>
+  <rect x="955" y="325" width="150" height="70" fill="#fef3c7" class="box"/><text x="1030" y="368" text-anchor="middle" class="b">Wait job 3</text>
+  <text x="45" y="435" class="s">Allows overlap and higher throughput; the application must track job IDs and buffer lifetime.</text>
+  <rect x="80" y="480" width="1040" height="75" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="600" y="510" text-anchor="middle" class="h">Batch is a request-grouping API, not a new model batch dimension</text>
+  <text x="600" y="538" text-anchor="middle" class="b">DXNN models normally keep batch size 1; DX-RT schedules several independent samples.</text>
+</svg>

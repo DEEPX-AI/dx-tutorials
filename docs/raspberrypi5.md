@@ -99,7 +99,7 @@ Understanding the different PCIe generations helps illustrate the performance bo
 
 
 ## Dual HAT case (made by Seeed Studio)
-Need to set additional configuraitons.
+Need to set additional configurations.
    ```bash
    dtparam=pciex1
    dtparam=pciex1_gen=3

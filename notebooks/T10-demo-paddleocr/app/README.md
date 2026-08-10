@@ -38,7 +38,7 @@ uv pip install --python <dx-tutorials>/.venv/bin/python \
 Run from a graphical JupyterLab terminal:
 
 ```bash
-cd notebooks/T10-PaddleOCR/app
+cd notebooks/T10-demo-paddleocr/app
 ./run_camera.sh
 ```
 

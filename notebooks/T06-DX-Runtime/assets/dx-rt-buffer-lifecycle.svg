@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><style>.t{font:700 28px sans-serif;fill:#0f172a}.h{font:700 19px sans-serif;fill:#0f172a}.b{font:16px sans-serif;fill:#334155}.s{font:14px sans-serif;fill:#475569}.box{stroke:#334155;stroke-width:2;rx:14}.arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#a)}</style></defs>
+  <rect width="1200" height="520" fill="#f8fafc"/><text x="600" y="44" text-anchor="middle" class="t">Asynchronous buffer ownership</text>
+  <rect x="55" y="115" width="205" height="120" fill="#dbeafe" class="box"/><text x="158" y="155" text-anchor="middle" class="h">1. Prepare input</text><text x="158" y="190" text-anchor="middle" class="b">keep storage alive</text>
+  <rect x="330" y="115" width="205" height="120" fill="#dcfce7" class="box"/><text x="433" y="155" text-anchor="middle" class="h">2. RunAsync</text><text x="433" y="190" text-anchor="middle" class="b">receive job ID</text>
+  <rect x="605" y="115" width="205" height="120" fill="#fef3c7" class="box"/><text x="708" y="155" text-anchor="middle" class="h">3. Wait</text><text x="708" y="190" text-anchor="middle" class="b">match the job ID</text>
+  <rect x="880" y="115" width="265" height="120" fill="#ede9fe" class="box"/><text x="1013" y="155" text-anchor="middle" class="h">4. Consume output</text><text x="1013" y="190" text-anchor="middle" class="b">copy only if ownership requires it</text>
+  <path d="M260 175 H325" class="arrow"/><path d="M535 175 H600" class="arrow"/><path d="M810 175 H875" class="arrow"/>
+  <path d="M1010 240 V315 H155 V240" class="arrow"/>
+  <text x="600" y="350" text-anchor="middle" class="h">Reuse the input buffer only after its request is complete</text>
+  <rect x="95" y="390" width="470" height="78" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="330" y="421" text-anchor="middle" class="h">Callback rule</text><text x="330" y="449" text-anchor="middle" class="b">callback output is valid only inside the callback scope</text>
+  <rect x="635" y="390" width="470" height="78" rx="12" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="870" y="421" text-anchor="middle" class="h">Capacity rule</text><text x="870" y="449" text-anchor="middle" class="b">buffer_count limits in-flight work and consumes memory</text>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>
+      .title{font:700 28px sans-serif;fill:#0f172a}.label{font:700 20px sans-serif;fill:#0f172a}.body{font:16px sans-serif;fill:#334155}.small{font:14px sans-serif;fill:#475569}.box{stroke:#334155;stroke-width:2;rx:16}.arrow{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="500" fill="#f8fafc"/>
+  <text x="600" y="45" text-anchor="middle" class="title">DX-RT inference workflow</text>
+  <rect x="40" y="105" width="190" height="110" fill="#dbeafe" class="box"/>
+  <text x="135" y="145" text-anchor="middle" class="label">Application</text><text x="135" y="178" text-anchor="middle" class="body">image, video, sensor</text>
+  <rect x="285" y="105" width="190" height="110" fill="#dcfce7" class="box"/>
+  <text x="380" y="145" text-anchor="middle" class="label">Preprocess</text><text x="380" y="178" text-anchor="middle" class="body">shape, layout, dtype</text>
+  <rect x="530" y="85" width="250" height="150" fill="#fef3c7" class="box"/>
+  <text x="655" y="130" text-anchor="middle" class="label">DX-RT</text><text x="655" y="162" text-anchor="middle" class="body">load DXNN</text><text x="655" y="190" text-anchor="middle" class="body">manage buffers and jobs</text>
+  <rect x="835" y="105" width="150" height="110" fill="#ede9fe" class="box"/>
+  <text x="910" y="145" text-anchor="middle" class="label">Driver</text><text x="910" y="178" text-anchor="middle" class="body">transfer and control</text>
+  <rect x="1040" y="105" width="120" height="110" fill="#fee2e2" class="box"/>
+  <text x="1100" y="145" text-anchor="middle" class="label">NPU</text><text x="1100" y="178" text-anchor="middle" class="body">execute</text>
+  <path d="M230 160 H280" class="arrow"/><path d="M475 160 H525" class="arrow"/><path d="M780 160 H830" class="arrow"/><path d="M985 160 H1035" class="arrow"/>
+  <path d="M1100 220 V300 H655 V240" class="arrow"/>
+  <rect x="385" y="325" width="540" height="115" fill="#e0f2fe" class="box"/>
+  <text x="655" y="365" text-anchor="middle" class="label">Output tensors</text>
+  <text x="655" y="398" text-anchor="middle" class="body">post-process → application result → display, storage, or next service</text>
+  <path d="M655 240 V320" class="arrow"/>
+  <text x="600" y="480" text-anchor="middle" class="small">DX-RT owns runtime execution. The application still owns preprocessing, post-processing, and product behavior.</text>
+</svg>

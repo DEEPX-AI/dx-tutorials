@@ -15,8 +15,8 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 * **Tutorial-02 (DX-APP)**: Introduction to DX-APP and demonstrations on running inference with image, video, and camera inputs.
 * **Tutorial-03 (E2E AI workflow)**: Hands-on practice implementing a Forklift-Worker detector using YOLOv7.
 * **Tutorial-04 (DX-STREAM)**: Explore DX-STREAM and practice integrating it with the Forklift-Worker detector.
-* **Tutorial-05 (DX-Compiler)**: Learn how to use DX-Compiler and practice compiling various AI models with different preprocessing options.
-* **Tutorial-06 (DX-Runtime)**: WIP...
+* **Tutorial-05 (DX-Compiler)**: Learn the complete DX-COM workflow, including ONNX validation, calibration, PPU, graph optimization, quantization, Python API compilation, and release validation.
+* **Tutorial-06 (DX-Runtime)**: Learn DX-RT from CLI validation to Python/C++ inference, profiling, resource tuning, monitoring, and release validation.
 * **Tutorial-10 (DEMO-PaddleOCR)**: Implementing an E2E pipeline for PaddleOCR on DEEPX NPU (A step-by-step guide).
 * **Tutorial-20 (DEMO-YOLO-Multi)**: Understand, build, and run the multi-channel YOLO C++ demo on DEEPX NPU.
 * **Tutorial-21 (DEMO-YOLO26-OD-Pose-Seg)**: Run YOLO26 object detection, pose estimation, and instance segmentation in one C++ application.
@@ -41,8 +41,14 @@ dx-tutorials
 │   ├── T04-DX-STREAM
 │   │   └── dx_stream.ipynb
 │   ├── T05-DX-Compiler
-│   │   └── dx_compiler.ipynb
-│   ├── T10-DEMO-PaddleOCR
+│   │   ├── dx_com_01_beginner.ipynb
+│   │   ├── dx_com_02_intermediate.ipynb
+│   │   └── dx_com_03_advanced.ipynb
+│   ├── T06-DX-Runtime
+│   │   ├── dx_rt_01_beginner.ipynb
+│   │   ├── dx_rt_02_intermediate.ipynb
+│   │   └── dx_rt_03_advanced.ipynb
+│   ├── T10-demo-paddleocr
 │   │   └── paddleocr_v6.ipynb
 │   ├── T20-demo-yolo-multi
 │   │   └── yolo_multi.ipynb
@@ -59,7 +65,6 @@ dx-tutorials
 ├── run-jupyter-lab.sh
 └── sudo_no_password.sh
 ```
-
 
 ## ⚙️ Installation Guide
 

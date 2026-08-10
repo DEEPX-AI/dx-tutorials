@@ -137,7 +137,7 @@ Pass an input video path as the first argument:
 
 ```bash
 cd notebooks/T21-demo-yolo26-od-pos-seg/app
-./run_video.sh ../assets/videos/sample.mp4
+./run_video.sh ../assets/videos/dance-960-540.mp4
 ```
 
 The video loops by default. Add `--no-loop-video` to stop at the end:
