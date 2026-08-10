@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(yolo26s_3_qt DESCRIPTION "YOLO26-S 3-task Qt demo")
+project(yolo26s_4_qt DESCRIPTION "YOLO26-S 4-task Qt demo")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,20 +20,20 @@ if(NOT DEFINED PROJECT_ROOT_OVERRIDE)
     get_filename_component(PROJECT_ROOT_OVERRIDE "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
 endif()
 
-add_executable(yolo26s_3
-    yolo26s_3.cpp
+add_executable(yolo26s_4
+    yolo26s_4.cpp
 )
 
-target_compile_definitions(yolo26s_3 PRIVATE PROJECT_ROOT_DIR="${PROJECT_ROOT_OVERRIDE}")
+target_compile_definitions(yolo26s_4 PRIVATE PROJECT_ROOT_DIR="${PROJECT_ROOT_OVERRIDE}")
 
-target_include_directories(yolo26s_3 PRIVATE
+target_include_directories(yolo26s_4 PRIVATE
     ${OpenCV_INCLUDE_DIRS}
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_options(yolo26s_3 PRIVATE -Wall -Wextra -O3)
+target_compile_options(yolo26s_4 PRIVATE -Wall -Wextra -O3)
 
-target_link_libraries(yolo26s_3
+target_link_libraries(yolo26s_4
     Qt5::Widgets
     ${OpenCV_LIBS}
     ${DXRT_LIB}

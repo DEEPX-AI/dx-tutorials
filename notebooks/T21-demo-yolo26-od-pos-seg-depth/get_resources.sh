@@ -5,11 +5,12 @@ set -euo pipefail
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 RESOURCE_DIR="${SCRIPT_DIR}/assets"
 ARCHIVE_PATH="${SCRIPT_DIR}/archive.tar.gz"
-DOWNLOAD_URL="https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolo26-od-pos-seg.tar.gz"
+DOWNLOAD_URL="https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolo26-od-pos-seg-depth.tar.gz"
 REQUIRED_FILES=(
-    "${RESOURCE_DIR}/models/yolo26s.dxnn"
-    "${RESOURCE_DIR}/models/yolo26s-pose.dxnn"
-    "${RESOURCE_DIR}/models/yolo26s-seg.dxnn"
+    "${RESOURCE_DIR}/models/yolo26-s_640x640.dxnn"
+    "${RESOURCE_DIR}/models/yolo26-s-pose_640x640.dxnn"
+    "${RESOURCE_DIR}/models/yolo26-s-seg_640x640.dxnn"
+    "${RESOURCE_DIR}/models/yolo26-depth-s_768x768_q-lite.dxnn"
     "${RESOURCE_DIR}/yolo26.png"
     "${RESOURCE_DIR}/videos/dance-960-540.mp4"
 )

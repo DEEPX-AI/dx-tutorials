@@ -1,6 +1,6 @@
 /**
- * @file yolo26s_3.cpp
- * @brief Qt5 2x2 YOLO26-S demo for three inference tasks plus a demo image panel.
+ * @file yolo26s_4.cpp
+ * @brief Qt5 2x2 YOLO26-S demo for detection, pose, segmentation, and depth.
  */
 
 #include <dxrt/dxrt_cxx_api.h>
@@ -28,6 +28,8 @@
 #include <cmath>
 #include <condition_variable>
 #include <cctype>
+#include <cstdint>
+#include <cstring>
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
@@ -62,16 +64,17 @@ constexpr int kPanelCount = 4;
 constexpr int kOdPanel = 0;
 constexpr int kPosePanel = 1;
 constexpr int kSegPanel = 2;
-constexpr int kDemoPanel = 3;
+constexpr int kDepthPanel = 3;
 constexpr int kOdAsyncQueueSize = 2;
 constexpr int kPoseAsyncQueueSize = 2;
 constexpr int kSegAsyncQueueSize = 3;
+constexpr int kDepthAsyncQueueSize = 2;
 
 const char* kPanelTitles[kPanelCount] = {
     "YOLO26-S Object Detection",
     "YOLO26-S Pose Estimation",
     "YOLO26-S Instance Segmentation",
-    "YOLO26-S Demo",
+    "YOLO26-S Depth Estimation",
 };
 
 const std::vector<cv::Scalar> kDetectionColors = {
@@ -122,10 +125,11 @@ std::string absolutePath(const std::string& path) {
 }
 
 struct AppArgs {
-    std::string model = projectPath("assets/models/yolo26s.dxnn");
-    std::string model_pose = projectPath("assets/models/yolo26s-pose.dxnn");
-    std::string model_seg = projectPath("assets/models/yolo26s-seg.dxnn");
-    std::string demo_image = projectPath("assets/yolo26.png");
+    std::string model = projectPath("assets/models/yolo26-s_640x640.dxnn");
+    std::string model_pose = projectPath("assets/models/yolo26-s-pose_640x640.dxnn");
+    std::string model_seg = projectPath("assets/models/yolo26-s-seg_640x640.dxnn");
+    std::string model_depth =
+        projectPath("assets/models/yolo26-depth-s_768x768_q-lite.dxnn");
     std::string video;
     bool no_loop_video = false;
     std::string device = "/dev/video0";
@@ -151,8 +155,8 @@ void printUsage(const char* argv0, const AppArgs& defaults) {
         << defaults.model_pose << ")\n"
         << "      --model-seg <PATH>      YOLO26 segmentation .dxnn (default: "
         << defaults.model_seg << ")\n"
-        << "      --demo-image <PATH>     Bottom-right panel image (default: "
-        << defaults.demo_image << ")\n"
+        << "      --model-depth <PATH>    YOLO26 depth .dxnn (default: "
+        << defaults.model_depth << ")\n"
         << "      --video <PATH>          Video file input path (default: use camera)\n"
         << "      --no-loop-video         Stop at EOF instead of looping video\n"
         << "  -c, --camera <PATH>         V4L2 camera device (default: "
@@ -183,8 +187,8 @@ AppArgs parseArgs(int argc, char* argv[]) {
     AppArgs args;
     std::string legacy_device;
     cxxopts::Options options(
-        "yolo26s_3",
-        "Qt5 2x2 YOLO26-S demo: object detection, pose, instance segmentation, demo image.");
+        "yolo26s_4",
+        "Qt5 2x2 YOLO26-S demo: object detection, pose, instance segmentation, and depth estimation.");
 
     options.add_options()
         ("model", "YOLO26 detection .dxnn",
@@ -193,8 +197,8 @@ AppArgs parseArgs(int argc, char* argv[]) {
          cxxopts::value<std::string>(args.model_pose)->default_value(args.model_pose))
         ("model-seg", "YOLO26 segmentation .dxnn",
          cxxopts::value<std::string>(args.model_seg)->default_value(args.model_seg))
-        ("demo-image", "Image shown in the bottom-right panel.",
-         cxxopts::value<std::string>(args.demo_image)->default_value(args.demo_image))
+        ("model-depth", "YOLO26 depth .dxnn",
+         cxxopts::value<std::string>(args.model_depth)->default_value(args.model_depth))
         ("video", "Video file path input. If omitted, USB webcam is used.",
          cxxopts::value<std::string>(args.video)->default_value(""))
         ("no-loop-video", "With --video, stop at EOF instead of looping.",
@@ -309,6 +313,15 @@ cv::Mat ensureBgr3(const cv::Mat& frame) {
     }
     return {};
 }
+
+struct DepthLetterboxContext {
+    int original_width{0};
+    int original_height{0};
+    int top{0};
+    int bottom{0};
+    int left{0};
+    int right{0};
+};
 
 class LatestFrameQueue {
 public:
@@ -762,6 +775,74 @@ private:
     std::mutex callback_mutex_;
 };
 
+class DepthWorker final : public IFrameConsumer {
+public:
+    DepthWorker(std::string model_path,
+                int max_inflight,
+                QuadWindow* window)
+        : model_path_(std::move(model_path)),
+          max_inflight_(std::max(1, max_inflight)),
+          window_(window) {}
+
+    void start() override {
+        running_.store(true, std::memory_order_relaxed);
+        thread_ = std::thread(&DepthWorker::run, this);
+    }
+
+    void stop() override {
+        running_.store(false, std::memory_order_relaxed);
+        queue_.wake();
+        inflight_cv_.notify_all();
+    }
+
+    void join() override {
+        if (thread_.joinable()) {
+            thread_.join();
+        }
+    }
+
+    void enqueue(const cv::Mat& frame) override {
+        if (running_.load(std::memory_order_relaxed)) {
+            queue_.push(frame);
+        }
+    }
+
+private:
+    struct AsyncJob {
+        std::vector<std::uint8_t> input;
+        DepthLetterboxContext letterbox;
+    };
+
+    void run();
+    void preprocess(const cv::Mat& bgr,
+                    std::vector<std::uint8_t>& input,
+                    DepthLetterboxContext& context);
+    static cv::Mat restoreDepth(const dxrt::Tensor* tensor,
+                                const DepthLetterboxContext& context,
+                                int network_width,
+                                int network_height);
+    static cv::Mat colorizeDepth(const cv::Mat& depth);
+    bool acquireInflightSlot();
+    void releaseInflightSlot();
+    void waitForInflightEmpty();
+
+    std::string model_path_;
+    int max_inflight_{1};
+    QuadWindow* window_{nullptr};
+    LatestFrameQueue queue_;
+    std::atomic<bool> running_{false};
+    std::thread thread_;
+    std::mutex inflight_mutex_;
+    std::condition_variable inflight_cv_;
+    int inflight_{0};
+    int network_width_{0};
+    int network_height_{0};
+    std::size_t input_bytes_{0};
+    cv::Mat resized_scratch_;
+    cv::Mat padded_scratch_;
+    cv::Mat rgb_scratch_;
+};
+
 class CaptureThread final {
 public:
     CaptureThread(AppArgs args, QuadWindow* window)
@@ -916,28 +997,11 @@ QFrame* makePanel(const QString& title,
     return frame;
 }
 
-QWidget* makeDemoImagePanel(QLabel** image_label, QLabel** fps_label) {
-    auto* image = new QLabel;
-    image->setAlignment(Qt::AlignCenter);
-    image->setScaledContents(true);
-    image->setMinimumSize(0, 0);
-    image->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    image->setFocusPolicy(Qt::NoFocus);
-    image->setStyleSheet("background-color: #0c0d10;");
-
-    auto* fps = new QLabel(image);
-    fps->hide();
-
-    *image_label = image;
-    *fps_label = fps;
-    return image;
-}
-
 class QuadWindow final : public QMainWindow {
 public:
     explicit QuadWindow(const AppArgs& args)
         : args_(args), capture_(args, this) {
-        setWindowTitle("yolo26s_3");
+        setWindowTitle("YOLO26-S Multi-Task Demo");
 
         auto* central = new QWidget;
         central->setFocusPolicy(Qt::StrongFocus);
@@ -955,23 +1019,15 @@ public:
         for (int i = 0; i < kPanelCount; ++i) {
             QLabel* image = nullptr;
             QLabel* fps = nullptr;
-            QWidget* panel = (i == kDemoPanel)
-                ? makeDemoImagePanel(&image, &fps)
-                : makePanel(kPanelTitles[i],
-                            &image,
-                            &fps,
-                            args_.show_exit_button && i == kPosePanel);
+            QWidget* panel = makePanel(kPanelTitles[i],
+                                       &image,
+                                       &fps,
+                                       args_.show_exit_button && i == kPosePanel);
             grid->addWidget(panel, cells[i][0], cells[i][1]);
             image_labels_.push_back(image);
             fps_labels_.push_back(fps);
             fps_counts_.push_back(0);
         }
-
-        cv::Mat demo_image = cv::imread(args_.demo_image, cv::IMREAD_COLOR);
-        if (demo_image.empty()) {
-            throw std::runtime_error("[ERROR] Could not read demo image: " + args_.demo_image);
-        }
-        setPanelFrame(kDemoPanel, demo_image, false);
 
         fps_timer_ = new QTimer(this);
         fps_timer_->setInterval(1000);
@@ -995,6 +1051,12 @@ public:
             args_.debug_seg_timing,
             args_.debug_timing_interval_ms,
             seg_render_options));
+        workers_.push_back(std::make_unique<DepthWorker>(
+            args_.model_depth, kDepthAsyncQueueSize, this));
+
+        if (args_.save_video && !args_.output_video.empty()) {
+            initializeVideoWriters();
+        }
 
         std::vector<IFrameConsumer*> consumers;
         consumers.reserve(workers_.size());
@@ -1004,11 +1066,6 @@ public:
         }
         capture_.setConsumers(std::move(consumers));
         capture_.start();
-        
-        // Initialize video writers if saving is enabled
-        if (args_.save_video && !args_.output_video.empty()) {
-            initializeVideoWriters();
-        }
     }
 
     ~QuadWindow() override {
@@ -1038,6 +1095,16 @@ public:
                 return;
             }
             showError(message);
+        }, Qt::QueuedConnection);
+    }
+
+    void postEndOfStream() {
+        QMetaObject::invokeMethod(this, [this]() {
+            if (closing_.load(std::memory_order_relaxed)) {
+                return;
+            }
+            std::cout << "[INFO] Video ended." << std::endl;
+            close();
         }, Qt::QueuedConnection);
     }
 
@@ -1074,34 +1141,30 @@ private:
     void initializeVideoWriters() {
         try {
             int fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
-            
+            static const char* kOutputSuffixes[kPanelCount] = {
+                "_od", "_pose", "_seg", "_depth"
+            };
+
             for (int i = 0; i < kPanelCount; ++i) {
-                if (i == kDemoPanel) {
-                    // Skip demo panel
-                    video_writers_.push_back(cv::VideoWriter());
+                std::string output_path = args_.output_video;
+                const std::size_t dot_pos = output_path.rfind('.');
+                if (dot_pos != std::string::npos) {
+                    output_path.insert(dot_pos, kOutputSuffixes[i]);
                 } else {
-                    std::string output_path = args_.output_video;
-                    if (i > 0) {
-                        // Insert panel index before file extension
-                        size_t dot_pos = output_path.rfind('.');
-                        if (dot_pos != std::string::npos) {
-                            output_path.insert(dot_pos, "_panel" + std::to_string(i));
-                        } else {
-                            output_path += "_panel" + std::to_string(i);
-                        }
-                    }
-                    
-                    cv::VideoWriter writer(output_path, fourcc, args_.fps, 
-                                          cv::Size(args_.width, args_.height), true);
-                    if (writer.isOpened()) {
-                        video_writers_.push_back(writer);
-                        std::cout << "[INFO] Video writer initialized: " << output_path 
-                                  << " (" << args_.width << "x" << args_.height 
-                                  << " @ " << args_.fps << " FPS)" << std::endl;
-                    } else {
-                        std::cerr << "[WARN] Failed to open video writer for: " << output_path << std::endl;
-                        video_writers_.push_back(cv::VideoWriter());
-                    }
+                    output_path += kOutputSuffixes[i];
+                }
+
+                cv::VideoWriter writer(output_path, fourcc, args_.fps,
+                                       cv::Size(args_.width, args_.height), true);
+                if (writer.isOpened()) {
+                    video_writers_.push_back(writer);
+                    std::cout << "[INFO] Video writer initialized: " << output_path
+                              << " (" << args_.width << "x" << args_.height
+                              << " @ " << args_.fps << " FPS)" << std::endl;
+                } else {
+                    std::cerr << "[WARN] Failed to open video writer for: "
+                              << output_path << std::endl;
+                    video_writers_.push_back(cv::VideoWriter());
                 }
             }
         } catch (const std::exception& e) {
@@ -1110,8 +1173,8 @@ private:
     }
 
     void saveFrame(int panel_index, const cv::Mat& frame) {
-        if (panel_index < 0 || panel_index >= static_cast<int>(video_writers_.size()) || 
-            frame.empty() || panel_index == kDemoPanel) {
+        if (panel_index < 0 || panel_index >= static_cast<int>(video_writers_.size()) ||
+            frame.empty()) {
             return;
         }
         
@@ -1361,6 +1424,274 @@ void ResultWorker<ResultT, FactoryT>::run() {
     }
 }
 
+bool DepthWorker::acquireInflightSlot() {
+    std::unique_lock<std::mutex> lock(inflight_mutex_);
+    inflight_cv_.wait(lock, [this] {
+        return inflight_ < max_inflight_ ||
+               !running_.load(std::memory_order_relaxed);
+    });
+    if (!running_.load(std::memory_order_relaxed)) {
+        return false;
+    }
+    ++inflight_;
+    return true;
+}
+
+void DepthWorker::releaseInflightSlot() {
+    {
+        std::lock_guard<std::mutex> lock(inflight_mutex_);
+        if (inflight_ > 0) {
+            --inflight_;
+        }
+    }
+    inflight_cv_.notify_all();
+}
+
+void DepthWorker::waitForInflightEmpty() {
+    std::unique_lock<std::mutex> lock(inflight_mutex_);
+    inflight_cv_.wait(lock, [this] { return inflight_ == 0; });
+}
+
+void DepthWorker::preprocess(const cv::Mat& bgr,
+                             std::vector<std::uint8_t>& input,
+                             DepthLetterboxContext& context) {
+    if (bgr.empty() || bgr.type() != CV_8UC3) {
+        throw std::runtime_error("Depth preprocessing expects a non-empty BGR8 frame");
+    }
+
+    context.original_width = bgr.cols;
+    context.original_height = bgr.rows;
+    const double gain = std::min(
+        static_cast<double>(network_width_) / context.original_width,
+        static_cast<double>(network_height_) / context.original_height);
+    const int resized_width =
+        std::max(1, cvRound(context.original_width * gain));
+    const int resized_height =
+        std::max(1, cvRound(context.original_height * gain));
+    const double horizontal_padding = (network_width_ - resized_width) / 2.0;
+    const double vertical_padding = (network_height_ - resized_height) / 2.0;
+    context.left = cvRound(horizontal_padding - 0.1);
+    context.right = cvRound(horizontal_padding + 0.1);
+    context.top = cvRound(vertical_padding - 0.1);
+    context.bottom = cvRound(vertical_padding + 0.1);
+
+    cv::resize(bgr, resized_scratch_, cv::Size(resized_width, resized_height),
+               0.0, 0.0, cv::INTER_LINEAR);
+    cv::copyMakeBorder(resized_scratch_, padded_scratch_,
+                       context.top, context.bottom,
+                       context.left, context.right,
+                       cv::BORDER_CONSTANT, cv::Scalar(114, 114, 114));
+    if (padded_scratch_.cols != network_width_ ||
+        padded_scratch_.rows != network_height_) {
+        throw std::runtime_error("Depth letterbox produced an unexpected image size");
+    }
+
+    cv::cvtColor(padded_scratch_, rgb_scratch_, cv::COLOR_BGR2RGB);
+    if (!rgb_scratch_.isContinuous()) {
+        rgb_scratch_ = rgb_scratch_.clone();
+    }
+
+    const std::size_t bytes = rgb_scratch_.total() * rgb_scratch_.elemSize();
+    if (bytes != input_bytes_) {
+        throw std::runtime_error("Depth input tensor size does not match preprocessing output");
+    }
+    input.resize(bytes);
+    std::memcpy(input.data(), rgb_scratch_.data, bytes);
+}
+
+cv::Mat DepthWorker::restoreDepth(const dxrt::Tensor* tensor,
+                                  const DepthLetterboxContext& context,
+                                  int network_width,
+                                  int network_height) {
+    if (tensor == nullptr || tensor->data() == nullptr ||
+        tensor->type() != dxrt::DataType::FLOAT ||
+        context.original_width <= 0 || context.original_height <= 0 ||
+        network_width <= 0 || network_height <= 0) {
+        return {};
+    }
+
+    const auto& shape = tensor->shape();
+    if (shape.size() != 4 || shape[0] != 1 || shape[1] != 1 ||
+        shape[2] <= 0 || shape[3] <= 0) {
+        return {};
+    }
+    const int output_height = static_cast<int>(shape[2]);
+    const int output_width = static_cast<int>(shape[3]);
+    const std::size_t expected_bytes =
+        static_cast<std::size_t>(output_width) * output_height * sizeof(float);
+    if (tensor->size_in_bytes() < expected_bytes) {
+        return {};
+    }
+
+    // The DX-RT output buffer is callback-scoped. OpenCV only reads this view,
+    // and cv::resize below copies the selected area before the callback returns.
+    cv::Mat raw(output_height, output_width, CV_32F,
+                const_cast<void*>(tensor->data()));
+    const double scale_x = static_cast<double>(output_width) / network_width;
+    const double scale_y = static_cast<double>(output_height) / network_height;
+    const int x_begin = std::clamp(
+        cvRound(context.left * scale_x), 0, output_width - 1);
+    const int x_end = std::clamp(
+        output_width - cvRound(context.right * scale_x),
+        x_begin + 1, output_width);
+    const int y_begin = std::clamp(
+        cvRound(context.top * scale_y), 0, output_height - 1);
+    const int y_end = std::clamp(
+        output_height - cvRound(context.bottom * scale_y),
+        y_begin + 1, output_height);
+
+    cv::Mat restored;
+    cv::resize(raw(cv::Rect(x_begin, y_begin,
+                            x_end - x_begin, y_end - y_begin)),
+               restored,
+               cv::Size(context.original_width, context.original_height),
+               0.0, 0.0, cv::INTER_LINEAR);
+    return restored;
+}
+
+cv::Mat DepthWorker::colorizeDepth(const cv::Mat& depth) {
+    if (depth.empty() || depth.type() != CV_32FC1 || !cv::checkRange(depth)) {
+        return {};
+    }
+
+    double minimum = 0.0;
+    double maximum = 0.0;
+    cv::minMaxLoc(depth, &minimum, &maximum);
+    cv::Mat normalized;
+    if (maximum > minimum) {
+        depth.convertTo(normalized, CV_8U,
+                        255.0 / (maximum - minimum),
+                        -255.0 * minimum / (maximum - minimum));
+    } else {
+        normalized = cv::Mat::zeros(depth.size(), CV_8U);
+    }
+
+    cv::Mat colored;
+    cv::applyColorMap(normalized, colored, cv::COLORMAP_TURBO);
+    return colored;
+}
+
+void DepthWorker::run() {
+    try {
+        dxrt::InferenceOption options;
+        options.bufferCount = max_inflight_;
+        dxrt::InferenceEngine engine(model_path_, options);
+        if (!dxapp::minversionforRTandCompiler(&engine)) {
+            throw std::runtime_error(
+                "Depth model/runtime version mismatch: " + model_path_);
+        }
+
+        const dxrt::Tensors inputs = engine.GetInputs();
+        const dxrt::Tensors outputs = engine.GetOutputs();
+        if (inputs.size() != 1 || outputs.size() != 1) {
+            throw std::runtime_error(
+                "Depth model must expose exactly one input and one output");
+        }
+
+        const auto& input_shape = inputs.front().shape();
+        if (inputs.front().type() != dxrt::DataType::UINT8 ||
+            input_shape.size() != 4 || input_shape[0] != 1 ||
+            input_shape[1] <= 0 || input_shape[2] <= 0 ||
+            input_shape[3] != 3) {
+            throw std::runtime_error(
+                "Depth model expects UINT8 NHWC input [1,H,W,3]");
+        }
+        network_height_ = static_cast<int>(input_shape[1]);
+        network_width_ = static_cast<int>(input_shape[2]);
+        input_bytes_ = static_cast<std::size_t>(engine.GetInputSize());
+        const std::size_t expected_input_bytes =
+            static_cast<std::size_t>(network_width_) * network_height_ * 3;
+        if (input_bytes_ != expected_input_bytes) {
+            throw std::runtime_error("Unexpected depth model input buffer size");
+        }
+
+        const auto& output_shape = outputs.front().shape();
+        if (outputs.front().type() != dxrt::DataType::FLOAT ||
+            output_shape.size() != 4 || output_shape[0] != 1 ||
+            output_shape[1] != 1 || output_shape[2] <= 0 ||
+            output_shape[3] <= 0) {
+            throw std::runtime_error(
+                "Depth model expects FLOAT NCHW output [1,1,H,W]");
+        }
+
+        std::cout << "[INFO] Depth Estimation model: " << model_path_ << std::endl;
+        std::cout << "[INFO] Depth Estimation input size (WxH): "
+                  << network_width_ << "x" << network_height_ << std::endl;
+        std::cout << "[INFO] Depth Estimation output size (WxH): "
+                  << output_shape[3] << "x" << output_shape[2] << std::endl;
+        std::cout << "[INFO] Depth Estimation async queue size: "
+                  << max_inflight_ << std::endl;
+
+        engine.RegisterCallback(
+            [this](dxrt::TensorPtrs& tensors, void* user_data) -> int {
+                auto job = std::unique_ptr<AsyncJob>(
+                    static_cast<AsyncJob*>(user_data));
+                if (!job) {
+                    releaseInflightSlot();
+                    return -1;
+                }
+
+                try {
+                    if (tensors.size() != 1) {
+                        throw std::runtime_error(
+                            "Depth callback received an unexpected output count");
+                    }
+                    cv::Mat depth = restoreDepth(
+                        tensors.front().get(), job->letterbox,
+                        network_width_, network_height_);
+                    cv::Mat rendered = colorizeDepth(depth);
+                    if (rendered.empty()) {
+                        throw std::runtime_error("Depth output tensor is invalid");
+                    }
+                    if (running_.load(std::memory_order_relaxed)) {
+                        window_->postFrame(kDepthPanel, rendered);
+                    }
+                } catch (const std::exception& error) {
+                    running_.store(false, std::memory_order_relaxed);
+                    queue_.wake();
+                    window_->postError(
+                        std::string("Depth async callback failed: ") + error.what());
+                }
+
+                releaseInflightSlot();
+                return 0;
+            });
+
+        int last_job_id = -1;
+        while (running_.load(std::memory_order_relaxed)) {
+            cv::Mat frame;
+            if (!queue_.waitPop(frame, running_) || frame.empty()) {
+                continue;
+            }
+
+            auto job = std::make_unique<AsyncJob>();
+            preprocess(frame, job->input, job->letterbox);
+            if (!acquireInflightSlot()) {
+                break;
+            }
+
+            try {
+                last_job_id = engine.RunAsync(
+                    job->input.data(), static_cast<void*>(job.get()), nullptr);
+                job.release();
+            } catch (...) {
+                releaseInflightSlot();
+                throw;
+            }
+        }
+
+        if (last_job_id >= 0) {
+            engine.Wait(last_job_id);
+        }
+        waitForInflightEmpty();
+    } catch (const std::exception& error) {
+        running_.store(false, std::memory_order_relaxed);
+        window_->postError(
+            std::string("Depth worker failed: ") + error.what());
+        waitForInflightEmpty();
+    }
+}
+
 void CaptureThread::publishFrame(const cv::Mat& frame) {
     cv::Mat bgr = ensureBgr3(frame);
     if (bgr.empty()) {
@@ -1390,7 +1721,7 @@ void CaptureThread::runVideo() {
         bool ok = cap.read(frame);
         if (!ok || frame.empty()) {
             if (args_.no_loop_video) {
-                window_->postError("Video ended.");
+                window_->postEndOfStream();
                 break;
             }
 
@@ -1487,7 +1818,7 @@ int main(int argc, char* argv[]) {
         args.model = absolutePath(args.model);
         args.model_pose = absolutePath(args.model_pose);
         args.model_seg = absolutePath(args.model_seg);
-        args.demo_image = absolutePath(args.demo_image);
+        args.model_depth = absolutePath(args.model_depth);
         if (!args.video.empty()) {
             args.video = absolutePath(args.video);
         }
@@ -1495,7 +1826,7 @@ int main(int argc, char* argv[]) {
         requireFile("OD model", args.model);
         requireFile("Pose model", args.model_pose);
         requireFile("Seg model", args.model_seg);
-        requireFile("Demo image", args.demo_image);
+        requireFile("Depth model", args.model_depth);
         if (!args.video.empty()) {
             requireFile("Video file", args.video);
         }

@@ -19,7 +19,7 @@ if (( $# > 0 )) && [[ "$1" != -* ]]; then
 fi
 
 cd "${SCRIPT_DIR}"
-exec ./build/yolo26s_3 \
+exec ./build/yolo26s_4 \
     --video "${VIDEO_PATH}" \
     --exit-btn \
     "$@"

@@ -19,7 +19,7 @@ Our goal is to provide clear, step-by-step guides to help you become more produc
 * **Tutorial-06 (DX-Runtime)**: Learn DX-RT from CLI validation to Python/C++ inference, profiling, resource tuning, monitoring, and release validation.
 * **Tutorial-10 (DEMO-PaddleOCR)**: Implementing an E2E pipeline for PaddleOCR on DEEPX NPU (A step-by-step guide).
 * **Tutorial-20 (DEMO-YOLO-Multi)**: Understand, build, and run the multi-channel YOLO C++ demo on DEEPX NPU.
-* **Tutorial-21 (DEMO-YOLO26-OD-Pose-Seg)**: Run YOLO26 object detection, pose estimation, and instance segmentation in one C++ application.
+* **Tutorial-21 (DEMO-YOLO26-OD-Pose-Seg-Depth)**: Run YOLO26s object detection, pose estimation, instance segmentation, and depth estimation in one C++ application.
 * **Tutorial-22 (DEMO-CLIP-Single)**: Compare camera or video frames with text queries using CLIP in a C++ application.
 * **Tutorial-23 (DEMO-Hand-Landmarks)**: Track 21 hand landmarks from camera or video input in a C++ application.
 * **Tutorial-24 (DEMO-PIDNet-Cityscapes)**: Run PIDNet semantic segmentation with a live argmax-scale control in a Qt5 C++ application.
@@ -52,8 +52,8 @@ dx-tutorials
 │   │   └── paddleocr_v6.ipynb
 │   ├── T20-demo-yolo-multi
 │   │   └── yolo_multi.ipynb
-│   ├── T21-demo-yolo26-od-pos-seg
-│   │   └── yolo26_od_pose_seg.ipynb
+│   ├── T21-demo-yolo26-od-pos-seg-depth
+│   │   └── yolo26_od_pose_seg_depth.ipynb
 │   ├── T22-demo-clip-single
 │   │   └── clip_single.ipynb
 │   ├── T23-demo-hand-landmarks
