@@ -375,6 +375,31 @@ def _check_npu(ctx: "TutorialContext") -> CheckResult:
     )
 
 
+def _check_gst_dxstream(ctx: "TutorialContext") -> CheckResult:
+    """The DX-STREAM GStreamer plugin must be loadable; set GST_PLUGIN_PATH for this process if needed."""
+    inspect = shutil.which("gst-inspect-1.0")
+    if inspect is None:
+        return CheckResult("gst_dxstream", False, "gst-inspect-1.0 not found", "sudo apt install gstreamer1.0-tools")
+
+    def visible() -> bool:
+        return subprocess.run([inspect, "dxstream"], capture_output=True, text=True).returncode == 0
+
+    current = os.environ.get("GST_PLUGIN_PATH", "")
+    if visible():
+        return CheckResult("gst_dxstream", True, "plugin 'dxstream' loads" + (f" (GST_PLUGIN_PATH={current})" if current else ""))
+    for directory in sorted(glob.glob("/usr/local/lib/*/gstreamer-1.0")) + ["/usr/local/lib/gstreamer-1.0"]:
+        if glob.glob(directory + "/libgstdxstream.so"):
+            os.environ["GST_PLUGIN_PATH"] = directory + (":" + current if current else "")
+            if visible():
+                return CheckResult("gst_dxstream", True, f"plugin 'dxstream' loads; GST_PLUGIN_PATH={directory} was set for this kernel")
+    return CheckResult(
+        "gst_dxstream", False, "plugin 'dxstream' is not visible to gst-inspect-1.0",
+        "Build DX-STREAM (./dx-runtime/install.sh --all, or Tutorial 04 section 5.7) and run "
+        "export GST_PLUGIN_PATH=<prefix>/lib/<arch>/gstreamer-1.0:$GST_PLUGIN_PATH before ./run-jupyter-lab.sh "
+        "(build.sh prints the exact line)",
+    )
+
+
 def _check_dir(name: str, attr: str, hint: str) -> Callable[["TutorialContext"], CheckResult]:
     def check(ctx: "TutorialContext") -> CheckResult:
         directory: Path = getattr(ctx, attr)
@@ -406,6 +431,7 @@ CHECKS: dict[str, Callable[["TutorialContext"], CheckResult]] = {
         "dx_stream", "dx_stream_dir",
         "Install DX-Runtime with --all (Tutorial 01, section 3)",
     ),
+    "gst_dxstream": _check_gst_dxstream,
     "dx_tron": _check_command(
         "dx_tron", "dxtron",
         "Run ./dx-compiler/install.sh --target=dx_tron in the SDK directory (Tutorial 01, section 2.3)",
@@ -597,6 +623,62 @@ def setup_tutorial(
     if not quiet:
         print(ctx.status_text())
     return ctx
+
+
+# ---------------------------------------------------------------------------
+# Downloads (shared by the tutorials that fetch Model Zoo files from Python)
+# ---------------------------------------------------------------------------
+
+def download_file(url: str, destination: "str | Path", chunk_size: int = 1024 * 1024) -> Path:
+    """Download ``url`` to ``destination`` unless a non-empty file is already there.
+
+    Rules:
+      1. A non-empty destination is reused without any network request
+         (delete the file to force a fresh download).
+      2. A new download goes to ``<name>.part`` and replaces the destination only
+         after the whole file arrived (checked against Content-Length when known),
+         so an interrupted download never leaves a truncated final file.
+    """
+    from urllib.request import Request, urlopen
+
+    destination = Path(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+
+    if destination.is_file() and destination.stat().st_size > 0:
+        print(f"Skip download: found {destination} ({destination.stat().st_size:,} bytes)")
+        return destination
+    if destination.is_file():
+        print(f"Existing file is empty; downloading again: {destination}")
+
+    with urlopen(Request(url, method="HEAD"), timeout=30) as response:
+        expected_size = int(response.headers.get("Content-Length") or 0)
+
+    temporary = destination.with_name(destination.name + ".part")
+    temporary.unlink(missing_ok=True)
+    downloaded = 0
+    next_report = 10
+    try:
+        with urlopen(url, timeout=60) as response, temporary.open("wb") as output:
+            while True:
+                chunk = response.read(chunk_size)
+                if not chunk:
+                    break
+                output.write(chunk)
+                downloaded += len(chunk)
+                if expected_size:
+                    percent = downloaded * 100 // expected_size
+                    if percent >= next_report:
+                        print(f"{destination.name}: {min(percent, 100)}%")
+                        next_report += 10
+        if expected_size and downloaded != expected_size:
+            raise IOError(f"Incomplete download: expected {expected_size} bytes, received {downloaded}")
+        temporary.replace(destination)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
+
+    print(f"Saved: {destination} ({downloaded:,} bytes)")
+    return destination
 
 
 # ---------------------------------------------------------------------------

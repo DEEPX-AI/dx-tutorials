@@ -37,4 +37,3 @@ cd "${BUILD_DIR}"
 
 cmake -DCMAKE_BUILD_TYPE=Release "${SCRIPT_DIR}"
 make -j"$(nproc)"
-

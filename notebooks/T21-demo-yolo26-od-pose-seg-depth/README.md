@@ -1,181 +1,32 @@
-# Tutorial 21: YOLO26 Object Detection, Pose, Segmentation, and Depth Demo
+# YOLO26 Object Detection, Pose, Segmentation, and Depth Demo
 
-This tutorial builds and runs a Qt-based C++ demo that processes one camera or video stream with four YOLO26-S models on a DEEPX NPU.
+![YOLO26 Object Detection, Pose, Segmentation, and Depth Demo](assets/yolo26-od-pos-seg-depth.png)
 
-The full-screen window uses a 2 x 2 layout:
+Feeds one camera or video stream to four asynchronous DXRT pipelines (object detection, pose estimation, instance segmentation, depth estimation) and shows all four results live in a 2 x 2 Qt layout.
 
-1. object detection;
-2. pose estimation;
-3. instance segmentation; and
-4. depth estimation.
+## What you need
 
-## Project layout
-
-```text
-T21-demo-yolo26-od-pos-seg-depth/
-├── yolo26_od_pose_seg.ipynb  # Tutorial and executable examples
-├── README.md                 # Quick-start guide
-├── get_resources.sh         # Downloads and extracts the required resources
-├── assets/
-│   ├── models/              # Detection, pose, segmentation, and depth models
-│   └── videos/              # Input videos
-└── app/
-    ├── build.sh
-    ├── run_camera.sh
-    ├── run_video.sh
-    ├── CMakeLists.txt
-    ├── yolo26s_4.cpp
-    ├── common/
-    │   ├── base/            # Processing interfaces and result types
-    │   ├── processors/      # YOLO26 preprocessing and post-processing
-    │   └── utility/         # Model input, labels, and version helpers
-    ├── factory/             # Detection, pose, and segmentation factories
-    └── extern/              # Header-only cxxopts dependency
-```
-
-## Prerequisites
-
-- A supported DEEPX NPU
-- The DEEPX device driver and DXRT SDK
+- A supported DEEPX NPU with DX-RT installed (Tutorial 01)
 - A graphical desktop session for the Qt window
-- A V4L2 camera for the camera demo
+- A V4L2 camera for the camera demo (optional)
 
-Install the required Debian or Ubuntu packages:
+## Run the tutorial
 
-```bash
-sudo apt-get update
-sudo apt-get install -y \
-    build-essential \
-    cmake \
-    pkg-config \
-    qtbase5-dev \
-    libopencv-dev \
-    ffmpeg \
-    v4l-utils
-```
-
-Verify that DXRT can see the NPU:
-
-```bash
-dxrt-cli -s
-```
-
-## 1. Prepare resources
-
-Run the resource setup script from the tutorial directory:
-
-```bash
-cd notebooks/T21-demo-yolo26-od-pos-seg-depth
-./get_resources.sh
-```
-
-The script downloads and extracts the existing resource archive into `assets/`. The depth-model download will be added to the archive separately. Until then, place the depth DXNN file at the path shown below. If every resource currently managed by the script is already available and non-empty, it skips the download. After a successful extraction, it removes the downloaded archive.
-
-The application expects these default files:
-
-```text
-assets/
-├── models/
-│   ├── yolo26s.dxnn
-│   ├── yolo26s-pose.dxnn
-│   ├── yolo26s-seg.dxnn
-│   └── yolo26-depth-s_768x768_q-lite.dxnn
-└── videos/
-    └── dance-960-540.mp4
-```
-
-Custom model paths can be passed with `--model`, `--model-pose`, `--model-seg`, and `--model-depth`.
-
-## 2. Build the application
-
-```bash
-cd notebooks/T21-demo-yolo26-od-pos-seg-depth/app
-./build.sh
-```
-
-The script configures a Release build and uses all available CPU cores. The executable is created at:
-
-```text
-app/build/yolo26s_4
-```
-
-Use a clean build when needed:
-
-```bash
-./build.sh --clean
-```
-
-## 3. Run the camera demo
-
-The default camera is `/dev/video0` with a requested size of 1280 x 720 at 30 FPS. These defaults are used when no camera options are provided.
-
-```bash
-cd notebooks/T21-demo-yolo26-od-pos-seg-depth/app
-./run_camera.sh
-```
-
-Use `-c` or `--camera` to select another V4L2 device. Use `--width`, `--height`, and `--fps` to request its capture settings:
-
-```bash
-./run_camera.sh -c /dev/video2 --width 1920 --height 1080 --fps 30
-```
-
-The long camera option is equivalent:
-
-```bash
-./run_camera.sh --camera /dev/video2 --width 1920 --height 1080 --fps 30
-```
-
-The existing `--device` option remains available as a deprecated alias for compatibility.
-
-## 4. Run the video demo
-
-Pass an input video path as the first argument:
-
-```bash
-cd notebooks/T21-demo-yolo26-od-pos-seg-depth/app
-./run_video.sh ../assets/videos/dance-960-540.mp4
-```
-
-The video loops by default. Add `--no-loop-video` to stop at the end:
-
-```bash
-./run_video.sh ../assets/videos/dance-960-540.mp4 --no-loop-video
-```
-
-## Controls
-
-- `Esc` or `q`: exit the application
-- `EXIT` button: exit with the mouse
-
-## Jupyter tutorial
-
-Start JupyterLab from the repository root:
+Everything else (package installation, resource download, build, run commands, options, and troubleshooting) is in the notebook. Start JupyterLab from the repository root and open it:
 
 ```bash
 ./run-jupyter-lab.sh
 ```
 
-Open `notebooks/T21-demo-yolo26-od-pos-seg-depth/yolo26_od_pose_seg.ipynb` and run the cells in order.
+Then open `notebooks/T21-demo-yolo26-od-pose-seg-depth/yolo26_od_pose_seg_depth.ipynb` in JupyterLab and run the cells from the top.
 
-## Troubleshooting
+## Project layout
 
-### CMake cannot find Qt5
-
-Install `qtbase5-dev` and configure the project again with `./build.sh --clean`.
-
-### CMake cannot find DXRT
-
-Confirm that the DXRT headers, CMake package files, and shared libraries are installed and visible to CMake.
-
-### A model cannot be opened
-
-Confirm that all four models exist under `assets/models/`, or pass explicit paths through the command-line options. The default depth model is `assets/models/yolo26-depth-s_768x768_q-lite.dxnn`.
-
-### The camera cannot be opened
-
-Confirm that the device exists with `v4l2-ctl --list-devices` and that the current user has permission to access it.
-
-### The Qt window does not appear
-
-Use a local desktop, remote desktop, or correctly configured X11 forwarding session.
+```text
+T21-demo-yolo26-od-pose-seg-depth/
+├── yolo26_od_pose_seg_depth.ipynb      # the tutorial
+├── README.md
+├── get_resources.sh    # downloads the models and sample videos into assets/
+├── app/                # C++ sources, CMakeLists.txt, build.sh, run_camera.sh, run_video.sh
+└── assets/             # models/ and videos/ (downloaded, ignored by git)
+```
