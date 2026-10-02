@@ -12,7 +12,7 @@
     "train_batchsize": 32,
     "num_samples": 1024,
     "default_loader": {
-        "dataset_path": "/mnt/datasets/COCO/official/images",
+        "dataset_path": "/mnt/datasets/COCO/official/images/val2017",
         "file_extensions": [
             "jpeg",
             "jpg",
