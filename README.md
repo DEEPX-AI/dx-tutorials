@@ -5,7 +5,7 @@
 
 **Welcome!** This repository is a collection of hands-on JupyterLab tutorials for the DEEPX SDK (DX-All Suite). It starts with installing the SDK, continues with the compiler and the runtime, and ends with complete Python and C++ applications on the DEEPX NPU.
 
-> These tutorials are based on dx-all-suite v2.4.0, released in July 2026.
+> These tutorials were validated with dx-all-suite v2.4.3 (`main`, September 2026): DX-COM 2.4.1, DX-RT 3.4.2, DX-APP 3.2.2, DX-STREAM 3.1.2.
 
 ## 📚 Tutorials
 
@@ -105,37 +105,40 @@ The SDK installers call `sudo apt-get`. A notebook cell cannot answer a password
 
 - The first code cell of every notebook is identical: it loads `tutorial_paths.py`, resolves the SDK location, checks the requirements of that notebook, and prints a status table.
 - Every command a learner needs appears verbatim in the cell that runs it (`!git clone ...`, `!dxcom ...`, `!./build.sh`), with the same command shown in the Markdown above it so it can be copied into a terminal. The only exceptions are a few cells that parse a command's output; those print the exact command with a `$` prefix before running it.
-- Cells that open a window or need hardware are guarded by a flag (`RUN_CAMERA`, `RUN_VIDEO`, `FLASH_FIRMWARE`) so that *Run All* never blocks or changes the system by accident.
+- Cells that open a window or need hardware are guarded by a flag (`RUN_DXTRON`, `RUN_DEMOS`, `RUN_CAMERA`, `SHOW_WINDOW`, `HEADLESS`, `FLASH_FIRMWARE`) so that *Run All* never blocks or changes the system by accident.
+- Terminal commands in the Markdown write `<DX_ALL_SUITE_DIR>` for the DX-All Suite directory (default `~/dx-all-suite`; Tutorial 01 section 1.1 prints the configured value) and `<workspace>` for the tutorial's own `workspace/` directory. The code cells substitute the real paths.
 - Sections are numbered `## 1.`, `### 1.1`, `#### 1.1.1`. Each notebook starts with learning objectives and prerequisites and ends with troubleshooting, a summary, a completion checklist, and a pointer to the next tutorial.
 
 ## 🌐 Languages
 
-The English notebook is the source of truth. Translated copies are generated next to it and share
-the same code cells, so one verification run covers every language:
+Every tutorial notebook (T00 to T06) is available in English, Korean, Japanese, and Chinese. The English
+notebook is the source of truth; the translated copies are generated next to it and share the same code cells,
+so one verification run covers every language. Each notebook starts with a language switcher line
+(`🌐 English | 한국어 | 日本語 | 中文`); click a language to open that copy.
 
 | File | Role |
 |---|---|
-| `notebooks/T01-Getting-Started/getting_started.ipynb` | English source (edit this one) |
-| `i18n/<lang>/T01-Getting-Started/getting_started.md` | Translations of the Markdown cells, one block per cell id |
-| `notebooks/T01-Getting-Started/getting_started.<lang>.ipynb` | Generated: same code cells, translated Markdown. Do not edit by hand |
-
-Every notebook that has translations starts with a language switcher line (`🌐 English | 한국어 | 日本語 | 中文`).
-Currently T01 is available in Korean (`ko`), Japanese (`ja`), and Chinese (`zh`).
+| `notebooks/<tutorial>/<name>.ipynb` | English source (edit this one) |
+| `i18n/<lang>/<tutorial>/<name>.md` | Translations of the Markdown cells, one block per cell id (`ko`, `ja`, `zh`) |
+| `notebooks/<tutorial>/<name>.<lang>.ipynb` | Generated: same code cells, translated Markdown. Do not edit by hand |
 
 ```bash
-# After editing English Markdown or a translation: regenerate the <lang>.ipynb files
+# After editing English Markdown or a translation: regenerate every <lang>.ipynb
 python scripts/build_i18n.py build
 
-# Report missing or stale translations and out-of-date generated notebooks (exit 1 on problems)
+# Report stale or missing translations and out-of-date generated notebooks (exit 1 on problems)
 python scripts/build_i18n.py check
 
-# Start a new language: write an English template to translate
-python scripts/build_i18n.py init notebooks/T01-Getting-Started/getting_started.ipynb --lang ja
+# Find blocks that still contain the English text
+python scripts/i18n_untranslated.py
+
+# Start a new language for one notebook: write an English template to translate
+python scripts/build_i18n.py init notebooks/T02-DX-APP/dx_app.ipynb --lang de
 ```
 
 A translation block records the hash of the English cell it was made from. When the English text changes,
 `check` lists that cell as *stale*; translate it again and run `python scripts/build_i18n.py stamp <notebook>`
-to record the new hash.
+to record the new hash. The demo tutorials (T10, T20 to T24) are English only for now.
 
 ## 💡 Troubleshooting
 ![FAQ](https://img.shields.io/badge/FAQ-Read-blue?style=flat-square&logo=github) ![Issues](https://img.shields.io/badge/Issues-Report-red?style=flat-square&logo=github)

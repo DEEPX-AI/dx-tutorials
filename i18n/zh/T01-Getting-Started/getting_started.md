@@ -13,13 +13,18 @@
 <!-- cell: 389418ec-fa11-4a60-9822-183b9d441952 src: 32aa4d182a -->
 ## 前提条件
 
-<!-- cell: 9c427531-ff8d-4e74-93db-8f41d1237db6 src: 2c603254b1 -->
+<!-- cell: 9c427531-ff8d-4e74-93db-8f41d1237db6 src: 34b79239d3 -->
 **注意:** 以下要求仅针对本教程,**并非使用 DEEPX 产品的必要条件。**
 - 操作系统: Linux (Ubuntu 20.04/22.04/24.04/26.04, Debian 12/13)
 - 内存: 8G(使用 DX-Compiler 时需 16G)
 - 存储: 至少 40 GB
 - DEEPX NPU: DX-M1、DX-M1M 和 DX-H1 Quattro
 - CPU: x86_64 上支持 DX-Compiler + DX-Runtime,aarch64 上仅支持 DX-Runtime
+- 下载量: DX-All Suite 克隆(约 600 MB)、DX-COM 安装程序(几百 MB),以及 3.3 节的 24 个示例模型和共享示例视频(各约 1.2 GB)
+- 耗时: 30 到 60 分钟。仅 3.1 的 DX-Runtime 构建就需要 10 到 30 分钟,之后还需重启一次
+- `sudo`: 两个安装程序都需要。每个安装步骤会先检查单元格内能否免密使用 `sudo`,否则打印供终端使用的命令
+
+本教程及后续教程中的终端命令用 `<DX_ALL_SUITE_DIR>` 表示 DX-All Suite 目录。默认值为 `~/dx-all-suite`,1.1 节会打印本主机上配置的实际值。
 
 <!-- cell: 2dcfff26-61ce-46f1-b08f-5669e3ead9a8 src: d3372f2340 -->
 ## DXNN® - DEEPX NPU SDK 简介 (DX-AS: DX-All Suite)
@@ -81,14 +86,14 @@ python tutorial_paths.py --set ~/my/dx-all-suite
 只有在需要其他 SDK 版本时才修改下面的分支名。
 当前分支名为 `main`。
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 187f9b06f0 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 0bfbf45537 -->
 ### 1.2 克隆 DX-All Suite
 
 下一个单元格**仅当所配置的位置不存在 DX-All Suite 时**才会运行以下命令。目录和分支来自您上面保存的设置,在单元格中显示为 `{DX_ALL_SUITE_DIR}` 和 `{DX_ALL_SUITE_BRANCH}`。
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch main https://github.com/DEEPX-AI/dx-all-suite.git ~/dx-all-suite
+    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
 - `--depth 1 --shallow-submodules` 只获取每个仓库的最新提交:下载约 600 MB、占用磁盘 1.6 GB,而不是数 GB。
@@ -100,7 +105,7 @@ git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
 如果上一次克隆在顶层检出之后被中断,目录中已有 `.git`,但部分子模块为空。此时单元格不会重新克隆,而是运行以下命令:
 
 ```bash
-git -C ~/dx-all-suite submodule update --init --recursive --depth 1 --progress
+git -C <DX_ALL_SUITE_DIR> submodule update --init --recursive --depth 1 --progress
 ```
 
 您也可以不使用单元格,而是在终端(**File > New > Terminal**)中自行运行上述任一命令。下面的状态单元格在两种情况下都同样有效。
@@ -142,13 +147,13 @@ DX-Compiler 环境提供预构建的二进制文件,不包含源代码。安装�
 
 本教程在 2.1 安装 DX-COM。DX-TRON 为可选项,在 2.3 介绍。
 
-<!-- cell: 3bdb9b57-de73-4186-bac9-ac1effa245da src: 814d4a60eb -->
+<!-- cell: 3bdb9b57-de73-4186-bac9-ac1effa245da src: 54b5b0324e -->
 ### 2.1 安装 DX-COM
 
 要运行的命令是:
 
 ```bash
-cd ~/dx-all-suite
+cd <DX_ALL_SUITE_DIR>
 ./dx-compiler/install.sh --target=dx_com
 ```
 
@@ -188,26 +193,26 @@ cd ~/dx-all-suite
 
 2.1 中的验证单元格已经确认 `dxcom` 存在。本节实际运行它:先输出帮助信息,然后真正编译一个示例模型。
 
-<!-- cell: 1803112e-39d6-4066-8abc-c1c2d61fdfbc src: dbf5bd0d1f -->
+<!-- cell: 1803112e-39d6-4066-8abc-c1c2d61fdfbc src: 0de98f2dda -->
 #### 2.2.1 查看 `dxcom` 帮助
 
 `dxcom` 位于安装程序创建的虚拟环境中,因此在终端里调用前必须先激活该环境。下一个单元格精确地运行以下命令:
 
 ```bash
-cd ~/dx-all-suite/dx-compiler
+cd <DX_ALL_SUITE_DIR>/dx-compiler
 source venv-dx-compiler-local/bin/activate
 dxcom -h
 ```
 
 笔记本中的每个 `!` 行都会启动一个新的 shell,因此这三条命令用 `&&` 连接在一行中。激活仅对该 shell 有效,Jupyter 环境不会改变。
 
-<!-- cell: 9cf00564-56e7-42cf-bbf6-873292fee8da src: bf66ec5280 -->
+<!-- cell: 9cf00564-56e7-42cf-bbf6-873292fee8da src: 1d50e93220 -->
 #### 2.2.2 编译 `MobileNetV2-1.onnx` 生成 `MobileNetV2-1.dxnn`
 
 下一个单元格运行以下命令。编译器会打印每个阶段,`--gen_log` 还会把它们写入 `compiler.log`。耗时从几秒到大约一分钟。
 
 ```bash
-cd ~/dx-all-suite/dx-compiler
+cd <DX_ALL_SUITE_DIR>/dx-compiler
 source venv-dx-compiler-local/bin/activate
 cd dx_com
 dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
@@ -246,34 +251,36 @@ dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
 - **交互式节点检查**: 双击图中的任意节点可查看相关算子的详细信息。
 - 说明: DX-TRON 基于 [netron](https://netron.app/) 开发,以支持 DXNN。
 
-<!-- cell: cdc69460-e92c-460b-aaa5-dc0651eba2dc src: 9f6e1afb38 -->
+<!-- cell: cdc69460-e92c-460b-aaa5-dc0651eba2dc src: ffa894d40f -->
 #### 2.3.1 安装 DX-TRON
 
 DX-TRON 以 Debian 包的形式发布,因此安装程序使用 `sudo apt-get`:
 
 ```bash
-cd ~/dx-all-suite
+cd <DX_ALL_SUITE_DIR>
 ./dx-compiler/install.sh --target=dx_tron
 ```
 
 与 2.1 一样,后面有三个单元格:**检查**(`dxtron` 是否已安装、`sudo` 能否免密运行)、**安装**(上述命令;仅当检查单元格提示可以运行时才运行,或者在终端中运行)、**验证**。
 
-<!-- cell: 061c3fe9-86fa-4dc3-aa5a-bf48c2365459 src: eb9122c32f -->
+<!-- cell: 061c3fe9-86fa-4dc3-aa5a-bf48c2365459 src: edd3da7766 -->
 #### 2.3.2 运行 DX-TRON
 
-下一个单元格在 DX-TRON 中打开 2.2.2 编译的 MobileNetV2 模型。窗口打开期间,单元格保持运行状态。
+下一个单元格在 DX-TRON 中打开 2.2.2 编译的 MobileNetV2 模型。该窗口需要图形桌面会话,且窗口打开期间单元格会一直处于运行状态,因此仅当单元格首行的 `RUN_DXTRON = True` 时才会运行;默认值 `False` 只打印命令。3.4.4 中的第二个 DX-TRON 单元格使用同一个开关。
 > **注意:** 点击上方的停止按钮('■')即可停止 `dxtron`!
 
 <!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: bcd38bb9d2 -->
 ## 3. 安装 DX-Runtime
 更多细节请参阅 [DX-All Suite 安装指南](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)。
 
-<!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: a530d80148 -->
-### 3.1 (可选)安装前的前提条件(仅限 `Orangepi-5 plus`)
+<!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: 39302d5b84 -->
+### 安装前的平台说明(可选)
+
+**仅限 Orange Pi 5 Plus**
  - 如果使用 Orange Pi 官方镜像,可能未安装内核头文件。安装 NPU 驱动需要内核头文件。
  - 请参阅[此处](../../docs/orangepi5p.md)链接的文档。
 
-### 3.2 (可选)安装前的前提条件(仅限 `Raspberrypi-5`)
+**仅限 Raspberry Pi 5**
  - PCIe 默认配置为 Gen2。可以设置为 Gen3 以提高带宽。 
  - 请参阅[此处](../../docs/raspberrypi5.md)链接的文档。 
 
@@ -282,13 +289,13 @@ DX-Runtime 环境包含各模块的源代码。这些仓库作为 Git 子模块(
 
 让我们看看 DX-Runtime 安装脚本的所有选项:
 
-<!-- cell: f46c6f59-c240-40ef-beef-c391b6b02ad7 src: bdef7c465b -->
+<!-- cell: f46c6f59-c240-40ef-beef-c391b6b02ad7 src: 1122f61d55 -->
 ### 3.1 安装 DX-Runtime
 
 后续教程会使用 DX-APP 和 DX-STREAM,因此使用 `--all` 安装全部内容:
 
 ```bash
-cd ~/dx-all-suite
+cd <DX_ALL_SUITE_DIR>
 ./dx-runtime/install.sh --all
 ```
 
@@ -303,15 +310,15 @@ cd ~/dx-all-suite
 
 配置单元格已经把安装目录和 Git 分支保存到了 `dx-tutorials/config.json`。本验证检查仓库、分支、子模块、DX-Compiler 环境、DX-Runtime CLI 以及 NPU 设备节点。之后的单元格会更详细地检查 PCIe 链路、内核驱动和服务。
 
-<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: b7b11a0e49 -->
+<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 68dd0ab6ce -->
 ### 3.3 推荐:仅下载选定的模型
 
 下一个代码单元格使用 `SELECTED_MODELS` 作为允许列表,只下载这些模型。这是本教程推荐的默认方式。如果需要其他模型集合,请在运行单元格前编辑该列表。
 
 > **警告 — 除非确有必要,否则不要使用全量下载命令。**  
-> 运行 `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""` 会向交互式提示提供空答案。空答案会选中所有类别和所有模型,因此会下载全部 349 个模型。完整集合需要大量网络流量和约 29 GB 的存储空间。
+> 运行 `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""` 会向交互式提示提供空答案。空答案会选中所有类别和所有模型,因此会下载全部 352 个模型(`dx_app` v3.2.2 清单)。完整集合需要大量网络流量和约 29 GB 的存储空间。
 
-推荐的单元格把 `SELECTED_MODELS` 传给 `setup.sh --models`,并使用 `--no-force`,这样已有的模型文件不会被重复下载。列出的 24 个模型是教程 02 到 24 使用的模型;根据网络情况,下载需要几分钟。
+推荐的单元格把 `SELECTED_MODELS` 传给 `setup.sh --models`,并使用 `--no-force`,这样已有的模型文件不会被重复下载。列出的 24 个模型是教程 02 到 24 使用的模型;根据网络情况,下载需要几分钟。后续教程会用同样的 `setup.sh --models ... --no-force` 只请求各自需要的模型,因此只要运行过本单元格一次,它们的下载单元格都会跳过并在几秒内完成。
 
 <!-- cell: 6549dfd3-3e52-45ca-b3a7-29a0c3a23134 src: de74293afb -->
 ### 3.4 DX-RT 提供的实用工具
@@ -358,7 +365,7 @@ DX-RT 把当前的 CLI 二进制文件安装在 `/usr/local/bin` 下。旧的命
 
 `dxcli`(为兼容也可用 `dxrt-cli`)用于查询和监控 DEEPX DX-RT 设备,并管理 NPU 固件。
 
-<!-- cell: fff91477-4f16-4cd2-b0bd-7962bacdfa4d src: c1380e457f -->
+<!-- cell: fff91477-4f16-4cd2-b0bd-7962bacdfa4d src: af61bd9792 -->
 #### 可选:刷写 NPU 固件
 
 DX-Runtime 安装程序已经写入了与此 SDK 版本匹配的固件,因此通常**不需要**此步骤。仅当 DEEPX 支持团队要求重新刷写,或切换到其他 SDK 分支之后才使用。在下一个单元格中设置 `FLASH_FIRMWARE = True` 以启用;为 `False` 时单元格只打印将要执行的操作。
@@ -367,7 +374,7 @@ DX-Runtime 安装程序已经写入了与此 SDK 版本匹配的固件,因此通
 
 ```bash
 sudo systemctl stop dxrt.service
-dxcli -u ~/dx-all-suite/dx-runtime/dx_fw/m1/latest/mdot2/fw.bin   # DX-H1 使用 h1/fw.bin
+dxcli -u <DX_ALL_SUITE_DIR>/dx-runtime/dx_fw/m1/latest/mdot2/fw.bin   # DX-H1 使用 h1/fw.bin
 sleep 5
 sudo systemctl start dxrt.service
 ```

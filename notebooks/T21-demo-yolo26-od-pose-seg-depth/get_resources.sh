@@ -11,7 +11,6 @@ REQUIRED_FILES=(
     "${RESOURCE_DIR}/models/yolo26-s-pose_640x640.dxnn"
     "${RESOURCE_DIR}/models/yolo26-s-seg_640x640.dxnn"
     "${RESOURCE_DIR}/models/yolo26-depth-s_768x768_q-lite.dxnn"
-    "${RESOURCE_DIR}/yolo26.png"
     "${RESOURCE_DIR}/videos/dance-960-540.mp4"
 )
 

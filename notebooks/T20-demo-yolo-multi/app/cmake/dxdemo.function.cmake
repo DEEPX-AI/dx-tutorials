@@ -50,20 +50,25 @@ if(MSVC)
   endif()
   LIST(APPEND link_libs dxrt)
 else()
+  # Native build: the DX-RT package installs dxrtConfig.cmake, which defines the imported
+  # target dxrt::dxrt (library, include directory, pthread). This is the same lookup the
+  # other demos and Tutorial 06 use. A custom prefix is passed with -DCMAKE_PREFIX_PATH.
+  set(_dxrt_target dxrt::dxrt)
   if(CROSS_COMPILE)
     if(DXRT_INSTALLED_DIR)
       add_library(dxrt SHARED IMPORTED)
       set_target_properties(dxrt PROPERTIES
         IMPORTED_LOCATION "${DXRT_INSTALLED_DIR}/lib/libdxrt.so"
         INTERFACE_INCLUDE_DIRECTORIES "${DXRT_INSTALLED_DIR}/include"
-      )  
+      )
+      set(_dxrt_target dxrt)
     else()
       find_package(dxrt REQUIRED)
     endif()
   else()
     find_package(dxrt REQUIRED HINTS ${DXRT_INSTALLED_DIR})
   endif()
-  LIST(APPEND link_libs dxrt pthread)
+  LIST(APPEND link_libs ${_dxrt_target} pthread)
 endif()  
 
 endmacro(add_dxrt_lib)

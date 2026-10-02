@@ -9,12 +9,14 @@ find_package(OpenCV REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(ZLIB REQUIRED)
 
+# DX-RT: the package installs /usr/local/lib/cmake/dxrt/dxrtConfig.cmake, so find_package() is enough.
+# For a custom prefix run ./build.sh -DCMAKE_PREFIX_PATH=<prefix> (or -DDXRT_INSTALLED_DIR=<prefix>).
 if(CROSS_COMPILE OR MSVC)
     find_library(DXRT_LIB dxrt HINTS ${DXRT_INSTALLED_DIR}/lib REQUIRED)
     set(DXRT_INCLUDE_DIR ${DXRT_INSTALLED_DIR}/include)
 else()
     find_package(dxrt REQUIRED HINTS ${DXRT_INSTALLED_DIR})
-    set(DXRT_LIB dxrt)
+    set(DXRT_LIB dxrt::dxrt)   # imported target: carries the include directory and pthread
 endif()
 
 find_path(ONNXRUNTIME_INCLUDE_DIR

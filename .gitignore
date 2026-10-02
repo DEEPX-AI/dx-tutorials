@@ -223,3 +223,9 @@ checklist.md
 notebooks/*/workspace/
 DXBENCHMARK_*
 profiler.json
+
+# Demo resources downloaded by get_resources.sh (models, videos, in-progress archives)
+notebooks/*/assets/models/
+notebooks/*/assets/videos/
+notebooks/*/archive.tar.gz
+*.part

@@ -13,13 +13,18 @@
 <!-- cell: 389418ec-fa11-4a60-9822-183b9d441952 src: 32aa4d182a -->
 ## 사전 요구 사항
 
-<!-- cell: 9c427531-ff8d-4e74-93db-8f41d1237db6 src: 2c603254b1 -->
+<!-- cell: 9c427531-ff8d-4e74-93db-8f41d1237db6 src: 34b79239d3 -->
 **참고:** 아래 요구 사항은 이 튜토리얼을 위한 것이며 **DEEPX 제품을 사용하기 위한 필수 조건은 아닙니다.**
 - OS: Linux (Ubuntu 20.04/22.04/24.04/26.04, Debian 12/13)
 - RAM: 8G (DX-Compiler 사용 시 16G)
 - 저장 공간: 최소 40 GB
 - DEEPX NPU: DX-M1, DX-M1M, DX-H1 Quattro
 - CPU: x86_64에서는 DX-Compiler + DX-Runtime, aarch64에서는 DX-Runtime만 지원
+- 다운로드: DX-All Suite 클론(약 600 MB), DX-COM 설치 파일(수백 MB), 3.3절의 샘플 모델 24개와 공유 샘플 영상(각 약 1.2 GB)
+- 소요 시간: 30~60분. 3.1의 DX-Runtime 빌드만 10~30분이 걸리고 뒤이어 재부팅이 한 번 필요합니다
+- `sudo`: 두 설치 스크립트 모두 필요합니다. 각 설치 단계는 먼저 셀 안에서 비밀번호 없는 `sudo`가 되는지 확인하고, 안 되면 터미널용 명령을 출력합니다
+
+이 튜토리얼과 이후 튜토리얼의 터미널 명령은 DX-All Suite 디렉터리를 `<DX_ALL_SUITE_DIR>`로 적습니다. 기본값은 `~/dx-all-suite`이며, 1.1절이 이 호스트에 설정된 값을 출력합니다.
 
 <!-- cell: 2dcfff26-61ce-46f1-b08f-5669e3ead9a8 src: d3372f2340 -->
 ## DXNN® - DEEPX NPU SDK 소개 (DX-AS: DX-All Suite)
@@ -81,14 +86,14 @@ python tutorial_paths.py --set ~/my/dx-all-suite
 다른 SDK 버전이 필요할 때만 아래 브랜치 이름을 변경하세요.
 현재 브랜치 이름은 `main`입니다.
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 187f9b06f0 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 0bfbf45537 -->
 ### 1.2 DX-All Suite 클론
 
 다음 셀은 설정한 위치에 **DX-All Suite가 없을 때만** 아래 명령을 실행합니다. 디렉터리와 브랜치는 위에서 저장한 설정에서 가져오며, 셀에는 `{DX_ALL_SUITE_DIR}`와 `{DX_ALL_SUITE_BRANCH}`로 표시됩니다.
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch main https://github.com/DEEPX-AI/dx-all-suite.git ~/dx-all-suite
+    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
 - `--depth 1 --shallow-submodules`는 모든 저장소의 최신 커밋만 가져옵니다. 수 GB 대신 약 600 MB를 다운로드하고 디스크에 1.6 GB를 사용합니다.
@@ -100,7 +105,7 @@ git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
 이전 클론이 최상위 체크아웃 이후에 중단되었다면 디렉터리에 `.git`은 있지만 일부 서브모듈이 비어 있습니다. 이 경우 셀은 다시 클론하는 대신 다음 명령을 실행합니다.
 
 ```bash
-git -C ~/dx-all-suite submodule update --init --recursive --depth 1 --progress
+git -C <DX_ALL_SUITE_DIR> submodule update --init --recursive --depth 1 --progress
 ```
 
 셀 대신 터미널(**File > New > Terminal**)에서 두 명령 중 하나를 직접 실행해도 됩니다. 아래 상태 셀은 두 경우 모두 동일하게 동작합니다.
@@ -142,13 +147,13 @@ DX-Compiler 환경은 사전 빌드된 바이너리를 제공하며 소스 코�
 
 이 튜토리얼은 2.1에서 DX-COM을 설치합니다. DX-TRON은 선택 사항이며 2.3에서 다룹니다.
 
-<!-- cell: 3bdb9b57-de73-4186-bac9-ac1effa245da src: 814d4a60eb -->
+<!-- cell: 3bdb9b57-de73-4186-bac9-ac1effa245da src: 54b5b0324e -->
 ### 2.1 DX-COM 설치
 
 실행할 명령은 다음과 같습니다.
 
 ```bash
-cd ~/dx-all-suite
+cd <DX_ALL_SUITE_DIR>
 ./dx-compiler/install.sh --target=dx_com
 ```
 
@@ -188,26 +193,26 @@ cd ~/dx-all-suite
 
 2.1의 검증 셀에서 `dxcom`이 존재하는 것은 이미 확인했습니다. 이 절에서는 실제로 실행해 봅니다. 먼저 도움말을 출력하고, 그다음 샘플 모델을 실제로 컴파일합니다.
 
-<!-- cell: 1803112e-39d6-4066-8abc-c1c2d61fdfbc src: dbf5bd0d1f -->
+<!-- cell: 1803112e-39d6-4066-8abc-c1c2d61fdfbc src: 0de98f2dda -->
 #### 2.2.1 `dxcom` 도움말 확인
 
 `dxcom`은 설치 스크립트가 만든 가상 환경 안에 있으므로, 터미널에서는 호출하기 전에 그 환경을 활성화해야 합니다. 다음 셀은 정확히 아래 명령을 실행합니다.
 
 ```bash
-cd ~/dx-all-suite/dx-compiler
+cd <DX_ALL_SUITE_DIR>/dx-compiler
 source venv-dx-compiler-local/bin/activate
 dxcom -h
 ```
 
 노트북의 `!` 줄은 매번 새 셸을 시작하므로 세 명령을 `&&`로 한 줄에 이어 붙였습니다. 활성화는 그 셸에만 적용되며 Jupyter 환경은 바뀌지 않습니다.
 
-<!-- cell: 9cf00564-56e7-42cf-bbf6-873292fee8da src: bf66ec5280 -->
+<!-- cell: 9cf00564-56e7-42cf-bbf6-873292fee8da src: 1d50e93220 -->
 #### 2.2.2 `MobileNetV2-1.onnx`를 컴파일해 `MobileNetV2-1.dxnn` 생성
 
 다음 셀은 아래 명령을 실행합니다. 컴파일러는 각 단계를 출력하고, `--gen_log` 옵션은 같은 내용을 `compiler.log`에도 기록합니다. 몇 초에서 1분 정도 걸립니다.
 
 ```bash
-cd ~/dx-all-suite/dx-compiler
+cd <DX_ALL_SUITE_DIR>/dx-compiler
 source venv-dx-compiler-local/bin/activate
 cd dx_com
 dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
@@ -246,34 +251,36 @@ DX-TRON을 사용하면 모델 실행 흐름을 더 잘 이해하고 전체 성�
 - **대화형 노드 검사**: 그래프의 노드를 더블 클릭하면 해당 연산의 상세 정보를 볼 수 있습니다.
 - 참고: DX-TRON은 DXNN을 지원하기 위해 [netron](https://netron.app/)을 기반으로 개발되었습니다.
 
-<!-- cell: cdc69460-e92c-460b-aaa5-dc0651eba2dc src: 9f6e1afb38 -->
+<!-- cell: cdc69460-e92c-460b-aaa5-dc0651eba2dc src: ffa894d40f -->
 #### 2.3.1 DX-TRON 설치
 
 DX-TRON은 Debian 패키지로 배포되므로 설치 스크립트가 `sudo apt-get`을 사용합니다.
 
 ```bash
-cd ~/dx-all-suite
+cd <DX_ALL_SUITE_DIR>
 ./dx-compiler/install.sh --target=dx_tron
 ```
 
 2.1과 마찬가지로 세 셀이 이어집니다. **확인**(`dxtron`이 설치되어 있는지, `sudo`가 비밀번호 없이 동작하는지), **설치**(위 명령. 확인 셀이 실행해도 된다고 알려 줄 때만 실행하거나 터미널에서 실행하세요), **검증**입니다.
 
-<!-- cell: 061c3fe9-86fa-4dc3-aa5a-bf48c2365459 src: eb9122c32f -->
+<!-- cell: 061c3fe9-86fa-4dc3-aa5a-bf48c2365459 src: edd3da7766 -->
 #### 2.3.2 DX-TRON 실행
 
-다음 셀은 2.2.2에서 컴파일한 MobileNetV2 모델을 DX-TRON에서 엽니다. 창이 열려 있는 동안 셀은 실행 중 상태로 유지됩니다.
+다음 셀은 2.2.2에서 컴파일한 MobileNetV2 모델을 DX-TRON에서 엽니다. 창을 띄우려면 데스크톱 세션이 필요하고 창이 열려 있는 동안 셀이 실행 중 상태로 유지되므로, 셀 첫 줄의 `RUN_DXTRON = True`일 때만 실행됩니다. 기본값 `False`에서는 명령만 출력합니다. 3.4.4의 두 번째 DX-TRON 셀도 같은 플래그를 사용합니다.
 > **참고:** 위의 중지 버튼('■')을 클릭해 `dxtron`을 종료할 수 있습니다!
 
 <!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: bcd38bb9d2 -->
 ## 3. DX-Runtime 설치
 자세한 내용은 [DX-All Suite 설치 가이드](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)를 참고하세요.
 
-<!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: a530d80148 -->
-### 3.1 (선택) 설치 전 사전 요구 사항 (`Orangepi-5 plus`인 경우만)
+<!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: 39302d5b84 -->
+### 설치 전 플랫폼별 참고 사항 (선택)
+
+**Orange Pi 5 Plus만 해당**
  - Orange Pi 공식 이미지를 사용하는 경우 커널 헤더가 설치되어 있지 않을 수 있습니다. NPU 드라이버를 설치하려면 커널 헤더가 필요합니다.
  - [여기](../../docs/orangepi5p.md)에 링크된 문서를 참고하세요.
 
-### 3.2 (선택) 설치 전 사전 요구 사항 (`Raspberrypi-5`인 경우만)
+**Raspberry Pi 5만 해당**
  - PCIe는 기본적으로 Gen2로 설정되어 있습니다. 대역폭을 높이려면 Gen3으로 설정할 수 있습니다. 
  - [여기](../../docs/raspberrypi5.md)에 링크된 문서를 참고하세요. 
 
@@ -282,13 +289,13 @@ DX-Runtime 환경에는 각 모듈의 소스 코드가 포함되어 있습니다
 
 DX-Runtime 설치 스크립트의 모든 옵션을 살펴보겠습니다.
 
-<!-- cell: f46c6f59-c240-40ef-beef-c391b6b02ad7 src: bdef7c465b -->
+<!-- cell: f46c6f59-c240-40ef-beef-c391b6b02ad7 src: 1122f61d55 -->
 ### 3.1 DX-Runtime 설치
 
 이후 튜토리얼에서 DX-APP과 DX-STREAM을 사용하므로 `--all`로 전부 설치합니다.
 
 ```bash
-cd ~/dx-all-suite
+cd <DX_ALL_SUITE_DIR>
 ./dx-runtime/install.sh --all
 ```
 
@@ -303,15 +310,15 @@ NPU 드라이버 설치 후에는 **재부팅**이 필요하며, 펌웨어 업�
 
 설치 디렉터리와 Git 브랜치는 설정 셀에서 이미 `dx-tutorials/config.json`에 저장되었습니다. 이 검증은 저장소, 브랜치, 서브모듈, DX-Compiler 환경, DX-Runtime CLI, NPU 장치 노드를 확인합니다. 그다음 셀들은 PCIe 링크, 커널 드라이버, 서비스를 더 자세히 살펴봅니다.
 
-<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: b7b11a0e49 -->
+<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 68dd0ab6ce -->
 ### 3.3 권장: 선택한 모델만 다운로드
 
 다음 코드 셀은 `SELECTED_MODELS`를 허용 목록으로 사용해 해당 모델만 다운로드합니다. 이 튜토리얼에서 권장하는 기본 방식입니다. 다른 모델 집합이 필요하면 셀을 실행하기 전에 목록을 수정하세요.
 
 > **경고 — 꼭 필요한 경우가 아니면 전체 다운로드 명령을 사용하지 마세요.**  
-> `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""`를 실행하면 대화형 프롬프트에 빈 답변이 입력됩니다. 빈 답변은 모든 카테고리와 모든 모델을 선택하므로 349개 모델이 전부 다운로드됩니다. 전체 집합은 많은 네트워크 트래픽과 약 29 GB의 저장 공간이 필요합니다.
+> `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""`를 실행하면 대화형 프롬프트에 빈 답변이 입력됩니다. 빈 답변은 모든 카테고리와 모든 모델을 선택하므로 352개 모델(`dx_app` v3.2.2 매니페스트 기준)이 전부 다운로드됩니다. 전체 집합은 많은 네트워크 트래픽과 약 29 GB의 저장 공간이 필요합니다.
 
-권장 셀은 `SELECTED_MODELS`를 `setup.sh --models`에 전달하고 `--no-force`를 사용해 이미 있는 모델 파일은 다시 다운로드하지 않습니다. 나열된 24개 모델은 튜토리얼 02~24에서 사용하는 모델이며, 네트워크에 따라 다운로드에 몇 분 정도 걸립니다.
+권장 셀은 `SELECTED_MODELS`를 `setup.sh --models`에 전달하고 `--no-force`를 사용해 이미 있는 모델 파일은 다시 다운로드하지 않습니다. 나열된 24개 모델은 튜토리얼 02~24에서 사용하는 모델이며, 네트워크에 따라 다운로드에 몇 분 정도 걸립니다. 이후 튜토리얼은 필요한 모델만 지정해 같은 `setup.sh --models ... --no-force`를 호출하므로, 이 셀을 한 번 실행해 두면 그쪽 다운로드 셀은 모두 건너뛰고 몇 초 만에 끝납니다.
 
 <!-- cell: 6549dfd3-3e52-45ca-b3a7-29a0c3a23134 src: de74293afb -->
 ### 3.4 DX-RT가 제공하는 유용한 도구
@@ -358,7 +365,7 @@ DX-RT는 현재 CLI 바이너리를 `/usr/local/bin`에 설치합니다. 이전 
 
 `dxcli`(호환성을 위해 `dxrt-cli`로도 사용 가능)는 DEEPX DX-RT 장치를 조회·모니터링하고 NPU 펌웨어를 관리합니다.
 
-<!-- cell: fff91477-4f16-4cd2-b0bd-7962bacdfa4d src: c1380e457f -->
+<!-- cell: fff91477-4f16-4cd2-b0bd-7962bacdfa4d src: af61bd9792 -->
 #### 선택: NPU 펌웨어 플래시
 
 DX-Runtime 설치 스크립트가 이 SDK 버전에 맞는 펌웨어를 이미 기록하므로 이 단계는 보통 **필요하지 않습니다**. DEEPX 지원팀이 재플래시를 요청하거나 다른 SDK 브랜치로 전환한 뒤에만 사용하세요. 다음 셀에서 `FLASH_FIRMWARE = True`로 설정하면 활성화되며, `False`이면 셀은 수행할 작업만 출력합니다.
@@ -367,7 +374,7 @@ DX-Runtime 설치 스크립트가 이 SDK 버전에 맞는 펌웨어를 이미 �
 
 ```bash
 sudo systemctl stop dxrt.service
-dxcli -u ~/dx-all-suite/dx-runtime/dx_fw/m1/latest/mdot2/fw.bin   # DX-H1은 h1/fw.bin
+dxcli -u <DX_ALL_SUITE_DIR>/dx-runtime/dx_fw/m1/latest/mdot2/fw.bin   # DX-H1은 h1/fw.bin
 sleep 5
 sudo systemctl start dxrt.service
 ```
