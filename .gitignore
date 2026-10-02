@@ -214,3 +214,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# dx-tutorials: user-local settings written by Tutorial 01 (see config.example.json)
+/config.json
+checklist.md
+
+# Per-tutorial generated files (benchmark reports, build outputs, downloads)
+notebooks/*/workspace/
+DXBENCHMARK_*
+profiler.json

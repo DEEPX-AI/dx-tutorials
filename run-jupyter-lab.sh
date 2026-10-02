@@ -56,9 +56,16 @@ fi
 
 # Always synchronize the required packages. This also updates an existing
 # environment when requirements.txt changes between tutorial releases.
-source "$VENV_DIR/bin/activate"
+#
+# The virtual environment is deliberately NOT activated. JupyterLab, its
+# kernels, and the terminals it opens therefore keep the system python3 on
+# PATH and no VIRTUAL_ENV variable, so SDK installers run from a JupyterLab
+# terminal create their own environments instead of touching this one.
+# The notebook kernel still runs on .venv/bin/python (ipykernel is installed
+# there), and the notebooks install extra packages with
+# `uv pip install --python "{sys.executable}"`, which does not depend on PATH.
 echo "--- Synchronize packages from requirements.txt with uv ---"
-uv pip install -r "${ROOT_PATH}/requirements.txt"
+uv pip install --python "$VENV_DIR/bin/python" -r "${ROOT_PATH}/requirements.txt"
 echo "--- Environment is ready! ---"
 
-jupyter lab
+exec "$VENV_DIR/bin/jupyter" lab "$@"
