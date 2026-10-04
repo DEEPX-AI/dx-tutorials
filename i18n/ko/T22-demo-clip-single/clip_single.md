@@ -1,0 +1,206 @@
+<!-- i18n source: notebooks/T22-demo-clip-single/clip_single.ipynb -->
+<!-- i18n lang: ko -->
+<!-- One block per Markdown cell of the source notebook. Keep the markers; translate the text. -->
+
+<!-- cell: t22-01 src: e41c8db501 -->
+# DEEPX Tutorial 22 - CLIP 단일 스트림 C++ 데모
+
+이 튜토리얼은 카메라 또는 비디오 입력을 사용하는 C++ CLIP 애플리케이션을 빌드하고 실행하는 방법을 설명합니다. 텍스트 쿼리는 ONNX Runtime으로 인코딩하고, 이미지는 DEEPX NPU로 비동기 인코딩하며, Qt GUI가 유사도 점수를 표시합니다.
+
+<!-- cell: t22-02 src: 4b7588c5da -->
+![CLIP 단일 스트림 데모](assets/clip-single-sc.png)
+
+<!-- cell: t22-03 src: 0d359c5f65 -->
+## 학습 목표
+
+이 튜토리얼을 마치면 다음을 이해할 수 있습니다.
+
+- CLIP이 이미지 임베딩과 텍스트 임베딩을 비교하는 방식,
+- C++ 애플리케이션이 ONNX Runtime과 DXRT를 결합하는 방식,
+- 카메라와 비디오 프레임을 이미지 인코더용으로 준비하는 방식,
+- 비동기 NPU 추론과 프레임 건너뛰기의 동작 방식,
+- 애플리케이션을 빌드하고 실행하는 방법.
+
+<!-- cell: t22-npu-pattern src: f43836dc91 -->
+## 이 애플리케이션의 NPU 사용 방식
+
+| 항목 | 이 튜토리얼에서 | 배운 곳 |
+|---|---|---|
+| 엔진 | ViT-L/14 이미지 인코더용 `InferenceEngine` 하나. 텍스트 인코더는 DX-RT 밖에서 ONNX Runtime으로 CPU에서 쿼리당 한 번 실행되며, 그 임베딩은 캐시됨 | T06-2 §4 |
+| 실행 | `bufferCount`를 동시에 처리 중인 프레임 수와 같게 설정한 `RunAsync()`. 제출된 각 프레임은 콜백이 768개 값의 임베딩을 복사할 때까지 입력 버퍼를 유지함 | T06-2 §5, §7 |
+| 태스크 그래프 | DXNN이 `cpu_0` 태스크로 시작해 NPU에서 끝나므로 CPU 부분이 임계 경로에 있고 `--use-ort`가 필요함 | T06-1 §6 |
+| 요청당 입력 | 호스트에서 리사이즈, 중앙 크롭, 정규화를 거친 `[1, 3, 224, 224]` FLOAT = 602 KB | T06-3 §4 |
+| 측정 대상 | 4절의 `dxrun` 기준값과 `--skip-frames 0`에서의 GUI 속도 비교. `--skip-frames`는 순위 갱신 빈도와 NPU 부하를 맞바꾸는 조절 값 | T06-1 §5 |
+
+<!-- cell: 307b3492-06ab-4f38-8103-9d48f85e1fd8 src: 5091fc3c20 -->
+## 사전 요구 사항
+
+- DX-RT가 설치된 DEEPX NPU(튜토리얼 01 3절)와 `cmake`.
+- 텍스트 인코더용 ONNX Runtime C++ 헤더와 공유 라이브러리. DX-Runtime이 `/usr/local` 아래에 설치합니다. 다른 접두사를 사용하는 경우 `./build.sh -DONNXRUNTIME_ROOT=<prefix>`를 실행하세요.
+- Qt 창을 위한 디스플레이와, 카메라 데모의 경우 V4L2 카메라.
+- 다운로드: 리소스 아카이브는 약 1.4 GB(이미지 인코더 DXNN, 텍스트 인코더 ONNX, 어휘 사전, 샘플 비디오)이며 git이 무시하는 `assets/`에 저장됩니다.
+- 소요 시간: 다운로드를 제외하고 약 20분. 빌드는 1분 정도 걸립니다.
+- DX-RT 3.4.2로 검증했습니다. 이미지 인코더는 DX-COM 2.2.1로 컴파일되었습니다.
+
+Debian 또는 Ubuntu 패키지를 설치합니다.
+
+```bash
+sudo apt update
+sudo apt install -y build-essential cmake pkg-config libopencv-dev qtbase5-dev zlib1g-dev
+```
+
+다음 셀은 SDK를 찾고, 위 요구 사항을 확인한 뒤 상태 표를 출력합니다. `MISSING`으로 표시된 항목에는 그것을 제공하는 단계가 함께 표시됩니다.
+
+<!-- cell: t22-05 src: 22cfa55977 -->
+## 1. 프로젝트 구조
+
+```text
+T22-demo-clip-single/
+├── README.md
+├── clip_single.ipynb
+├── get_resources.sh
+├── assets/
+│   ├── models/
+│   ├── videos/
+│   └── images/
+└── app/
+    ├── CMakeLists.txt
+    ├── build.sh
+    ├── run_camera.sh
+    ├── run_video.sh
+    ├── main.cpp
+    ├── clip_tokenizer.cpp
+    └── clip_tokenizer.hpp
+```
+
+<!-- cell: t22-07 src: 25298446ba -->
+## 2. 리소스 다운로드 및 확인
+
+`get_resources.sh`는 리소스 아카이브를 다운로드하고, 이미지 인코더, 텍스트 인코더, BPE 어휘 사전, 샘플 비디오를 `assets/`에 추출한 뒤, 추출이 성공하면 다운로드한 아카이브를 삭제합니다. 텍스트 인코더가 가중치를 외부 데이터로 저장하므로 ONNX `.data` 파일이 필요합니다.
+
+<!-- cell: t22-08-download-note src: 670c65bcaf -->
+리소스가 없을 때만 다음 셀을 실행하세요. 같은 이름의 기존 파일은 추출 과정에서 교체될 수 있습니다.
+
+<!-- cell: t22-09 src: 49c8ad89f7 -->
+## 3. 추론 파이프라인
+
+```text
+Text queries -> BPE tokens -> ONNX Runtime text encoder -> text embeddings
+                                                              |
+Camera/video -> resize and center crop -> DXRT image encoder -> image embedding
+                                                              |
+                                                              v
+                                      L2 normalization -> dot products -> ranked GUI scores
+```
+
+텍스트 임베딩은 시작 시 계산되어 캐시됩니다. 선택된 각 비디오 프레임은 224 x 224 CHW float 텐서로 변환됩니다. DXRT가 이미지 추론을 비동기로 제출하므로, 캡처와 GUI 갱신은 각 NPU 요청이 끝날 때까지 기다리지 않습니다.
+
+<!-- cell: t22-11 src: 2cc1224d10 -->
+### 3.1 명령줄 옵션
+
+`AppOptions`는 모델 경로, 입력 소스, 카메라 설정, 프레임 건너뛰기 간격, GUI 플래그를 정의합니다. `--input`을 생략하면 애플리케이션은 `--camera`로 선택한 카메라를 사용합니다.
+
+<!-- cell: t22-13 src: d79b113959 -->
+### 3.2 이미지 전처리
+
+이미지는 종횡비를 유지한 채 리사이즈되고, 224 x 224로 중앙 크롭되며, BGR에서 RGB 순서로 변환되고, 정규화된 뒤 CHW 레이아웃으로 저장됩니다.
+
+<!-- cell: t22-15 src: 160edac714 -->
+### 3.3 텍스트 인코딩과 캐싱
+
+`TextEncoder`는 각 쿼리를 토큰화하고 ONNX 텍스트 인코더를 실행합니다. `TextFeatureStore`는 정규화된 임베딩을 모델과 텍스트 목록을 키로 하여 `.cache/text_features_cpp/` 아래에 저장합니다.
+
+<!-- cell: t22-17 src: dd4b9fd45c -->
+### 3.4 비동기 이미지 인코딩
+
+`ImageEncoderAsync`는 여러 버퍼를 가진 DXRT 추론 엔진을 생성합니다. 제출된 각 프레임은 완료 콜백이 768개 값의 이미지 임베딩을 복사할 때까지 입력 메모리를 소유합니다.
+
+<!-- cell: t22-19 src: f266352d14 -->
+### 3.5 유사도 순위
+
+선택적인 L2 정규화 후, 애플리케이션은 텍스트 쿼리마다 내적을 하나씩 계산합니다. 정규화된 임베딩의 경우 이는 코사인 유사도입니다. GUI는 설정된 점수 임계값을 넘는 가장 강한 일치 항목을 강조 표시합니다.
+
+<!-- cell: t22-21 src: 39b6816859 -->
+## 4. DXNN 이미지 인코더 검사
+
+모델이 있으면 `dxparse`가 모델의 입력 및 출력 텐서를 보여 줍니다. 애플리케이션은 `[1, 3, 224, 224]` 형상의 float 입력과 768개 값의 이미지 임베딩을 기대합니다. 태스크 순서에 주목하세요. 이 모델은 `cpu_0` 태스크로 시작해(패치 임베딩이 CPU에서 실행됨) NPU에서 끝나므로 `--use-ort`가 필요하고, CPU 부분이 모든 요청의 임계 경로에 놓입니다. 그다음 `dxrun`은 GUI와 비교할 단일 모델 기준값을 제공합니다.
+
+<!-- cell: t22-23 src: b823314d41 -->
+## 5. 애플리케이션 빌드
+
+`build.sh`는 CMake를 Release 모드로 구성하고 `nproc`가 보고하는 모든 CPU 코어로 `make`를 실행합니다. 기존 빌드 디렉터리를 먼저 삭제하려면 `./build.sh --clean`을, 사용자 지정 접두사 아래의 라이브러리를 사용하려면 `./build.sh -DONNXRUNTIME_ROOT=<prefix>` 또는 `-DCMAKE_PREFIX_PATH=<prefix>`를 사용하세요. 빌드에는 모델이나 비디오 파일이 필요하지 않습니다.
+
+<!-- cell: t22-26 src: 54770cb65b -->
+## 6. 카메라 데모 실행
+
+기본 소스는 `/dev/video0`이며 1280 x 720, 30 FPS를 요청합니다. 리소스와 카메라가 준비되면 `RUN_CAMERA = True`로 설정하세요. GUI가 닫힐 때까지 셀은 블록됩니다.
+
+<!-- cell: t22-28 src: 2048774b7b -->
+## 7. 비디오 데모 실행
+
+`run_video.sh`는 `assets/videos/CLIP-demo.mp4`를 사용하며 파일 끝에서 반복 재생합니다. 리소스가 준비되면 `RUN_VIDEO = True`로 설정하세요.
+
+<!-- cell: t22-30 src: 021a013221 -->
+## 8. 유용한 옵션
+
+- `--skip-frames N`은 `N + 1` 프레임마다 한 번 이미지 추론을 실행합니다. `0`은 모든 프레임을, `2`(기본값)는 세 번째 프레임마다 인코딩합니다. 값이 클수록 NPU와 CPU 부하가 낮아지며, 순위는 덜 자주 갱신됩니다.
+- `--no-normalize`는 유사도 계산 전의 L2 정규화를 비활성화합니다.
+- `--camera SOURCE`는 `--input`을 생략했을 때 사용할 카메라를 선택합니다.
+- `--input SOURCE`는 카메라 인덱스, 카메라 장치 또는 비디오 경로를 받습니다.
+- `--full-screen`은 Qt 창을 전체 화면 모드로 엽니다.
+- `--exit-btn`은 Exit 버튼을 추가합니다.
+
+GUI를 닫으려면 `Esc` 또는 `Q`를 누르세요. 실행 스크립트에는 기본 텍스트 쿼리가 포함되어 있습니다. 완전히 사용자 지정한 쿼리 목록을 사용하려면 `build/clip_single`을 직접 실행하세요.
+
+<!-- cell: 8d0c598f-eb24-4c6c-8238-f1ea3b1878b0 src: 73c3cfa45c -->
+## 9. 사용자 지정 텍스트 쿼리 사용
+
+실행 스크립트는 작업에 맞는 기본 텍스트 쿼리를 제공합니다. 직접 작성한 쿼리만 사용하려면 실행 파일을 직접 실행하세요.
+
+```bash
+cd notebooks/T22-demo-clip-single/app
+./build/clip_single \
+    --texts "A person" "A bicycle" "A cup" \
+    --camera /dev/video0 \
+    --skip-frames 2 \
+    --full-screen \
+    --exit-btn
+```
+
+사용자 지정 비디오의 경우:
+
+```bash
+./build/clip_single \
+    --texts "Cars are driving" "An empty road" \
+    --input /path/to/video.mp4 \
+    --exit-btn
+```
+
+모든 옵션은 `./build/clip_single --help`로 확인하세요. 애플리케이션을 닫으려면 `Esc` 또는 `Q`를 누르거나 Exit 버튼을 클릭하세요.
+
+<!-- cell: 666c080f-6927-4134-9841-3a3cb4999793 src: 3fcbd3e27f -->
+## 10. 문제 해결
+
+| 증상 | 표시되는 내용 | 원인 | 해결 |
+|---|---|---|---|
+| CMake가 ONNX Runtime을 찾지 못함 | `Could not find ONNXRUNTIME` | ONNX Runtime C++ 패키지가 설치되지 않았거나 기본 접두사에 없음 | 설치(DX-Runtime이 제공)하거나 `./build.sh -DONNXRUNTIME_ROOT=<prefix>` 실행 |
+| CMake가 DXRT를 찾지 못함 | `Could not find a package configuration file provided by "dxrt"` | DX-RT가 설치되지 않았거나 사용자 지정 접두사 아래에 있음 | DX-Runtime 설치(튜토리얼 01 3절) 또는 `./build.sh -DCMAKE_PREFIX_PATH=<prefix>` 실행 |
+| 이미지 인코더가 로드 시 거부됨 | DX-RT 버전 또는 형식 오류 | DXNN이 이전 런타임용 DX-COM 2.2.1로 컴파일됨 | 이 튜토리얼이 검증된 DX-RT 버전(3.4.2) 사용 |
+| 다운로드가 느리거나 중단됨 | `get_resources.sh`가 오래 실행됨 | 아카이브가 약 1.4 GB | 끝날 때까지 기다림. 셀을 다시 실행하면 `.part` 파일에서 이어받음 |
+| 카메라를 열 수 없음 | `cannot open /dev/video0` | 카메라가 없거나 권한 없음 | `v4l2-ctl --list-devices`로 확인하고 `--camera`로 다른 장치 지정 |
+| Qt 창이 나타나지 않음 | `could not connect to display` | 그래픽 세션 없음 | 데스크톱 세션에서 실행 |
+
+<!-- cell: t22-31 src: e079ee85d4 -->
+## 11. 요약
+
+이 애플리케이션은 CPU 텍스트 인코더와 비동기 NPU 이미지 인코더를 하나의 C++ GUI에 결합합니다. 텍스트 특징은 재사용할 수 있고, 이미지 특징은 지속적으로 생성되며, 정규화된 내적이 작업별 분류기 없이 제로샷 텍스트-이미지 매칭을 제공합니다.
+
+### 11.1 완료 체크리스트
+
+- [ ] 이미지 인코더, 텍스트 인코더, 어휘 사전을 다운로드함
+- [ ] `dxparse`로 이미지 인코더를 검사함
+- [ ] 애플리케이션을 빌드하고 `--help`를 실행함
+- [ ] 비디오 또는 카메라로 데모를 실행함
+- [ ] 직접 작성한 텍스트 쿼리로 `clip_single`을 실행함
+
+> **다음:** 튜토리얼 23으로 이동해 C++ 애플리케이션에서 카메라로 손 랜드마크를 추적해 보세요.
