@@ -181,14 +181,19 @@ def resolve_sdk_dir(tutorial_root: str | Path | None = None) -> tuple[Path, str]
 
 
 def sdk_git_info(dx_all_suite_dir: str | Path) -> dict[str, str]:
-    """Best-effort git remote/branch information for the SDK checkout."""
+    """Best-effort git remote/branch/tag information for the SDK checkout.
+
+    ``branch`` is the checked-out branch name, or "" for a detached HEAD.
+    ``tag`` is the tag that exactly matches HEAD (for example after ``git checkout v2.4.2``), or "".
+    """
     directory = Path(dx_all_suite_dir).expanduser()
-    info = {"remote": "", "branch": ""}
+    info = {"remote": "", "branch": "", "tag": ""}
     if not (directory / ".git").exists() or shutil.which("git") is None:
         return info
     for key, args in (
         ("remote", ["remote", "get-url", "origin"]),
         ("branch", ["branch", "--show-current"]),
+        ("tag", ["describe", "--tags", "--exact-match"]),
     ):
         result = subprocess.run(
             ["git", "-C", str(directory), *args],
@@ -293,6 +298,8 @@ def _check_sdk(ctx: "TutorialContext") -> CheckResult:
         info = sdk_git_info(ctx.dx_all_suite_dir)
         if info["branch"]:
             detail += f"  (branch {info['branch']})"
+        elif info["tag"]:
+            detail += f"  (tag {info['tag']})"
         if info["remote"] and SDK_REMOTE_HINT not in info["remote"]:
             detail += f"  [remote is not {SDK_REMOTE_HINT}]"
     elif ctx.dx_all_suite_dir.exists():
@@ -311,7 +318,8 @@ def _check_sdk_branch(ctx: "TutorialContext") -> CheckResult:
     expected = ctx.git_branch
     if not (directory / ".git").exists():
         return CheckResult("sdk_branch", False, "no git repository yet", "Clone dx-all-suite first (Tutorial 01, section 1)")
-    current = sdk_git_info(directory)["branch"]
+    info = sdk_git_info(directory)
+    current = info["branch"] or info["tag"]          # a tag checkout (detached HEAD) counts as well
     ok = bool(current) and current == expected
     detail = f"{current or 'detached HEAD'}" + ("" if ok else f"  (expected {expected})")
     hint = (

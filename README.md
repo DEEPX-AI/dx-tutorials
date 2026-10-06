@@ -5,7 +5,7 @@
 
 **Welcome!** This repository is a collection of hands-on JupyterLab tutorials for the DEEPX SDK (DX-All Suite). It starts with installing the SDK, continues with the compiler and the runtime, and ends with complete Python and C++ applications on the DEEPX NPU.
 
-> These tutorials were validated with dx-all-suite v2.4.3 (`main`, September 2026): DX-COM 2.4.1, DX-RT 3.4.2, DX-APP 3.2.2, DX-STREAM 3.1.2.
+> These tutorials target the dx-all-suite release tag `v2.4.2` (the default in Tutorial 01 section 1.1.2): DX-COM 2.4.1, DX-RT 3.4.2, DX-APP 3.2.2, DX-STREAM 3.1.2. The same component versions were validated on `main` as of September 2026 (v2.4.3).
 
 ## 📚 Tutorials
 
@@ -111,7 +111,7 @@ The SDK installers call `sudo apt-get`. A notebook cell cannot answer a password
 
 ## 🌐 Languages
 
-Every tutorial notebook (T00 to T06) is available in English, Korean, Japanese, and Chinese. The English
+Every tutorial notebook (T00 to T06, T10, and T20 to T24) is available in English, Korean, Japanese, and Chinese. The English
 notebook is the source of truth; the translated copies are generated next to it and share the same code cells,
 so one verification run covers every language. Each notebook starts with a language switcher line
 (`🌐 English | 한국어 | 日本語 | 中文`); click a language to open that copy.
@@ -138,7 +138,7 @@ python scripts/build_i18n.py init notebooks/T02-DX-APP/dx_app.ipynb --lang de
 
 A translation block records the hash of the English cell it was made from. When the English text changes,
 `check` lists that cell as *stale*; translate it again and run `python scripts/build_i18n.py stamp <notebook>`
-to record the new hash. The demo tutorials (T10, T20 to T24) are English only for now.
+to record the new hash.
 
 ## 💡 Troubleshooting
 ![FAQ](https://img.shields.io/badge/FAQ-Read-blue?style=flat-square&logo=github) ![Issues](https://img.shields.io/badge/Issues-Report-red?style=flat-square&logo=github)

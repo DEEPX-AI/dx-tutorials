@@ -80,22 +80,23 @@ DEEPX SDK 主要分为两个关键部分。
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 635edf5993 -->
+<!-- cell: dx-all-suite-branch-heading src: 8ee70f7dfe -->
 #### 1.1.2 Git 分支
 
-只有在需要其他 SDK 版本时才修改下面的分支名。
-当前分支名为 `main`。
+只有在需要其他 SDK 版本时才修改下面的分支名或标签名。
+当前默认值是发布标签 `v2.4.2`;`main` 是最新的开发状态。
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 0bfbf45537 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 13566ea0b3 -->
 ### 1.2 克隆 DX-All Suite
 
 下一个单元格**仅当所配置的位置不存在 DX-All Suite 时**才会运行以下命令。目录和分支来自您上面保存的设置,在单元格中显示为 `{DX_ALL_SUITE_DIR}` 和 `{DX_ALL_SUITE_BRANCH}`。
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch v2.4.2 https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
+- `--branch` 既可以是分支也可以是标签;教程默认使用发布标签 `v2.4.2`。
 - `--depth 1 --shallow-submodules` 只获取每个仓库的最新提交:下载约 600 MB、占用磁盘 1.6 GB,而不是数 GB。
 - `--recurse-submodules` 同时检出子模块(`dx-runtime`、`dx-compiler`、`dx-modelzoo` 及其内部的仓库)。
 - `--progress` 即使输出不是终端也会打印进度,因此您可以在单元格中查看进度。

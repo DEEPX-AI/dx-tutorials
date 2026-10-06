@@ -80,22 +80,23 @@ DX-All Suite を使えば、両方のコンポーネントを個別に管理す�
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 635edf5993 -->
+<!-- cell: dx-all-suite-branch-heading src: 8ee70f7dfe -->
 #### 1.1.2 Git ブランチ
 
-別の SDK バージョンが必要な場合にのみ、下のブランチ名を変更してください。
-現在のブランチ名は `main` です。
+別の SDK バージョンが必要な場合にのみ、下のブランチ名またはタグ名を変更してください。
+現在の既定値はリリースタグ `v2.4.2` で、`main` は最新の開発状態です。
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 0bfbf45537 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 13566ea0b3 -->
 ### 1.2 DX-All Suite のクローン
 
 次のセルは、設定した場所に **DX-All Suite が存在しない場合にのみ**、以下のコマンドを実行します。ディレクトリとブランチは上で保存した設定から取得され、セル内では `{DX_ALL_SUITE_DIR}` と `{DX_ALL_SUITE_BRANCH}` として表示されます。
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch v2.4.2 https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
+- `--branch` にはブランチ名でもタグ名でも指定できます。チュートリアルは既定でリリースタグ `v2.4.2` を使います。
 - `--depth 1 --shallow-submodules` はすべてのリポジトリの最新コミットだけを取得します。数 GB ではなく約 600 MB のダウンロードとディスク上 1.6 GB で済みます。
 - `--recurse-submodules` はサブモジュール(`dx-runtime`、`dx-compiler`、`dx-modelzoo` とその内部のリポジトリ)もチェックアウトします。
 - `--progress` は出力がターミナルでなくても進捗を表示するので、セル内で進み具合を確認できます。

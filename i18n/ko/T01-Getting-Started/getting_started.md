@@ -80,22 +80,23 @@ DX-All Suite를 사용하면 두 구성 요소를 따로 관리하지 않고도 
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 635edf5993 -->
+<!-- cell: dx-all-suite-branch-heading src: 8ee70f7dfe -->
 #### 1.1.2 Git 브랜치
 
-다른 SDK 버전이 필요할 때만 아래 브랜치 이름을 변경하세요.
-현재 브랜치 이름은 `main`입니다.
+다른 SDK 버전이 필요할 때만 아래 브랜치 또는 태그 이름을 변경하세요.
+현재 기본값은 릴리즈 태그 `v2.4.2`이며, `main`은 최신 개발 상태입니다.
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 0bfbf45537 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 13566ea0b3 -->
 ### 1.2 DX-All Suite 클론
 
 다음 셀은 설정한 위치에 **DX-All Suite가 없을 때만** 아래 명령을 실행합니다. 디렉터리와 브랜치는 위에서 저장한 설정에서 가져오며, 셀에는 `{DX_ALL_SUITE_DIR}`와 `{DX_ALL_SUITE_BRANCH}`로 표시됩니다.
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch v2.4.2 https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
+- `--branch`에는 브랜치나 태그를 쓸 수 있습니다. 튜토리얼은 기본적으로 릴리즈 태그 `v2.4.2`를 사용합니다.
 - `--depth 1 --shallow-submodules`는 모든 저장소의 최신 커밋만 가져옵니다. 수 GB 대신 약 600 MB를 다운로드하고 디스크에 1.6 GB를 사용합니다.
 - `--recurse-submodules`는 서브모듈(`dx-runtime`, `dx-compiler`, `dx-modelzoo` 및 그 안의 저장소)도 함께 체크아웃합니다.
 - `--progress`는 출력이 터미널이 아닐 때도 진행 상황을 출력하므로 셀 안에서 진행 상황을 볼 수 있습니다.
