@@ -177,12 +177,12 @@ wget -nc https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolov7-forklift-per
 <!-- cell: 6daf1b20-9182-4a77-82d0-8188d9c6e257 src: c0768f5b3c -->
 ## 5. AI ワークフロー - DEEPX NPU へのデプロイ
 
-<!-- cell: 4d54f93a-31ff-4f9c-8fd5-1de4776cc622 src: f2166618d1 -->
+<!-- cell: 4d54f93a-31ff-4f9c-8fd5-1de4776cc622 src: 6291ba5212 -->
 ### 5.1 独自の YOLOv7 モデル向けに DX-APP を設定する
 
 現在の DX-APP では、独自のクラス数に対応するために C++ ソースを修正する必要はありません。YOLOv7 ファクトリはランタイム設定ファイルから `num_classes` と `class_names` を読み込み、後処理器が検出結果をデコードする際にそれらの値を使用します。
 
-> **参考:** この節は [DX-APP YOLO Customizing Guide](https://github.com/DEEPX-AI/dx_app/blob/main/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md#step-3-tune-configjson)(チェックアウト内の `dx_app/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md`)の **Step 3「Tune `config.json`」**に沿っています。このガイドには YOLO 後処理器が読み込むすべてのキー(`obj_threshold`、`score_threshold`、`nms_threshold`、`num_classes`、`class_names`、`anchors`、`strides`)が列挙され、3 クラスモデル向けの同じファイルの例が示されています。同梱の YOLOv7 サンプルは既定値を `src/cpp_example/object_detection/yolov7/config.json` に持っており、以下で書き出すファイルは 2 クラスの Forklift と Worker モデル向けにそれらを上書きします。
+> **参考:** この節は [DX-APP YOLO Customizing Guide](https://github.com/DEEPX-AI/dx_app/blob/main/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md#step-3-tune-configjson)(チェックアウト内の `dx_app/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md`)の **Step 3「Tune `config.json`」**に沿っています。このガイドには YOLO 後処理器が読み込むすべてのキー(`obj_threshold`、`score_threshold`、`nms_threshold`、`num_classes`、`class_names`、`anchors`、`strides`)が列挙され、3 クラスモデル向けの同じファイルの例が示されています。同梱の YOLOv7 サンプルは既定値を `src/cpp_example/object_detection/yolov7/yolov7_640x640/config.json` に持っており、以下で書き出すファイルは 2 クラスの Forklift と Worker モデル向けにそれらを上書きします。
 
 このチュートリアルで使う 2 つの JSON 設定ファイルを混同しないでください。
 
@@ -208,10 +208,10 @@ wget -nc https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolov7-forklift-per
 
 > **注:** ガイドが警告しているとおり、`num_classes` はコンパイル済みモデルの出力と一致している必要があります。クラス数はコンパイル時に固定されるため、ランタイム JSON だけを変更してもテンソル形状の不一致は解消できません。
 
-<!-- cell: 12ba0bdd-1df3-47d2-a454-a1bc39c8768c src: d725d9b9f9 -->
+<!-- cell: 12ba0bdd-1df3-47d2-a454-a1bc39c8768c src: c710c552be -->
 ### 5.2 YOLOv7 実行ファイルの確認
 
-ランタイム設定は、DX-APP が YOLOv7 後処理器を生成する前に `--config` で読み込まれます。C++ ソースは変更しないため、`bin/yolov7_async` がすでに存在していれば DX-APP の再ビルドは不要です。
+ランタイム設定は、DX-APP が YOLOv7 後処理器を生成する前に `--config` で読み込まれます。C++ ソースは変更しないため、`bin/yolov7_640x640_async` がすでに存在していれば DX-APP の再ビルドは不要です。
 
 モデルの実行時、DX-APP は `Config loaded: yolov7-forklift-runtime.json (4 keys)` と記録します。この数はスカラー値のみを数えたもので、`class_names` はリストとして別に保存されるため、5 つの設定すべてが有効になっています。
 
@@ -219,28 +219,28 @@ wget -nc https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolov7-forklift-per
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
-./build.sh --target yolov7_async
+./build.sh --target yolov7_640x640_async
 ```
 
-<!-- cell: aef5fbb5-57c5-425b-bb18-be6c09f84008 src: 548c63ca47 -->
+<!-- cell: aef5fbb5-57c5-425b-bb18-be6c09f84008 src: 3605a3a8c9 -->
 ### 5.3 画像で独自モデルを実行する
 
 独自の DXNN とそのランタイム設定を標準の YOLOv7 実行ファイルに渡します。共有の DX-APP ソースは変更しません。セルはヘッドレス(`--no-display --save`)で動作するためディスプレイがなくても実行でき、保存された結果を下に表示します。代わりに DX-APP のウィンドウを開くには `--no-display` を外してください。その場合、ウィンドウを閉じるまでセルは実行中のままになります。
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
-./bin/yolov7_async -m <workspace>/output/yolov7-forklift-person.dxnn \
+./bin/yolov7_640x640_async -m <workspace>/output/yolov7-forklift-person.dxnn \
     --config <workspace>/yolov7-forklift-runtime.json \
     -i <tutorial>/assets/forklift-worker.png --no-display --save --save-dir <workspace>/outputs
 ```
 
-<!-- cell: c6d86bb5-c77a-4144-8072-4c30ac0e0386 src: 2dbebc5c03 -->
+<!-- cell: c6d86bb5-c77a-4144-8072-4c30ac0e0386 src: 90b10f1ee4 -->
 ### 5.4 動画で独自モデルを実行する
 
 動画での実行は、同じコマンドに `-v` を付けたものです。クリップの長さは 80 秒(2001 フレーム)です。`SHOW_WINDOW = False`(既定)では、アプリケーションはヘッドレスで動作し、レンダリング済みの動画をワークスペース配下に書き出し、**完了するまで何も出力しません**。DX-M1 では約 20 秒かかるため、セルが固まっているわけではありません。その後、保存された動画がノートブックに表示されます。代わりに DX-APP のウィンドウでライブ表示したい場合は `SHOW_WINDOW = True` に設定してください(ウィンドウを閉じるまでセルは実行中のままになります)。
 
 ```bash
-./bin/yolov7_async -m <workspace>/output/yolov7-forklift-person.dxnn \
+./bin/yolov7_640x640_async -m <workspace>/output/yolov7-forklift-person.dxnn \
     --config <workspace>/yolov7-forklift-runtime.json -v <workspace>/forklift-worker.mp4 \
     --no-display --save --save-dir <workspace>/outputs
 ```
@@ -257,7 +257,7 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 | 5.3 または 5.4 でウィンドウが表示されない | セルが性能サマリーだけで終了する | セルは既定でヘッドレスで動作する | `workspace/outputs/` 配下の保存結果を開くか、デスクトップセッションで `--no-display` を外す / `SHOW_WINDOW = True` に設定する |
 | ボックスのラベルが誤っている | フォークリフトが Worker とラベル付けされる、またはその逆 | `class_names` の順序が学習時の順序と異なる | ランタイム JSON の順序を修正して再実行する。`num_classes` は 2 のままにする |
 
-<!-- cell: 2df122e0-2ea3-4c2e-b294-6fee2d7c5b24 src: 4848d5487c -->
+<!-- cell: 2df122e0-2ea3-4c2e-b294-6fee2d7c5b24 src: b518f75933 -->
 ## 7. まとめ
 
 ### 7.1 完了したワークフロー
@@ -275,7 +275,7 @@ Export ONNX and compile to DXNN with dxcom
 Describe classes and thresholds in a DX-APP runtime config
        │
        ▼
-Run the custom model on the NPU with yolov7_async
+Run the custom model on the NPU with yolov7_640x640_async
 ```
 
 ### 7.2 完了チェックリスト

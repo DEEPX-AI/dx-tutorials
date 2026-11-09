@@ -8,25 +8,28 @@
 <!-- cell: 8d745a2c-590f-466c-8d99-dac51463d1a7 src: 13dceb44ed -->
 이 두 번째 튜토리얼에서는 DX-APP을 소개하고, 컴파일된 DXNN 모델을 AI 애플리케이션에서 실행하는 방법을 배웁니다.
 
-<!-- cell: 6780ee30-ea89-4759-806a-13dc7b1667bd src: fa8fcdcd69 -->
+<!-- cell: 6780ee30-ea89-4759-806a-13dc7b1667bd src: 2957c3ce1d -->
 ## 학습 목표
 
 이 튜토리얼을 마치면 다음을 할 수 있습니다.
 
-- DX-APP이 **[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/)의 모든 모델**에 대해 바로 실행할 수 있는 C++ 및 Python 예제 코드를 제공한다는 것을 알고, 그 코드로 원하는 모델을 실행할 수 있습니다.
-- DX-APP이 무엇이고 C++ 및 Python 예제가 어떻게 구성되어 있는지 설명할 수 있습니다.
+- DX-APP이 **[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/)의 모든 모델**(497개 모델 변형)에 대해 바로 실행할 수 있는 C++ 및 Python 예제 코드를 제공한다는 것을 알고, 그 코드로 원하는 모델을 실행할 수 있습니다.
+- 예제가 작업(task), 모델 패밀리(family), 변형(variant)별로 어떻게 구성되어 있는지, 그리고 변형 이름이 모델 파일, 실행 파일, 스크립트를 어떻게 하나로 묶는지 설명할 수 있습니다.
 - 튜토리얼에 필요한 모델과 영상만 다운로드할 수 있습니다.
-- 이미지, 영상, 카메라를 입력으로 분류, 검출, 포즈, 세그멘테이션 예제를 실행할 수 있습니다.
-- 동기, 비동기, PPU 실행 방식 중에서 선택할 수 있습니다.
-- 대화형 데모 런처를 시작할 수 있습니다.
-- 독립 실행형 C++ 또는 Python 예제를 내보내 DX-APP 트리 밖에서 실행할 수 있습니다.
+- 분류, 검출, 포즈, 세그멘테이션 예제를 실행하고 저장된 결과를 노트북에서 확인할 수 있습니다.
+- 동기, 비동기, PPU 실행 방식 중에서 선택하고, 어떤 Python 변형이 모델에 맞는지 측정할 수 있습니다.
+- `dx_tool.sh`로 예제를 조회하고 데모 런처를 시작할 수 있습니다.
+- 독립 실행형 C++ 또는 Python 예제를 내보내고, 그 모델 카드를 읽고, DX-APP 트리 밖에서 실행할 수 있습니다.
+- 코드 대신 JSON 파일을 편집해 멀티 모델 그래프로 여러 모델을 하나의 파이프라인으로 연결할 수 있습니다.
 
 <!-- cell: 6c593151-97c1-49c9-ac7b-d9149c7e58ba src: ffff5dd049 -->
 ## DX-APP이란?
 
-<!-- cell: 4a8fc6e5-dd5e-4014-a9bd-1aacde11dea1 src: ac1c2b5a7b -->
+<!-- cell: 4a8fc6e5-dd5e-4014-a9bd-1aacde11dea1 src: f4bca1a566 -->
 **DX-APP**은 DEEPX NPU용 참조 애플리케이션입니다. 가장 큰 특징은 커버리지입니다. **[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/)에 공개된 모든 모델에는 바로 실행할 수 있는 예제**가 C++과 Python 양쪽으로 준비되어 있으며, 작업(object detection, classification, face detection, pose, segmentation, depth 등)별로 정리되어 있습니다. Model Zoo 페이지에서 모델을 고르면 DX-APP에 이미 그 모델을 실행하는 코드가 들어 있습니다. DX-APP은 개발자가 런타임 환경을 빠르게 구성하도록 돕고,
 자신만의 AI 애플리케이션을 만들고 커스터마이즈하기 위한 템플릿 역할을 합니다.
+
+이 튜토리얼은 DX-All Suite v2.5.0에 포함된 버전인 **DX-APP v3.3.0**을 사용합니다.
 
 자세한 내용은 [dx_app git 저장소](https://github.com/DEEPX-AI/dx_app/blob/main/README.md)의 개요를 참고하거나, [여기](https://developer.deepx.ai/download/?id=580)에서 DX-APP User Guide를 다운로드하세요!
 
@@ -34,7 +37,7 @@
 
 DX-APP의 파일 구조를 살펴보겠습니다.
 
-<!-- cell: 61ec96cc-5fe7-4a93-a39e-709db97d0465 src: 43789987cb -->
+<!-- cell: 61ec96cc-5fe7-4a93-a39e-709db97d0465 src: e31818a20b -->
 **DX-APP** 데모는 최소한의 설정으로 DEEPX NPU에서 사전 컴파일된 모델을 시연하도록 최적화되어 있습니다.
 각 데모는 일반적인 AI 작업을 나타내며 이미지, 영상, 실시간 카메라
 입력으로 실행할 수 있습니다.
@@ -46,91 +49,79 @@ DX-APP의 파일 구조를 살펴보겠습니다.
 ```shell
 dx_app/
 ├── src/
-│   ├── cpp_example/            # C++ end-to-end examples (352 models across 22 tasks)
-│   │   ├── <task>/<model>/     #   Model-specific factories, configs, and entry points
-│   │   └── common/             # Shared C++ runtime layer
-│   │       ├── base/           #   Abstract interfaces (IFactory, IProcessor, ...)
-│   │       ├── processors/     #   42 postprocessors, 4 preprocessors, and helpers
-│   │       ├── runner/         #   16 task-specific sync/async runner pairs
-│   │       ├── inputs/         #   Image, video, camera, and RTSP input sources
-│   │       ├── visualizers/    #   13 task-specific visualizers
-│   │       ├── config/         #   ModelConfig loader
-│   │       ├── trackers/       #   Shared IoU tracker
-│   │       ├── third_party/    #   Vendored header dependencies
-│   │       └── utility/        #   Labels, preprocessing, profiling, and run utilities
-│   ├── python_example/         # Python end-to-end examples (352 models across 22 tasks)
-│   │   ├── <task>/<model>/     #   Four execution/postprocessing variants per model
-│   │   └── common/             # Shared Python runtime layer
-│   │       ├── base/           #   Abstract interfaces (IFactory, IProcessor, ...)
-│   │       ├── processors/     #   41 postprocessors, 4 preprocessors, and helpers
-│   │       ├── runner/         #   SyncRunner, AsyncRunner, arguments, and run utilities
-│   │       ├── inputs/         #   Image, video, camera, and RTSP input sources
-│   │       ├── visualizers/    #   14 task-specific visualizers
-│   │       ├── config/         #   ModelConfig loader and schema
-│   │       ├── trackers/       #   Shared IoU tracker
-│   │       └── utility/        #   Labels, preprocessing, profiling, and geometry helpers
-│   ├── postprocess/            # C++ post-processing (consumed by pybind11 bindings)
-│   ├── utility/                # Shared support code used by build flow
+│   ├── cpp_example/                    # C++ end-to-end examples (497 model variants across 29 tasks)
+│   │   ├── <task>/<family>/<variant>/  #   One folder per .dxnn file: entry points, factory, config.json, README.md
+│   │   ├── multi_model_graph/          #   Multi-model graph CLI and sample graph JSON files (section 4)
+│   │   └── common/                     # Shared C++ runtime layer
+│   │       ├── base/                   #   Abstract interfaces (factories, pre/post-processors, visualizers, inputs)
+│   │       ├── processors/             #   Shared processors
+│   │       ├── runner/                 #   Task-specific sync/async runner pairs
+│   │       ├── inputs/                 #   Image, video, camera, and RTSP input sources
+│   │       ├── visualizers/            #   Task-specific visualizers
+│   │       ├── config/                 #   ModelConfig loader
+│   │       ├── graph/                  #   Multi-model graph engine
+│   │       ├── registry/               #   Model registry used by the graph engine
+│   │       ├── trackers/               #   IoU tracker
+│   │       ├── third_party/            #   Header-only third-party libraries
+│   │       └── utility/                #   Labels, preprocessing, profiling, and run utilities
+│   ├── python_example/                 # Python end-to-end examples (the same 497 variants and 29 tasks)
+│   │   ├── <task>/<family>/<variant>/  #   Four scripts per variant, config.json, and the model card files
+│   │   └── common/                     # Shared Python runtime layer (same structure as the C++ one)
+│   ├── postprocess/                    # C++ post-processing (consumed by pybind11 bindings)
+│   ├── utility/                        # Shared support code used by build flow
 │   └── bindings/
 │       └── python/
-│           └── dx_postprocess/ # pybind11 bindings wrapping src/postprocess/
+│           ├── dx_postprocess/         # pybind11 bindings wrapping src/postprocess/
+│           └── dx_graph/               # pybind11 module running multi-model graphs (./build.sh --all)
 ├── config/
-│   ├── model_registry.json     # Model registry — single source of truth
-│   ├── test_models.conf        # Test model configuration
-│   └── README.md               # Config directory documentation
-├── scripts/                    # Developer tools, validation, and helper scripts
-├── tests/                      # C++, Python, script, helper, and Windows tests
-├── assets/                     # Links to downloaded models and videos
-├── sample/                     # Bundled images and task-specific sample data
-├── bin/                        # C++ executables generated by the build
-├── cmake/                      # x86_64 and aarch64 toolchain files
-├── extern/                     # External header dependencies
-├── build.sh / build.bat        # Linux and Windows build scripts
-├── setup.sh / setup.bat        # Model, video, and dependency setup
-├── setup_sample_models.sh      # Download the sample model set only
-├── setup_sample_videos.sh      # Download the sample video set only
-├── run_demo.sh / run_demo.bat  # Interactive demo launcher
-├── run_tc.sh                   # Unified test runner for example tests
-├── install.sh                  # Dependency and OpenCV installer
-└── docs/                       # Detailed documentation
+│   ├── model_registry.json             # Model registry: one row per variant, the single source of truth
+│   ├── test_models.conf                # Test model configuration
+│   └── README.md                       # Config directory documentation
+├── scripts/                            # dx_tool.sh, extract_model_package.sh, download_models.py, and helpers
+├── tests/                              # pytest-based test suites
+├── assets/                             # Links to downloaded models and videos
+├── sample/                             # Bundled images and task-specific sample data
+├── bin/                                # C++ executables generated by the build: <variant>_sync, <variant>_async
+├── build.sh                            # Build script (default: the 26 demo models; --all: every variant)
+├── setup.sh                            # Model, video, and dependency setup
+├── run_demo.sh                         # Demo launcher: 26 demos, up to 6 execution modes
+├── run_multi_model_demo.sh             # Multi-model graph scenarios and graph checks
+├── install.sh                          # Dependency and OpenCV installer
+└── docs/                               # Detailed documentation
 ```
 ---
-**DX-APP은 C++과 Python 예제를 모두 제공합니다:**
+**작업, 패밀리, 변형**
 
-`cpp_example`과 `python_example`은 모두 작업(task)을 기준으로 한 동일한 구조를 따릅니다.
+모든 예제는 `<task>/<family>/<variant>/`에 있습니다. **변형(variant)**은 `.dxnn` 파일 이름에서 확장자를 뺀 부분이며, 그 모델에 속한 모든 것의 이름이 됩니다.
 
-현재 두 언어 모두 동일한 22개의 작업 디렉터리를 제공합니다.
+| 항목 | `yolov7_640x640.dxnn`의 경우 |
+|---|---|
+| 예제 폴더 | `src/cpp_example/object_detection/yolov7/yolov7_640x640/` 및 `src/python_example/` 아래의 같은 경로 |
+| C++ 실행 파일 | `bin/yolov7_640x640_sync`, `bin/yolov7_640x640_async` |
+| Python 스크립트 | `yolov7_640x640_sync.py`, `yolov7_640x640_async.py`, `yolov7_640x640_sync_cpp_postprocess.py`, `yolov7_640x640_async_cpp_postprocess.py` |
+| 다운로드 이름 | `./setup.sh --models yolov7_640x640` |
 
-- 3d_object_detection/
-- attribute_recognition/
-- classification/
-- depth_estimation/
-- embedding/
-- face_alignment/
-- face_detection/
-- hand_detection/
-- hand_landmark/
-- image_denoising/
-- image_enhancement/
-- instance_segmentation/
-- keypoint_detection/
-- obb_detection/
-- object_detection/
-- object_pose_estimation/
-- panoptic_driving_perception/
-- pose_estimation/
-- ppu/
-- reid/
-- semantic_segmentation/
-- super_resolution/
+> **DX-APP v3.2.x에서 넘어오셨나요?** 이제 실행 파일은 변형 이름을 따릅니다(`bin/yolov7_async`는 이제 `bin/yolov7_640x640_async`). PPU 모델은 `object_detection/yolo_ppu/`로 옮겨졌고, 여러 작업의 이름이 바뀌거나 나뉘었습니다. `classification`은 이제 `image_classification`, `obb_detection`은 `oriented_object_detection`, `image_enhancement`는 `low_light_enhancement`, `face_alignment`는 `face_landmark`이며, `embedding`은 `face_recognition`, `image_retrieval`, `visual_place_recognition`, `zero_shot_image_classification`으로 나뉘었습니다.
 
-<!-- cell: dx-app-prerequisites src: 5e7d954f0f -->
+**29개 작업 디렉터리** (`cpp_example`과 `python_example`에서 동일):
+
+- 검출: `object_detection`, `oriented_object_detection`, `face_detection`, `hand_detection`, `mainbody_detection`, `3d_object_detection`, `anomaly_detection`
+- 세그멘테이션: `instance_segmentation`, `semantic_segmentation`, `zero_shot_instance_segmentation`, `panoptic_driving_perception`, `image_matting`
+- 포즈와 키포인트: `pose_estimation`, `hand_landmark`, `face_landmark`, `keypoint_detection`, `object_pose_estimation`
+- 분류와 속성: `image_classification`, `zero_shot_image_classification`, `person_attribute`, `face_attribute`
+- 인식과 검색: `face_recognition`, `person_reid`, `image_retrieval`, `visual_place_recognition`
+- 이미지 복원과 깊이: `image_denoising`, `super_resolution`, `low_light_enhancement`, `depth_estimation`
+
+DX-APP v3.3.0에는 Model Zoo 모델 147개가 추가로 등록되었습니다. RT-DETR(v1, v2, v3), YOLOv12, YOLOv13, 사전 최적화된 YOLO26, 그리고 새 작업용 모델인 이상 탐지(PatchCore, EfficientAD), 이미지 매팅(PP-Matting), CLIP 이미지 검색, 사람 재식별(re-identification), 시각적 장소 인식(EigenPlaces)이 포함됩니다.
+
+<!-- cell: dx-app-prerequisites src: f5f35b82be -->
 ## 사전 요구 사항
 
 - 튜토리얼 01 완료: DX-Runtime을 `--all`로 설치(DX-RT, DX-APP 및 그 `venv-dx-runtime` Python 환경)하고 NPU가 `/dev/dxrt0`으로 인식되는 상태.
-- DX-APP 샘플 모델과 영상. 튜토리얼 01의 3.3절에서 다운로드하며, 아래 1절은 아직 없는 것만 받아옵니다(이 튜토리얼용 모델 약 300 MB, 새 호스트라면 공유 샘플 영상 아카이브 1.2 GB 추가).
-- 그래픽 데스크톱 세션은 선택 사항입니다. 2절의 데모 셀은 도움말을 출력하거나 헤드리스로 실행되고, 3절은 독립 실행형 예제를 헤드리스로 실행한 뒤 저장된 이미지를 노트북에 표시합니다.
-- `sudo` 불필요. 소요 시간은 약 30분이며, 3.3절의 C++ 빌드에 1~2분이 걸립니다.
+- **DX-RT 3.5.0 이상.** DX-APP v3.3.0은 Model Zoo 릴리스 `2_5_0`에서 모델을 다운로드하며, 이 릴리스의 `.dxnn` 파일은 컨테이너 형식 v9를 사용합니다. 이전 런타임은 이 파일을 거부합니다(문제 해결 참고). `dxrt-cli --version`으로 설치된 버전을 확인할 수 있습니다.
+- DX-APP 샘플 모델과 영상. 튜토리얼 01의 3.3절에서 다운로드하며, 아래 다운로드 셀은 아직 없는 것만 받아옵니다(이 튜토리얼용 모델 약 300 MB, 새 호스트라면 공유 샘플 영상 아카이브 1.2 GB 추가).
+- 그래픽 데스크톱 세션은 선택 사항입니다. 셀은 예제를 헤드리스(`--no-display --save`)로 실행하고 저장된 이미지를 노트북에 표시합니다. 창을 여는 셀은 `SHOW_WINDOW = False` 같은 플래그로 꺼져 있습니다.
+- `sudo` 불필요. 소요 시간은 약 45분입니다. 두 셀은 각각 1~2분이 걸립니다. 3.3절의 C++ 빌드와, 그래프 실행 파일이 없는 경우 4.1절의 빌드입니다.
 
 다음 셀은 SDK를 찾고, 이 요구 사항을 확인한 뒤 상태 표를 출력합니다. `MISSING`으로 표시된 항목에는 그것을 제공하는 단계가 함께 표시됩니다.
 
@@ -150,12 +141,12 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 
 3. 다음 셀은 실제 설치 경로를 넣어 같은 두 명령을 출력합니다.
 
-<!-- cell: dx-app-setup-selection-guide src: 23faa57e4f -->
+<!-- cell: dx-app-setup-selection-guide src: cb8e8bf9e4 -->
 > ![](assets/sc-setup.png)
 
-4. 여유 저장 공간이 29 GB 이상이라면 **Enter**를 눌러 모든 Model Zoo 모델을 다운로드합니다.
+4. 전체 Model Zoo를 받을 여유 저장 공간(수십 GB)이 있다면 **Enter**를 눌러 모든 Model Zoo 모델을 다운로드합니다. 스크린샷은 이전 릴리스의 것이며, 현재 메뉴에는 더 많은 모델과 새 작업 이름이 나열됩니다.
 
-5. 그렇지 않다면 아래 코드 셀로 이 튜토리얼에 필요한 모델만 다운로드하세요. 튜토리얼 01의 3.3절에서 이 목록을 포함하는 24개 모델을 이미 다운로드했으므로, 그 절을 완료했다면 `--no-force` 덕분에 셀이 모든 파일을 건너뛰고 몇 초 만에 끝납니다. 뒤의 3절에서는 같은 방식으로 거기서 사용하는 YOLO26 모델 두 개를 추가합니다.
+5. 그렇지 않다면 아래 코드 셀로 이 튜토리얼에 필요한 모델만 다운로드하세요. `yolov7_640x640`처럼 `.dxnn` 파일 이름에서 확장자를 뺀 **변형 이름**을 전달합니다. `YoloV7` 같은 이전 Model Zoo 이름도 여전히 사용할 수 있습니다. 튜토리얼 01의 3.3절에서 이 모델들을 이미 다운로드했으므로, 그 절을 완료했다면 `--no-force` 덕분에 셀이 모든 파일을 건너뛰고 몇 초 만에 끝납니다. 3절과 4절도 같은 방식으로 추가 모델을 받아옵니다.
 
 <!-- cell: feedff76-7e3e-4407-8fd4-45ce6f44bafc src: 62ee90271e -->
 6. 모델과 영상이 모두 정상적으로 다운로드되었는지 확인합니다.
@@ -163,18 +154,33 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 <!-- cell: 952b336d-4a65-436a-8024-5094e7392138 src: fd09a5dbf9 -->
 ## 2. 데모 실행
 
-<!-- cell: cc5f5be6-8a4d-49ad-9a60-a26ee425696e src: 1f26a35c90 -->
+<!-- cell: cc5f5be6-8a4d-49ad-9a60-a26ee425696e src: 736e2f2969 -->
 **DX-APP**은 분류, 검출, 세그멘테이션, 포즈 추정 등 컴파일된 모델을 DEEPX NPU에서 실행하는 방법을 보여 주는 바로 사용할 수 있는 데모 애플리케이션 모음입니다.
 
 사용자는 다양한 DX-APP 데모를 살펴보며 애플리케이션을 배우고 만들 수 있습니다.
 
-<!-- cell: 2cdf03bd-4b9a-4a95-baaf-62100bda6a94 src: 77e50c45c9 -->
-### 2.1 분류
-- **bin/resnet50_async**는 사전 학습된 이미지 분류 모델을 실행해 가장 가능성이 높은 클래스를 출력하는 DX-APP 실행 파일입니다.
+`bin/`의 C++ 실행 파일은 변형 이름을 따라 `bin/<variant>_sync`와 `bin/<variant>_async`로 이름이 붙습니다. 모두 같은 입력 옵션(`-i` 이미지, `-v` 영상, `-c` 카메라, `-r` RTSP 스트림)과 같은 출력 옵션을 받습니다.
 
-<!-- cell: 4e228439-78cd-4b7e-83dd-23bffe2def95 src: 6652a2c692 -->
+| 옵션 | 효과 |
+|---|---|
+| `--no-display` | 창을 열지 않고 성능 요약만 출력 |
+| `-s`, `--save` | 렌더링된 결과를 저장 |
+| `--save-dir <dir>` | 저장 위치. 실행할 때마다 새 하위 디렉터리를 만듦 |
+| `-l`, `--loop <n>` | 입력을 `n`번 반복 |
+
+이 절의 셀은 `--no-display --save`로 헤드리스 실행하고 저장된 이미지를 셀 아래에 표시하므로, SSH 환경에서도 동작하며 노트북을 멈추게 하지 않습니다. 주석 처리된 줄은 같은 예제를 영상이나 카메라로 실행합니다. 이 줄은 창을 열기 때문에 데스크톱 세션에서 사용하세요.
+
+다음 셀은 출력 디렉터리와, 가장 최근에 저장된 이미지를 보여 주는 작은 헬퍼를 만듭니다.
+
+<!-- cell: 2cdf03bd-4b9a-4a95-baaf-62100bda6a94 src: bbf4aaaa60 -->
+### 2.1 분류
+- **bin/resnet50_224x224_sync**는 사전 학습된 ImageNet 분류 모델을 실행해 가장 가능성이 높은 클래스를 이미지 위에 그립니다.
+
+`-m`은 모든 C++ 예제에서 선택 사항입니다. 지정하지 않으면 예제는 기본 모델 `assets/models/<variant>.dxnn`을 불러옵니다. 그래도 셀에서는 모델이 어디에서 오는지 보이도록 이 옵션을 전달합니다.
+
+<!-- cell: 4e228439-78cd-4b7e-83dd-23bffe2def95 src: 395be1de2b -->
 ### 2.2 객체 검출
-- **bin/yolov\<version>_async**는 YOLO 기반 객체 검출 모델을 실행해 이미지, 영상 또는 카메라에서 객체를 검출하는 DX_APP 데모 바이너리입니다.
+- **bin/yolov7_640x640_sync**와 **bin/yolov7_640x640_async**는 YOLOv7 객체 검출 모델을 이미지, 영상 또는 카메라에 대해 실행합니다. 다음 셀은 기본 빌드가 만든 다른 YOLO 실행 파일 목록을 보여 줍니다.
 
 <!-- cell: dx-app-execution-mode-comparison src: f76c3f12c3 -->
 #### 실행 방식
@@ -192,60 +198,85 @@ DX-APP은 다양한 애플리케이션 요구 사항에 맞는 여러 실행 방
 
 <img src="https://github.com/DEEPX-AI/dx_rt/raw/main/docs/source/resources/09_01_Sync_Inference_Operation.png" style="max-width: 300px;">
 
-<!-- cell: 59d677b9-2a5b-4590-9896-09fa8a602b5f src: def72565fc -->
+<!-- cell: 59d677b9-2a5b-4590-9896-09fa8a602b5f src: 933d6309ef -->
 - **비동기 애플리케이션**
 
 
 <img src="https://github.com/DEEPX-AI/dx_rt/raw/main/docs/source/resources/09_01_Async_Inference_Operation.png" style="max-width: 1000px;">
 
-<!-- cell: d1f4d8e5-56ba-4aaa-b86e-9f3db0ecc1b9 src: 6feef57d39 -->
+다음 셀은 같은 영상을 비동기 실행 파일로 실행합니다. 출력되는 `Overall FPS` 줄을 위의 동기 실행 결과와 비교해 보세요.
+
+<!-- cell: d1f4d8e5-56ba-4aaa-b86e-9f3db0ecc1b9 src: 964c025ec3 -->
 - **PPU와 비PPU 비교**
 
-아래 두 셀은 같은 7초짜리 영상을 비PPU YOLOv7 모델과 PPU YOLOv7 모델로 각각 실행합니다. 기본값인 `SHOW_WINDOW = False`에서는 `--no-display`로 헤드리스 실행되어 FPS 요약만 출력하므로 노트북이 멈추지 않습니다. 데스크톱 세션에서 `SHOW_WINDOW = True`로 설정하면 DX-APP 창에서 검출 결과와 FPS 카운터를 볼 수 있습니다. 두 FPS 줄을 비교해 보세요. PPU 모델은 후보 필터링과 클래스 선택을 NPU로 옮깁니다.
+아래 두 셀은 같은 7초짜리 영상을 비PPU 모델(`bin/yolov7_640x640_async`)과 PPU 모델(`bin/yolov7_640x640_ppu_async`)로 각각 실행합니다. 기본값인 `SHOW_WINDOW = False`에서는 `--no-display`로 헤드리스 실행되어 FPS 요약만 출력하므로 노트북이 멈추지 않습니다. 데스크톱 세션에서 `SHOW_WINDOW = True`로 설정하면 DX-APP 창에서 검출 결과와 FPS 카운터를 볼 수 있습니다. 두 FPS 줄을 비교해 보세요. PPU 모델은 후보 필터링과 클래스 선택을 NPU로 옮깁니다. 모든 PPU 예제는 `object_detection/yolo_ppu/` 아래에 있습니다.
 
-<!-- cell: 322638df-c151-40e1-960f-9262f721b3dc src: 35efe0e651 -->
+<!-- cell: 322638df-c151-40e1-960f-9262f721b3dc src: 311dfc08a6 -->
 ### 2.3 포즈 추정
-- **bin/yolov8s_pose_sync**는 포즈 추정 모델을 실행해 이미지, 영상 또는 카메라에서 사람을 검출하고 키포인트를 추정하는 DX_APP 데모 바이너리입니다.
+- **bin/yolov8-s-pose_640x640_sync**는 포즈 추정 모델을 실행해 이미지, 영상 또는 카메라에서 사람을 검출하고 신체 키포인트를 추정합니다.
 
-<!-- cell: bed097f7-bf23-4bf7-95b3-17ee8e288cff src: aef4f46b9d -->
+<!-- cell: bed097f7-bf23-4bf7-95b3-17ee8e288cff src: 7664b14349 -->
 ### 2.4 세그멘테이션
-- **bin/yolov8n_seg_async**는 인스턴스 세그멘테이션 모델을 실행해 이미지, 영상 또는 카메라에 대해 픽셀 단위 클래스 레이블을 생성하는 DX_APP 데모 바이너리입니다.
+- **bin/yolov8-n-seg_640x640_async**는 인스턴스 세그멘테이션 모델을 실행해 이미지, 영상 또는 카메라에서 찾은 모든 객체에 대해 박스와 픽셀 마스크를 생성합니다.
 
-<!-- cell: 9236142c-e920-47f2-81ed-2aa530727caf src: a73d6764ed -->
-### 2.5 데모 스크립트
+<!-- cell: 9236142c-e920-47f2-81ed-2aa530727caf src: 707b891fba -->
+### 2.5 데모 런처: run_demo.sh
 
-<!-- cell: e50af299-3964-4065-9c27-f35258bfba3f src: 17b6d175c7 -->
-`run_demo.sh`는 C++ 데모와 Python 데모를 모두 실행할 수 있는 대화형 런처입니다.
-
-대화형이므로 터미널(**File > New > Terminal**)에서 실행하세요.
+<!-- cell: e50af299-3964-4065-9c27-f35258bfba3f src: de4f481f2f -->
+`run_demo.sh`는 작업마다 하나씩 **26개 데모**를 최대 **6가지 실행 모드**(C++ 동기와 비동기, 그리고 네 가지 Python 변형)로 실행합니다. 데모, 모드, 입력의 세 가지를 물어보므로, 터미널(**File > New > Terminal**)에서 시작한 뒤 메뉴에 답하세요.
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 ./run_demo.sh
 ```
 
-다음 셀은 실제 경로를 넣어 같은 명령을 출력합니다.
+다음 셀은 실제 경로를 넣어 같은 명령을 출력합니다. 런처는 첫 메뉴를 표시하기 전에 26개 데모 모델 중 없는 것을 다운로드하므로, 처음 시작할 때는 몇 분이 걸릴 수 있습니다. 또한 `venv-dx-runtime` Python을 스스로 찾으므로, Python 모드를 위해 가상 환경을 활성화할 필요가 없습니다.
 
-<!-- cell: dx-app-demo-selection-guide src: e1636d1d6f -->
-> ![](assets/sc-run_demo.png)
+<!-- cell: dx-app-demo-selection-guide src: eeab3bd7f9 -->
+첫 번째 메뉴에는 데모 목록이 표시됩니다.
 
-런처는 DX-APP 작업 카테고리 전반에 걸쳐 바로 실행할 수 있는 데모 23개를 제공합니다.
+| # | 데모 | # | 데모 |
+|---|---|---|---|
+| 0 | Object Detection (YOLOv7) | 13 | Image Enhancement (Zero-DCE) |
+| 1 | Object Detection (YOLOv11N) | 14 | Embedding (ArcFace) |
+| 2 | Face Detection (SCRFD500M) | 15 | Attribute Recognition (DeepMAR-ResNet50) |
+| 3 | OBB Detection (YOLO26N-OBB) | 16 | PPU Pipeline (YOLOv7-PPU) |
+| 4 | Pose Estimation (YOLOv8s-Pose) | 17 | Keypoint Detection (SuperPoint) |
+| 5 | Hand Landmark (HandLandmarkLite) | 18 | Object Pose Estimation (DOPE) |
+| 6 | Face Alignment (3DDFA-V2-MobileNetV1) | 19 | Panoptic Driving (YOLOPv2) |
+| 7 | Instance Segmentation (YOLOv8N-Seg) | 20 | 3D Object Detection (SFA3D) |
+| 8 | Semantic Segmentation (DeepLabV3+MobileNet) | 21 | Hand Detection (MediaPipe Palm) |
+| 9 | Classification (ResNet50) | 22 | Image Retrieval (CLIP RN50) |
+| 10 | Depth Estimation (YOLO26-Depth-S) | 23 | Visual Place Recognition (EigenPlaces R18) |
+| 11 | Image Denoising (DnCNN-50) | 24 | Person Re-ID (RepVGG-A0) |
+| 12 | Super Resolution (ESPCN-X4) | 25 | Image Matting (PP-Matting HRNet-W48) |
 
-`0` Object Detection을 선택하면 다음 실행 옵션을 사용할 수 있습니다.
+두 번째 메뉴에서는 실행 모드를 고릅니다. 모드 1과 2는 C++ 실행 파일을, 모드 3~6은 3.4절에서 설명하는 네 가지 Python 변형을 실행합니다.
+
 > ![](assets/sc-run_demo2.png)
 
-옵션 [1, 2]는 C++ 기반 애플리케이션을 실행하고, 옵션 [3–6]은 Python 기반 애플리케이션을 실행합니다.
+세 번째 메뉴에서는 입력을 고릅니다. `1`은 데모의 샘플 영상, `2`는 샘플 이미지입니다.
 
-> **참고:** Python 기반 애플리케이션을 실행하려면 `dx-engine`이 설치된 Python 가상 환경을 활성화하세요.
+세 가지 답은 옵션 `--task`, `--mode`, `--input`으로도 지정할 수 있으며, 이 경우 모든 메뉴를 건너뜁니다. 다음 셀은 런처의 도움말을 출력합니다. `RUN_DEMO_LAUNCHER = True`이면 이어서 데모 `0`(YOLOv7)을 모드 `2`(C++ 비동기)로 샘플 이미지에 대해 시작합니다. 데모는 창을 열기 때문에 이 플래그는 데스크톱 세션에서만 설정하세요.
 
-예시:
-> ![](assets/sc-run_demo3.png)
+<!-- cell: aa6c7d5b-a586-4724-9c06-a0b4512c7cb5 src: eed71bf863 -->
+### 2.6 dx_tool.sh로 예제 찾기, 살펴보기, 내보내기
 
-<!-- cell: aa6c7d5b-a586-4724-9c06-a0b4512c7cb5 src: b0879909c6 -->
-### 2.6 C++ 및 Python으로 작성된 샘플 애플리케이션 추출
+<!-- cell: dx-app-dx-tool-query-intro src: e27cae447d -->
+`scripts/dx_tool.sh`는 예제를 관리합니다. 인자 없이 시작하면 대화형 메뉴가 열리지만, 조회 명령은 바로 실행할 수도 있어 노트북에서 사용하기 편리합니다.
 
-<!-- cell: 1fdb3a9f-7bb1-4f96-b645-dda897a5cf2e src: 4cfb1b4aa0 -->
-`scripts/dx_tool.sh`는 예제를 관리하고 내보내는 대화형 터미널 도구입니다. `extract` 메뉴는 한 모델의 예제를 공유 `common/` 런타임 레이어와 함께 복사해, DX-APP 트리 **밖에서** 빌드하고 실행할 수 있는 자체 완결형 패키지를 만듭니다. 터미널(File > New > Terminal)에서 실행하세요.
+| 명령 | 하는 일 |
+|---|---|
+| `dx_tool.sh list [FILTER]` | 예제 목록 출력. 작업으로 필터링 가능(예: `det`) |
+| `dx_tool.sh search <KEYWORD>` | 모델 이름이나 작업으로 예제 검색 |
+| `dx_tool.sh info <MODEL>` | 한 예제의 파일, 팩토리 클래스, `config.json` 표시 |
+| `dx_tool.sh run` / `dx_tool.sh bench` | 여러 예제를 한 번에 실행하거나 벤치마크(대화형 필터) |
+| `dx_tool.sh extract` | 독립 실행형 패키지 내보내기(대화형) |
+
+다음 셀은 YOLO26-S 예제를 검색하고 검출 모델의 세부 정보를 출력합니다. `search`는 각 결과를 `<task>/<family>/<variant>` 형식으로 출력하는데, 이는 3절의 내보내기 스크립트가 받는 형식과 정확히 같습니다. `info`는 기본 샘플 이미지와 영상, 그리고 `config.json`의 점수 및 NMS 임곗값 등을 보여 줍니다.
+
+<!-- cell: 1fdb3a9f-7bb1-4f96-b645-dda897a5cf2e src: ed48a8e0f1 -->
+대화형 메뉴에서는 내보내기도 할 수 있습니다. 질문을 하므로 터미널(File > New > Terminal)에서 실행하세요.
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
@@ -254,70 +285,81 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 
 다음 셀은 실제 경로를 넣어 같은 명령을 출력합니다. 메뉴가 나타나면 그 아래의 단계를 따르세요.
 
-이 메뉴는 내부적으로 `scripts/extract_model_package.sh`를 호출합니다. 3절에서는 이 스크립트를 직접 사용하는데, 모델과 언어를 인자로 받기 때문에 노트북 셀 안에서 실행할 수 있기 때문입니다.
-
-<!-- cell: 203b3870-66e6-425d-a483-6415a06a7f87 src: 3731ac4d34 -->
-`dx_tool.sh`를 실행하면 다음 메뉴가 표시됩니다. 
-- `3`을 선택해 관심 있는 모델 목록을 확인합니다.
-- `2`를 선택해 샘플 코드를 추출합니다.
-- 프로그래밍 언어를 선택합니다. (C++, Python)
-- 애플리케이션에 사용할 카테고리와 모델을 입력합니다. (예: `object_detection/yolo26s`)
+<!-- cell: 203b3870-66e6-425d-a483-6415a06a7f87 src: 150f88aeeb -->
+메뉴가 나타나면:
+- `2`(Extract Package)를 선택합니다.
+- 프로그래밍 언어를 선택합니다. `1` C++, `2` Python, `3` 둘 다.
+- 예제 경로를 `<task>/<family>/<variant>` 형식으로 입력합니다. 예: `object_detection/yolo26/yolo26-s_640x640`. Tab 키로 경로가 자동 완성됩니다.
+- Enter를 눌러 기본 출력 디렉터리 `output`을 그대로 사용합니다.
 
 > ![](assets/sc-extract.png)
 
-몇 초 뒤 `output` 디렉터리에 샘플 코드가 생성됩니다.
+스크린샷은 경로가 두 단계(`object_detection/yolo26s`)뿐이던 이전 릴리스의 것입니다. 몇 초 뒤 패키지가 `output/cpp/<task>/<family>/<variant>`와 `output/py/<task>/<family>/<variant>`에 생성됩니다.
 
-> ![](assets/sc-extract2.png)
+이 메뉴는 내부적으로 `scripts/extract_model_package.sh`를 호출합니다. 3절에서는 이 스크립트를 직접 사용하는데, 모델과 언어를 인자로 받기 때문에 노트북 셀 안에서 실행할 수 있기 때문입니다.
 
-<!-- cell: 0de95d78-8360-4516-968b-aaf8d0ee949c src: b708a6fcb8 -->
+<!-- cell: 0de95d78-8360-4516-968b-aaf8d0ee949c src: 5627b8ffee -->
 ## 3. 추출한 독립 실행형 예제 실행
 
-2.6절에서는 예제를 대화형으로 내보냈습니다. 이 절에서는 같은 작업을 노트북에서 `scripts/extract_model_package.sh`로 수행한 뒤, 내보낸 패키지를 **DX-APP 트리 밖에서** 빌드하고 실행합니다. 여러분의 프로젝트에서 하는 것과 똑같은 방식입니다. 세 예제가 두 언어와, 네 가지 Python 변형 중 두 가지를 다룹니다.
+2.6절에서는 대화형 내보내기를 살펴보았습니다. 이 절에서는 같은 작업을 노트북에서 `scripts/extract_model_package.sh`로 수행한 뒤, 내보낸 패키지를 **DX-APP 트리 밖에서** 빌드하고 실행합니다. 여러분의 프로젝트에서 하는 것과 똑같은 방식입니다.
 
-| 예제 | 모델(작업) | 언어 및 변형 | 보여 주는 내용 |
+| 절 | 예제(`<task>/<family>/<variant>`) | 언어 및 변형 | 보여 주는 내용 |
 |---|---|---|---|
-| 3.2 | `object_detection/yolo26s` | Python, `*_sync.py` | Model Zoo 모델을 실행하는 가장 간단한 방법 |
-| 3.3 | `object_detection/yolo26s` | C++, `*_sync` | 내보낸 C++ 패키지를 CMake로 빌드 |
-| 3.4 | `pose_estimation/yolo26s_pose` | Python, `*_async_cpp_postprocess.py` | 다른 작업, 처리량이 가장 높은 변형 |
+| 3.2 | `object_detection/yolo26/yolo26-s_640x640` | Python, `*_sync.py` | Model Zoo 모델을 실행하는 가장 간단한 방법 |
+| 3.3 | `object_detection/yolo26/yolo26-s_640x640` | C++, `*_sync` | 내보낸 C++ 패키지를 CMake로 빌드 |
+| 3.4 | `pose_estimation/yolo26_pose/yolo26-s-pose_640x640` | Python, `*_async_cpp_postprocess.py` | 다른 작업, C++ 후처리 사용 |
+| 3.5 | `object_detection/yolo26/yolo26-s_640x640` | Python, 네 가지 변형 모두 | 사용할 변형을 측정으로 결정 |
 
-내보낸 모든 Python 예제는 DX-Runtime이 `dx-runtime/venv-dx-runtime`에 설치한 `dx_engine`과 `dx_postprocess`를 임포트합니다. 따라서 셀은 그 인터프리터를 명시적으로 호출합니다. 내보낸 예제에는 샘플 이미지가 없으므로, 셀은 `dx_app/sample/img`의 이미지를 전달해 헤드리스(`--no-display --save`)로 실행한 뒤 저장된 결과를 노트북에 표시합니다.
+내보낸 모든 Python 예제는 DX-Runtime이 `dx-runtime/venv-dx-runtime`에 설치한 `dx_engine`과 `dx_postprocess`를 임포트합니다. 따라서 셀은 그 인터프리터를 명시적으로 호출하고, Python 패키지는 `--no-prune`으로 내보냅니다(이유는 3.1절에서 설명합니다). DX-APP 트리 안에서는 입력을 주지 않으면 예제가 기본 샘플 이미지를 사용하지만, 내보낸 패키지에는 샘플 이미지가 없습니다. 따라서 셀은 `dx_app/sample/img`의 이미지를 전달해 헤드리스(`--no-display --save`)로 실행한 뒤 저장된 결과를 노트북에 표시합니다.
 
 ### 3.1 패키지 내보내기
 
-먼저 스크립트 자체의 도움말부터 확인합니다. 다음 셀에서 사용하는 인자인 `<task>/<model>` 형식의 모델, `--lang cpp|py|both`, `--output-dir`이 나열됩니다.
+먼저 스크립트 자체의 도움말부터 확인합니다. 다음 셀에서 사용하는 인자인 `<task>/<family>/<variant>` 형식의 예제(패밀리의 모든 변형이라면 `<task>/<family>`), `--lang cpp|py|both`, `--output-dir`, `--no-prune`이 나열됩니다.
 
-<!-- cell: c8018ff0-ede6-47ed-809c-da06a2d7a021 src: 867cd9e0a5 -->
-`--output-dir` 없이 실행하면 스크립트가 `dx_app` 안에 패키지를 그대로 준비하고, 지정하면 패키지가 `<dir>/cpp/<task>/<model>`과 `<dir>/py/<task>/<model>`로 복사됩니다. 다음 셀은 세 패키지를 이 튜토리얼의 `workspace/` 디렉터리로 내보내며, 이 디렉터리는 git이 무시합니다.
+<!-- cell: c8018ff0-ede6-47ed-809c-da06a2d7a021 src: 1c4f5c4c05 -->
+`--output-dir` 없이 실행하면 스크립트가 `dx_app` 안에 패키지를 그대로 준비하고, 지정하면 패키지가 `<dir>/cpp/<task>/<family>/<variant>`와 `<dir>/py/<task>/<family>/<variant>`로 복사됩니다. 다음 셀은 YOLO26 모델 두 개를 다운로드하고, 세 패키지를 이 튜토리얼의 `workspace/` 디렉터리로 내보냅니다. 이 디렉터리는 git이 무시합니다. 세 패키지는 C++ 객체 검출 모델, 그리고 Python 객체 검출 모델과 포즈 추정 모델입니다.
 
-<!-- cell: f53338d7-a29a-4940-9827-4a1c2be39a23 src: 09b46cfa3b -->
+<!-- cell: dx-app-prune-intro src: f6df5d7c31 -->
+#### 프루닝된 패키지와 `--no-prune`
+
+기본적으로 내보내기는 `common/`을 **프루닝(pruning)**합니다. 즉 런타임 레이어 전체가 아니라 이 예제가 실제로 사용하는 공유 파일만 복사합니다. 패키지가 더 작고 읽기 쉬워지지만, 이 예제만 실행할 수 있습니다. `--no-prune`은 `common/` 전체를 복사하며, 같은 패키지에 두 번째 모델을 추가할 계획이라면 이 옵션도 필요합니다. 이전 셀의 C++ 패키지는 프루닝된 것입니다. 다음 셀은 Python YOLO26-S 예제를 기본 프루닝으로 한 번 더 내보내고 전체 복사본과 비교합니다.
+
+> **DX-APP v3.3.0 관련 참고:** 프루닝된 **Python** 패키지에는 `config.json`에 지정된 프로세서 클래스가 빠져 있어, 시작 시 `VariantConfigError: processor class 'LetterboxPreprocessor' is exported by neither common.processors nor common.visualizers` 오류로 멈춥니다. 이 문제가 수정될 때까지는 이 튜토리얼처럼 Python 패키지를 `--no-prune`으로 내보내세요. 프루닝된 C++ 패키지는 영향을 받지 않습니다.
+
+<!-- cell: dx-app-model-card-intro src: 93b7e37de4 -->
+#### 모델 카드
+
+모든 예제 폴더에는 Model Zoo에서 생성된 **모델 카드**가 들어 있습니다. `README.md`는 모델이 무엇인지, 출처와 함께 정확도와 속도, 다운로드, 실행 방법을 설명합니다. Python 예제 폴더에는 브라우저에서 오프라인으로 볼 수 있는 같은 카드인 `model.html`과, 참조 결과인 `result.webp`도 있습니다. 내보낸 Python 패키지는 이 세 파일을 모두 유지합니다. 다음 셀은 방금 내보낸 패키지의 참조 이미지와 카드를 보여 줍니다.
+
+<!-- cell: f53338d7-a29a-4940-9827-4a1c2be39a23 src: a2c178bc3e -->
 ### 3.2 예제 1: Python 독립 실행형, 객체 검출
 
-`yolo26s_sync.py`는 가장 기본적인 동기 변형으로, 순수 Python 후처리를 사용해 한 번에 한 프레임씩 처리합니다. 가장 먼저 읽어 볼 변형입니다. 인자는 DX-APP의 모든 Python 예제에서 동일합니다. `--model`, 입력 옵션 하나(`--image`, `--video`, `--camera`, `--rtsp`), 그리고 헤드리스 실행을 위한 `--no-display --save`입니다.
+`yolo26-s_640x640_sync.py`는 가장 기본적인 동기 변형으로, 순수 Python 후처리를 사용해 한 번에 한 프레임씩 처리합니다. 가장 먼저 읽어 볼 변형입니다. 인자는 DX-APP의 모든 Python 예제에서 동일합니다. `--model`, 입력 옵션 하나(`--image`, `--video`, `--camera`, `--rtsp`), 그리고 헤드리스 실행을 위한 `--no-display --save`입니다.
 
 ```bash
-cd <workspace>/standalone/py/object_detection/yolo26s
-<dx-runtime>/venv-dx-runtime/bin/python yolo26s_sync.py \
+cd <workspace>/standalone/py/object_detection/yolo26/yolo26-s_640x640
+<dx-runtime>/venv-dx-runtime/bin/python yolo26-s_640x640_sync.py \
     --model <workspace>/res/models/yolo26-s_640x640.dxnn \
     --image <dx_app>/sample/img/sample_street.jpg \
     --no-display --save --save-dir <output-dir>
 ```
 
-<!-- cell: 8ef7c53a-d140-421f-bf05-dbb99cb34759 src: 07003a5f95 -->
+<!-- cell: 8ef7c53a-d140-421f-bf05-dbb99cb34759 src: 85c8c27e49 -->
 ### 3.3 예제 2: C++ 독립 실행형, 객체 검출
 
-내보낸 C++ 패키지에는 `yolo26s_sync.cpp`, `yolo26s_async.cpp`, 공유 `common/` 레이어, 그리고 설치된 DX-RT에 링크하는 생성된 `CMakeLists.txt`가 들어 있습니다. 빌드는 표준 CMake 절차이며, DX-APP 트리를 참조하는 것은 아무것도 없습니다.
+내보낸 C++ 패키지에는 `yolo26-s_640x640_sync.cpp`, `yolo26-s_640x640_async.cpp`, 공유 `common/` 레이어, 그리고 설치된 DX-RT에 링크하는 생성된 `CMakeLists.txt`가 들어 있습니다. 빌드는 표준 CMake 절차이며, DX-APP 트리를 참조하는 것은 아무것도 없습니다.
 
 ```bash
-cd <workspace>/standalone/cpp/object_detection/yolo26s
+cd <workspace>/standalone/cpp/object_detection/yolo26/yolo26-s_640x640
 mkdir -p build && cd build
 cmake .. && make -j$(nproc)
-./yolo26s_sync -m <workspace>/res/models/yolo26-s_640x640.dxnn \
+./yolo26-s_640x640_sync -m <workspace>/res/models/yolo26-s_640x640.dxnn \
     -i <dx_app>/sample/img/sample_street.jpg --no-display --save --save-dir <output-dir>
 ```
 
-C++ 예제는 옵션을 `-m/--model_path`와 `-i/--image_path`로 표기한다는 점에 유의하세요. `./yolo26s_sync --help`로 목록을 볼 수 있습니다. 빌드에는 1~2분이 걸립니다.
+C++ 예제는 옵션을 `-m/--model_path`와 `-i/--image_path`로 표기한다는 점에 유의하세요. `./yolo26-s_640x640_sync --help`로 목록을 볼 수 있습니다. 빌드에는 1~2분이 걸립니다.
 
-<!-- cell: d643e80f-bbc3-4b0d-ba3c-291446e0d634 src: a0c6ea69d7 -->
+<!-- cell: d643e80f-bbc3-4b0d-ba3c-291446e0d634 src: 04d6bec0f3 -->
 ### 3.4 예제 3: Python 독립 실행형, 포즈 추정, C++ 후처리를 사용하는 비동기
 
 모든 Python 예제는 네 가지 변형으로 제공됩니다. 파일 이름을 보면 어떤 변형을 실행하는지 알 수 있습니다.
@@ -325,89 +367,172 @@ C++ 예제는 옵션을 `-m/--model_path`와 `-i/--image_path`로 표기한다�
 | 변형 | 후처리 | 스레딩 | 용도 |
 |---|---|---|---|
 | `*_sync.py` | 순수 Python | 동기 | 로직 학습과 디버깅 |
-| `*_async.py` | 순수 Python | 비동기 | 첫 번째 성능 개선 단계 |
-| `*_sync_cpp_postprocess.py` | C++ 바인딩(`dx_postprocess`) | 동기 | CPU 후처리 부하가 큰 경우 |
-| `*_async_cpp_postprocess.py` | C++ 바인딩(`dx_postprocess`) | 비동기 | 최대 FPS. 배포용 변형 |
+| `*_async.py` | 순수 Python | 비동기 | 더 높은 처리량. 배포를 위한 일반적인 출발점 |
+| `*_sync_cpp_postprocess.py` | C++ 바인딩(`dx_postprocess`) | 동기 | 무거운 후처리를 한 번에 한 프레임씩 |
+| `*_async_cpp_postprocess.py` | C++ 바인딩(`dx_postprocess`) | 비동기 | 높은 프레임 속도에서 무거운 후처리 |
 
-이 예제는 다른 작업과 가장 빠른 변형으로 전환합니다. 명령 형태는 바뀌지 않으며, 디렉터리, 스크립트 이름, 모델만 달라집니다.
+> DX-APP v3.2.x에서는 `*_cpp_postprocess.py` 스크립트가 아무 표시 없이 Python 후처리기를 실행했으며, v3.3.0에서 이 문제가 수정되었습니다. 따라서 이전 릴리스로 측정한 결과에서는 변형 간 차이가 나타나지 않습니다.
+
+이 예제는 다른 작업과 C++ 후처리를 사용하는 비동기 변형으로 전환합니다. 명령 형태는 바뀌지 않으며, 디렉터리, 스크립트 이름, 모델만 달라집니다.
 
 ```bash
-cd <workspace>/standalone/py/pose_estimation/yolo26s_pose
-<dx-runtime>/venv-dx-runtime/bin/python yolo26s_pose_async_cpp_postprocess.py \
+cd <workspace>/standalone/py/pose_estimation/yolo26_pose/yolo26-s-pose_640x640
+<dx-runtime>/venv-dx-runtime/bin/python yolo26-s-pose_640x640_async_cpp_postprocess.py \
     --model <workspace>/res/models/yolo26-s-pose_640x640.dxnn \
     --image <dx_app>/sample/img/sample_people.jpg \
     --no-display --save --save-dir <output-dir>
 ```
 
-<!-- cell: 49083464-b187-4ce2-9440-533681001c7b src: 36b094d0ca -->
-### 3.5 직접 해 보기: Model Zoo의 아무 모델이나
+<!-- cell: dx-app-variant-timing-intro src: 6c1488d8f6 -->
+### 3.5 변형을 고르기 전에 측정하기
 
-세 예제는 하나의 패턴을 따랐고, 이 패턴은 352개 모델 전부에 적용됩니다.
+네 가지 변형 중 어느 것이 가장 빠른지는 시간이 어디에 쓰이는지에 달려 있습니다. 환경 변수 `DXAPP_PROGRESS=1`을 설정하면 모든 예제가 약 1초마다 `[PROGRESS]` 줄을 출력하고, 끝날 때 마지막 줄을 한 번 더 출력합니다. 각 줄에는 처리량(`fps`, `avg_fps`)과 각 단계의 프레임당 평균 시간이 들어 있습니다. 입력 읽기(`read_ms`), 전처리(`pre_ms`), NPU 추론(`infer_ms`), 후처리(`post_ms`)입니다.
 
-1. [Model Zoo](https://developer.deepx.ai/modelzoo/) 페이지에서 모델을 고르고, `./scripts/dx_tool.sh search <keyword>` 또는 `./scripts/dx_tool.sh list <category>`로 DX-APP에서의 이름을 찾습니다.
-2. 다운로드: `./setup.sh --models <name> --no-force`.
-3. 내보내기: `scripts/extract_model_package.sh <task>/<name> --lang py --output-dir <dir>`.
-4. 실행: `<dir>/py/<task>/<name>/<name>_sync.py --model <file>.dxnn --image <image>`.
+다음 셀은 네 가지 YOLO26-S 변형을 모두 같은 588프레임 영상에 대해 헤드리스로 실행하고, 각 실행의 마지막 줄을 표로 정리합니다. 한 번의 실행은 다음과 같습니다.
 
-다음 셀은 `config/model_registry.json`에서 모델을 찾아 그 모델용 네 가지 명령을 출력합니다. `MODEL_NAME`을 시도해 보고 싶은 모델로 바꾼 뒤, 출력된 명령을 셀이나 터미널에서 실행하세요. 예를 들어 `scrfd500m`(face detection, `sample_face.jpg` 사용)이나 `resnet50`(classification, `sample/ILSVRC2012`의 이미지 사용)을 써 볼 수 있습니다.
+```bash
+DXAPP_PROGRESS=1 <dx-runtime>/venv-dx-runtime/bin/python yolo26-s_640x640_sync.py \
+    --model <workspace>/res/models/yolo26-s_640x640.dxnn --video <dx_app>/assets/videos/boat.mp4 --no-display
+```
 
-<!-- cell: d4f00dc6-dde3-4742-a170-fa8699a69c6a src: cf07613229 -->
-## 4. 문제 해결
+이 셀은 약 40초가 걸립니다.
+
+<!-- cell: dx-app-variant-timing-reading src: c638ed5e7a -->
+표를 읽는 방법(수치는 호스트 CPU와 NPU 카드에 따라 다릅니다):
+
+- **비동기와 동기 비교:** 비동기 변형은 여러 프레임을 동시에 NPU에서 처리하므로 훨씬 높은 프레임 속도에 도달합니다. DX-M1 카드 한 장에서 YOLO26-S는 비동기로 약 200 FPS, 동기로 약 50 FPS로 실행됩니다. 비동기 모드에서 `infer_ms`가 커지는 것은 NPU 시간만이 아니라 각 프레임을 제출해서 결과를 받기까지의 소요 시간을 측정하기 때문입니다.
+- **C++와 Python 후처리 비교:** `cpp_postprocess` 변형은 `post_ms`를 줄이지만, YOLO26-S의 후처리는 1밀리초에 한참 못 미치므로 프레임 속도는 거의 바뀌지 않습니다. C++ 후처리는 세그멘테이션 마스크, 많은 앵커, 느린 호스트 CPU처럼 `post_ms`가 프레임 시간에서 큰 비중을 차지할 때 효과가 있습니다.
+- **경험 법칙:** `*_async.py`로 시작해 `DXAPP_PROGRESS=1`로 측정하고, 후처리가 병목일 때만 `cpp_postprocess` 변형으로 바꾸세요.
+
+<!-- cell: 49083464-b187-4ce2-9440-533681001c7b src: fa03a225fb -->
+### 3.6 직접 해 보기: Model Zoo의 아무 모델이나
+
+예제들은 하나의 패턴을 따랐고, 이 패턴은 497개 변형 전부에 적용됩니다.
+
+1. [Model Zoo](https://developer.deepx.ai/modelzoo/) 페이지에서 모델을 고르고, `./scripts/dx_tool.sh search <keyword>`로 그 예제를 찾습니다.
+2. 그 자리에서 실행합니다. DX-APP 트리 안에서는 모델과 입력이 선택 사항입니다. `--model`이 없으면 예제는 `assets/models/<variant>.dxnn`을 불러오고 파일이 없으면 먼저 다운로드하며, 입력이 없으면 해당 작업의 기본 샘플 이미지를 사용합니다.
+3. 이를 바탕으로 개발하려면 내보냅니다: `scripts/extract_model_package.sh <task>/<family>/<variant> --lang py --output-dir <dir>`.
+
+다음 셀은 `config/model_registry.json`에서 변형을 찾아, 그 동기 Python 예제를 모델과 입력 없이 그 자리에서 실행합니다. 가장 짧은 형태의 실행입니다. 결과를 표시하고 내보내기 명령을 출력합니다. 다른 모델을 시도하려면 `VARIANT`를 바꾸세요. 예를 들어 `resnet50_224x224`(분류), `yolov12-n_640x640`(YOLOv12), `rtdetr-r18vd-6x_640x640`(RT-DETR)을 써 볼 수 있습니다. 아직 디스크에 없는 모델은 먼저 다운로드되며, 몇 초에서 1분 정도 걸립니다.
+
+<!-- cell: dx-app-graph-intro src: addf2cbb2a -->
+## 4. 멀티 모델 그래프: 코드 작성 없이 모델 연결하기
+
+실제 애플리케이션은 프레임마다 둘 이상의 모델을 실행하는 경우가 많습니다. 검출 모델이 사람을 찾으면 두 번째 모델이 그 속성을 읽거나, 손바닥 검출 모델이 손을 찾으면 랜드마크 모델이 손가락 관절 위치를 잡는 식입니다. DX-APP v3.3.0은 이를 위해 **멀티 모델 그래프**를 추가했습니다. 파이프라인을 JSON 파일로 기술하면 실행 파일 하나가 그것을 실행합니다.
+
+- **nodes**는 입력 소스와 모델이며, 각 모델은 변형 이름으로 지정합니다.
+- **edges**는 노드를 연결합니다. `"roi"`가 있는 edge는 첫 번째 모델이 찾은 모든 박스를 잘라 내어 그 크롭을 다음 모델에 전달합니다.
+
+수정할 C++ 코드도, 다시 빌드할 것도 없습니다. 다른 모델을 시도하려면 JSON 파일의 문자열 하나만 바꾸면 됩니다. 실행 파일은 `bin/multi_model_graph_sync`와 `bin/multi_model_graph_async`이고, 샘플 그래프는 `src/cpp_example/multi_model_graph/`에 있습니다.
+
+| 옵션 | 효과 |
+|---|---|
+| `--graph <file>` | 그래프 실행 |
+| `--check <file>` | NPU를 사용하지 않고 그래프와 모델 파일을 검증 |
+| `--output <file>` | 합성된 결과 이미지 저장 |
+| `--report <file>` | 모든 노드의 결과를 JSON으로 저장 |
+| `--list-models` | 그래프에서 사용할 수 있는 모델 목록 출력(`--consumes roi`는 2단계 모델 목록 출력) |
+
+> Python 모듈 `dx_graph`는 같은 그래프를 Python에서 실행합니다. 이 모듈은 `./build.sh --all`로만 빌드되므로, 이 튜토리얼에서는 실행 파일을 사용합니다.
+
+### 4.1 그래프 실행 파일 빌드와 모델 다운로드
+
+다음 셀은 DX-APP 빌드에 두 실행 파일이 아직 없으면 빌드하며, 약 1분이 걸립니다. 이어서 이 절의 그래프가 사용하는 추가 모델 세 개를 다운로드합니다. 손바닥 검출 모델, 손 랜드마크 모델, 사람 속성 모델입니다.
+
+<!-- cell: dx-app-graph-hand-intro src: d37e7d1cc8 -->
+### 4.2 2단계 캐스케이드: 손바닥 검출 후 손 랜드마크
+
+`hand_cascade.json`은 가장 작은 샘플 그래프입니다.
+
+<!-- cell: dx-app-graph-hand-run-intro src: 482277b95a -->
+소스 `cam`은 샘플 이미지입니다. `palm`은 전체 프레임에서 손을 찾습니다. `palm`에서 `landmark`로 가는 edge에는 `"roi"`가 있으므로, 각 손 박스가 15% 여백을 두고 잘려 랜드마크 모델에 전달됩니다.
+
+`--check`는 NPU에서 무엇이든 실행하기 전에 그래프를 검증합니다. 각 모델을 확인하고, 그 모델이 무엇을 `produces`하고 `consumes`하는지 보여 주며, `.dxnn` 파일이 있는지 확인합니다. 이어서 `--graph`가 그래프를 실행하고, `--output`이 합성된 이미지를 저장하며, `--report`가 모든 노드의 결과를 기록합니다. 샘플 그래프는 `dx_app` 기준의 상대 경로를 사용하므로 그 디렉터리에서 실행하세요.
+
+<!-- cell: dx-app-graph-report-intro src: 2c05298a39 -->
+리포트에는 프레임마다 각 노드의 결과가 나열됩니다. 전체 프레임에서 실행된 모델은 `nodes` 아래에, 크롭에서 실행된 모델은 각 크롭이 잘려 나온 프레임 내 박스와 함께 `roi_nodes` 아래에 있습니다. 다음 셀은 첫 번째 프레임을 요약합니다.
+
+<!-- cell: dx-app-graph-edit-intro src: 7f40a53e80 -->
+### 4.3 JSON 편집으로 모델 교체하기
+
+`cascade_od_attr.json`은 사람을 검출하고, 각 사람 크롭을 사람 속성 모델(성별, 연령대, 옷차림 등)인 `deepmar_resnet50_224x224`에 전달합니다. 이 그래프의 검출 모델은 `yolov8-n_640x640`인데, 이 튜토리얼에서는 다운로드하지 않았습니다. 다음 셀은 이를 다운로드하는 대신, 검출 모델을 3절의 모델인 `yolo26-s_640x640`으로 바꾼 그래프 사본을 workspace에 작성합니다. 사본이 `dx_app` 밖에 있으므로 셀은 소스 이미지 경로도 절대 경로로 바꿉니다. 그런 다음 편집한 그래프를 검증하고 실행합니다. 다시 빌드하는 것은 없습니다.
+
+<!-- cell: dx-app-graph-more-intro src: d848216d40 -->
+### 4.4 어떤 모델이 맞는지, 그리고 그 밖의 그래프
+
+모든 모델이 모든 자리에 맞는 것은 아닙니다. 2단계 모델은 크롭을 받을 수 있어야 하며, `consumes` 열이 `roi` 또는 `either`여야 합니다. `--list-models --consumes roi`는 레지스트리에서 이런 모델을 걸러 내며, `file` 열은 `.dxnn`이 디스크에 있는지 보여 줍니다. 다음 셀은 처음 몇 줄과 전체 개수를 출력합니다.
+
+이어서 `run_multi_model_demo.sh --list`가 샘플 그래프 목록을 출력합니다. 샘플 그래프는 캐스케이드(검출 모델이 속성, 재식별, 분류 모델에 결과를 전달), 팬아웃(같은 프레임에서 검출, 세그멘테이션, 포즈), 체인(검출 전에 초해상도 또는 저조도 개선), 그리고 필터링, 카운팅, 추적, 영역이나 선 확인을 수행하는 로직 노드를 다룹니다. `bash run_multi_model_demo.sh --check`는 NPU를 사용하지 않고 모든 샘플 그래프를 검증하며, 없는 모델마다 다운로드 명령을 출력합니다.
+
+<!-- cell: d4f00dc6-dde3-4742-a170-fa8699a69c6a src: ba63e660bb -->
+## 5. 문제 해결
 
 | 증상 | 표시되는 내용 | 원인 | 해결 |
 |---|---|---|---|
-| 실행 파일이 없음 | `./bin/yolov7_async: No such file or directory` | DX-APP이 빌드되지 않았거나 해당 타깃 없이 빌드됨 | 터미널에서 `dx_app`의 `./build.sh`(또는 `./build.sh --target yolov7_async`) 실행 |
-| 모델을 불러올 수 없음 | `assets/models` 아래 경로와 함께 `Failed to load model` | 모델이 다운로드되지 않음 | 1절의 다운로드 셀을 해당 모델 이름으로 실행한 뒤 다시 실행 |
-| 출력 창이 없음 | `cannot open display` 또는 창 없이 셀이 종료됨 | 그래픽 세션 없음(SSH 또는 헤드리스 호스트) | 데스크톱 세션에서 실행하거나, 이미지 입력(`-i`)을 사용하고 저장된 결과 확인 |
+| 이전 실행 파일 이름을 찾을 수 없음 | `./bin/yolov7_async: No such file or directory` | DX-APP v3.3.0은 실행 파일 이름을 변형 이름으로 지정함 | `./bin/yolov7_640x640_async` 같은 새 이름 사용. `ls bin`으로 목록 확인 |
+| 실행 파일이 없음 | `./bin/<variant>_sync: No such file or directory` | 기본 빌드(`--minimal`)는 26개 데모 모델만 빌드함 | 터미널에서 `dx_app`의 `./build.sh --target <variant>` 또는 `./build.sh --all` 실행 |
+| 불러오는 시점에 모델이 거부됨 | `.dxnn container v9 needs DX-RT >= 3.5.0, but this runtime is 3.4.1` 또는 `Model file format version 9 is not supported` | Model Zoo `2_5_0` 파일에는 DX-RT 3.5.0 이상이 필요함 | DX-Runtime 업데이트(튜토리얼 01의 3절). `dxrt-cli --version`으로 설치된 버전 확인 |
+| `import dx_engine` 실패 | `dx_engine and DX-RT versions do not match` | `venv-dx-runtime`에 다른 DX-RT용으로 빌드된 `dx_engine`이 있음 | 둘 다 3.5.x가 되도록 DX-Runtime 재설치 |
+| 모델을 불러올 수 없음 | `assets/models` 아래 경로와 함께 `Failed to load model` | 모델이 다운로드되지 않음 | 1절의 다운로드 셀을 해당 변형 이름으로 실행한 뒤 다시 실행 |
+| 그래프 검증에서 모델 누락 보고 | `MISSING: 1 model file is not in .../assets/models` | 그래프가 다운로드되지 않은 모델을 지정함 | `--check`가 출력한 다운로드 명령 또는 `bash setup.sh --models <variant> --no-force` 실행 |
+| 출력 창이 없음 | `cannot open display` 또는 창 없이 셀이 종료됨 | 그래픽 세션 없음(SSH 또는 헤드리스 호스트) | 데스크톱 세션에서 실행하거나, `--no-display --save`를 유지하고 저장된 결과 확인 |
 | 카메라를 열 수 없음 | `Could not open camera 0` | `/dev/video0`이 없거나 사용자가 `video` 그룹에 속해 있지 않음 | `v4l2-ctl --list-devices`; `sudo usermod -aG video $USER` 실행 후 다시 로그인 |
-| `run_demo.sh`가 데모를 저절로 시작함 | 10초 뒤 옵션 0이 실행됨 | 런처에 10초 입력 제한 시간이 있음 | 메뉴가 나타나는 즉시 옵션 번호 입력 |
+| `run_demo.sh`가 메뉴 전에 멈춤 | `Failed to download demo models.` | 데모 모델 자동 다운로드 중 네트워크에 접속할 수 없음 | 네트워크에 연결하거나, 네트워크가 되는 상태에서 `./setup.sh --demo-models`를 한 번 실행 |
+| 내보낸 Python 예제가 시작 시 멈춤 | `VariantConfigError: processor class '...' is exported by neither common.processors nor common.visualizers` | 기본 프루닝으로 내보내 `config.json`에 지정된 클래스가 빠짐(DX-APP v3.3.0) | `--no-prune`으로 다시 내보내기 |
 | 내보낸 Python 예제가 `dx_engine`을 임포트하지 못함 | `ModuleNotFoundError: No module named 'dx_engine'` | DX-Runtime 환경 대신 Jupyter Python으로 실행됨 | 3절의 셀처럼 `<dx-runtime>/venv-dx-runtime/bin/python` 사용 |
 | 내보낸 C++ 패키지가 구성(configure)되지 않음 | `Could not find a package configuration file provided by "dxrt"` | DX-RT가 설치되지 않았거나 사용자 지정 prefix 아래에 있음 | DX-Runtime 설치(튜토리얼 01의 3절) 또는 `cmake` 줄에 `-DCMAKE_PREFIX_PATH=<prefix>` 추가 |
 | 내보낸 예제가 입력을 찾지 못함 | `Input file not found: sample/img/...` | 패키지에 샘플 이미지가 없음 | `dx_app/sample/img`의 파일을 `--image`(Python) 또는 `-i`(C++)로 전달 |
 
-<!-- cell: dx-app-summary src: 43a530c056 -->
-## 5. 요약
+<!-- cell: dx-app-summary src: 2d8a7ea04c -->
+## 6. 요약
 
-### 5.1 완료한 DX-APP 워크플로
+### 6.1 완료한 DX-APP 워크플로
 
 ```text
 Load SDK paths
        │
        ▼
-Prepare selected models and videos
+Download the selected models by variant name
        │
        ▼
-Run C++ or Python examples
+Run C++ or Python examples headless and view the saved results
        │
        ├── Synchronous
        ├── Asynchronous
        └── PPU
        │
        ▼
-Use run_demo.sh or export a standalone example
+Find an example with dx_tool.sh, export it, and measure its variants
+       │
+       ▼
+Chain several models with a multi-model graph
 ```
 
-### 5.2 학습 대시보드
+### 6.2 학습 대시보드
 
 | 영역 | 이제 할 수 있는 것 |
 |---|---|
 | SDK 경로 | `config.json`에서 `DX_APP_DIR`과 관련 경로 불러오기 |
-| 모델 설정 | 실습에 필요한 모델과 영상만 다운로드 |
-| 예제 선택 | 작업, 모델, 언어, 실행 방식별로 예제 찾기 |
+| 이름 규칙 | `<task>/<family>/<variant>`의 변형 이름으로 예제, 실행 파일, 스크립트 찾기 |
+| 모델 설정 | 실습에 필요한 모델과 영상만 변형 이름으로 다운로드 |
 | 실행 방식 | 목표에 맞게 동기, 비동기, PPU 실행 중 선택 |
-| 데모 런처 | `run_demo.sh`로 설치된 예제 시작 |
-| 독립 실행형 코드 | `scripts/extract_model_package.sh`로 아무 모델의 예제나 내보낸 뒤 DX-APP 밖에서 빌드하고 실행 |
+| 측정 | 하나를 고르기 전에 `DXAPP_PROGRESS=1`로 네 가지 Python 변형 비교 |
+| 데모 런처 | 메뉴 또는 `--task`, `--mode`, `--input`으로 `run_demo.sh` 데모 시작 |
+| 독립 실행형 코드 | `scripts/extract_model_package.sh`로 아무 모델의 예제나 내보내고, 모델 카드를 읽은 뒤 DX-APP 밖에서 빌드하고 실행 |
 | Model Zoo 커버리지 | `config/model_registry.json` 또는 `dx_tool.sh search`로 모든 Model Zoo 모델의 DX-APP 예제 찾기 |
+| 멀티 모델 그래프 | 여러 모델을 연결하는 그래프 JSON을 검증, 실행, 편집 |
 
-### 5.3 완료 체크리스트
+### 6.3 완료 체크리스트
 
-- [ ] DX-RT에서 DEEPX NPU가 인식되는지 확인
+- [ ] DX-RT에서 DEEPX NPU가 인식되고 DX-RT가 3.5.0 이상인지 확인
 - [ ] 필요한 DX-APP 모델과 영상 에셋 준비
-- [ ] 엔드투엔드 추론 예제를 하나 이상 실행
+- [ ] 엔드투엔드 추론 예제를 하나 이상 실행하고 저장된 결과 확인
 - [ ] 사용 가능한 실행 방식 비교
-- [ ] 대상 작업의 참조 구현 찾기
+- [ ] `dx_tool.sh search`로 대상 작업의 참조 구현 찾기
 - [ ] `run_demo.sh` 열기
 - [ ] 독립 실행형 Python 및 C++ 예제를 DX-APP 트리 밖에서 내보내고 빌드하고 실행
+- [ ] 네 가지 Python 변형을 측정하고 모델에 맞는 하나 선택
 - [ ] 직접 선택한 Model Zoo 모델 실행
+- [ ] 멀티 모델 그래프를 실행하고 그 모델 중 하나 교체
 
 > **다음:** 튜토리얼 03으로 이동해 학습된 모델을 조정하고, DXNN으로 컴파일하고, DX-APP 런타임 구성과 통합해 보세요.

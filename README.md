@@ -5,14 +5,14 @@
 
 **Welcome!** This repository is a collection of hands-on JupyterLab tutorials for the DEEPX SDK (DX-All Suite). It starts with installing the SDK, continues with the compiler and the runtime, and ends with complete Python and C++ applications on the DEEPX NPU.
 
-> These tutorials target the dx-all-suite release tag `v2.4.2` (the default in Tutorial 01 section 1.1.2): DX-COM 2.4.1, DX-RT 3.4.2, DX-APP 3.2.2, DX-STREAM 3.1.2. The same component versions were validated on `main` as of September 2026 (v2.4.3).
+> The tutorials currently clone the dx-all-suite `staging` branch (v2.5.0 pre-release; the default in Tutorial 01 section 1.1.2) and will move to the `v2.5.0` tag once it is published. The last fully validated release is tag `v2.4.2`: DX-COM 2.4.1, DX-RT 3.4.2, DX-APP 3.2.2, DX-STREAM 3.1.2.
 
 ## 📚 Tutorials
 
 | Tutorial | What you learn | Needs an NPU | Other requirements |
 |---|---|---|---|
 | **00 JupyterLab QuickStart** | Cells, kernels, shell commands, shortcuts | - | - |
-| **01 Getting Started** | Clone DX-All Suite, install DX-COM, DX-TRON, and DX-Runtime, verify the NPU, use the DX-RT CLI tools | Yes | `sudo` for the installers; reboot after the driver |
+| **01 Getting Started** | Clone DX-All Suite, install DX-COM and DX-Runtime, verify the NPU, use the DX-RT CLI tools | Yes | `sudo` for the installers; reboot after the driver |
 | **02 DX-APP** | Ready-to-run C++ and Python examples for every Model Zoo model: run the bundled demos, then export standalone examples and run any model you choose | Yes | Display; camera optional |
 | **03 E2E AI Workflow** | Train, compile, and deploy a custom YOLOv7 Forklift and Worker detector | Yes | Training is optional and needs an NVIDIA GPU |
 | **04 DX-STREAM** | GStreamer pipelines with DX-STREAM, a custom postprocessor, and a Python people counter | Yes | Display; camera and RTSP optional; `sudo` for the rebuild |
@@ -105,7 +105,7 @@ The SDK installers call `sudo apt-get`. A notebook cell cannot answer a password
 
 - The first code cell of every notebook is identical: it loads `tutorial_paths.py`, resolves the SDK location, checks the requirements of that notebook, and prints a status table.
 - Every command a learner needs appears verbatim in the cell that runs it (`!git clone ...`, `!dxcom ...`, `!./build.sh`), with the same command shown in the Markdown above it so it can be copied into a terminal. The only exceptions are a few cells that parse a command's output; those print the exact command with a `$` prefix before running it.
-- Cells that open a window or need hardware are guarded by a flag (`RUN_DXTRON`, `RUN_DEMOS`, `RUN_CAMERA`, `SHOW_WINDOW`, `HEADLESS`, `FLASH_FIRMWARE`) so that *Run All* never blocks or changes the system by accident.
+- Cells that open a window or need hardware are guarded by a flag (`RUN_DEMOS`, `RUN_CAMERA`, `SHOW_WINDOW`, `HEADLESS`, `FLASH_FIRMWARE`) so that *Run All* never blocks or changes the system by accident.
 - Terminal commands in the Markdown write `<DX_ALL_SUITE_DIR>` for the DX-All Suite directory (default `~/dx-all-suite`; Tutorial 01 section 1.1 prints the configured value) and `<workspace>` for the tutorial's own `workspace/` directory. The code cells substitute the real paths.
 - Sections are numbered `## 1.`, `### 1.1`, `#### 1.1.1`. Each notebook starts with learning objectives and prerequisites and ends with troubleshooting, a summary, a completion checklist, and a pointer to the next tutorial.
 

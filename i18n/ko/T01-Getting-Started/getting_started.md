@@ -29,10 +29,10 @@
 <!-- cell: 2dcfff26-61ce-46f1-b08f-5669e3ead9a8 src: d3372f2340 -->
 ## DXNN® - DEEPX NPU SDK 소개 (DX-AS: DX-All Suite)
 
-<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: 99488f0f51 -->
+<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: f040d4a409 -->
 DX-AS(DX-All Suite)는 DEEPX 장치로 AI 모델을 컴파일하고 추론할 수 있게 해 주는 프레임워크와 도구의 통합 환경입니다. 개별 도구를 하나씩 설치해 통합 환경을 구성할 수도 있지만, DX-AS는 개별 도구의 버전을 서로 맞춰 최적의 호환성을 유지합니다.
 
-![](https://github.com/DEEPX-AI/dx-all-suite/raw/main/docs/source/resources/dxnn_sdk_illustration.png)
+<img src="assets/DXNN-SDK-Full-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="DEEPX SDK 아키텍처: AI 모델 컴파일 환경과 AI 모델 런타임 환경">
 
 DEEPX SDK는 크게 두 부분으로 나뉩니다.
 
@@ -45,14 +45,7 @@ DX-All Suite를 사용하면 두 구성 요소를 따로 관리하지 않고도 
 ![](https://github.com/DEEPX-AI/dx-all-suite/raw/main/docs/source/img/dx-as.png)
 
 
-![](https://github.com/DEEPX-AI/dx-all-suite/raw/main/docs/source/img/DXNN-SDK-Simple-Architecture.png)
-
-
-
-이해를 돕기 위한 DX-SDK 소개 YouTube 영상 두 편이 있습니다.
-- [Youtube - DEEPX SDK Introduction](https://www.youtube.com/watch?v=Js6Soex0WI4) | 다운로드: [EN](https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/1.DXNN_Introduce_ENG.mp4) · [中文](https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/1.DXNN_Introduce_CH.mp4) · [한국어](https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/1.DXNN_Introduce_KO.mp4)
-
-<img src="assets/youtube-dx-sdk.png" style="max-width: 1000px;">
+<img src="assets/DXNN-SDK-Simple-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="간략한 DEEPX SDK 아키텍처: ONNX 모델에서 DX-COM과 DX-RT를 거쳐 NPU까지">
 
 <!-- cell: 2af4c675-fced-4ac2-ab69-05a2a8abbeb9 src: accfc71fa0 -->
 ## 1. DX-All Suite 다운로드
@@ -80,24 +73,24 @@ DX-All Suite를 사용하면 두 구성 요소를 따로 관리하지 않고도 
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 8ee70f7dfe -->
+<!-- cell: dx-all-suite-branch-heading src: 8212e20324 -->
 #### 1.1.2 Git 브랜치
 
 다른 SDK 버전이 필요할 때만 아래 브랜치 또는 태그 이름을 변경하세요.
-현재 기본값은 릴리즈 태그 `v2.4.2`이며, `main`은 최신 개발 상태입니다.
+현재 기본값은 **v2.5.0** 사전 릴리즈 라인인 `staging` 브랜치입니다. `v2.4.2` 같은 릴리즈 태그는 고정된 버전을 가리키고, `main`은 최신 개발 상태입니다. `v2.5.0` 태그가 공개되면 기본값을 그쪽으로 옮길 예정입니다.
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: 13566ea0b3 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: ce888d0946 -->
 ### 1.2 DX-All Suite 클론
 
 다음 셀은 설정한 위치에 **DX-All Suite가 없을 때만** 아래 명령을 실행합니다. 디렉터리와 브랜치는 위에서 저장한 설정에서 가져오며, 셀에는 `{DX_ALL_SUITE_DIR}`와 `{DX_ALL_SUITE_BRANCH}`로 표시됩니다.
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch v2.4.2 https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch staging https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
-- `--branch`에는 브랜치나 태그를 쓸 수 있습니다. 튜토리얼은 기본적으로 릴리즈 태그 `v2.4.2`를 사용합니다.
-- `--depth 1 --shallow-submodules`는 모든 저장소의 최신 커밋만 가져옵니다. 수 GB 대신 약 600 MB를 다운로드하고 디스크에 1.6 GB를 사용합니다.
+- `--branch`에는 브랜치나 태그를 쓸 수 있습니다. 튜토리얼은 현재 `staging` 브랜치(v2.5.0 사전 릴리즈)를 사용합니다. 고정된 버전이 필요하면 `v2.4.2` 같은 릴리즈 태그를 쓰세요.
+- `--depth 1 --shallow-submodules`는 모든 저장소의 최신 커밋만 가져옵니다. `staging`에서는 최상위 저장소만으로도 디스크 약 1.1 GB(`dx-ai-studio`와 `dx-agent-dev-showcase`가 포함됨)이고, 서브모듈까지 합치면 약 2 GB를 예상하세요. `v2.4.2` 같은 릴리즈 태그는 더 작습니다(다운로드 약 600 MB, 디스크 1.6 GB).
 - `--recurse-submodules`는 서브모듈(`dx-runtime`, `dx-compiler`, `dx-modelzoo` 및 그 안의 저장소)도 함께 체크아웃합니다.
 - `--progress`는 출력이 터미널이 아닐 때도 진행 상황을 출력하므로 셀 안에서 진행 상황을 볼 수 있습니다.
 
@@ -116,13 +109,14 @@ git -C <DX_ALL_SUITE_DIR> submodule update --init --recursive --depth 1 --progre
 
 다음 셀은 지금까지 설치된 항목을 보여 주고, `MISSING`으로 표시된 항목에 대해서는 그것을 제공하는 정확한 단계를 알려 줍니다. 이 노트북으로 돌아올 때마다 다시 실행하세요. 반복 실행해도 안전합니다.
 
-<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: 64b774a178 -->
+<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: 5f78225be6 -->
 ### 1.4 DX-All Suite 구성
 
-클론에는 세 개의 Git 서브모듈이 들어 있습니다.
+클론에는 다음 Git 서브모듈이 들어 있습니다(튜토리얼은 앞의 세 개를 사용합니다).
  - `dx-compiler` (**DX-Compiler**): ONNX 모델을 DXNN으로 변환합니다. 2절에서 설치합니다.
  - `dx-runtime` (**DX-Runtime**): 컴파일된 모델을 DEEPX NPU에서 실행합니다. 3절에서 설치합니다.
  - `dx-modelzoo`: 이후 튜토리얼에서 사용하는 사전 컴파일된 모델과 컴파일러 설정입니다.
+ - `dx-k8s-device-plugin` (`staging`에 포함): NPU용 Kubernetes 디바이스 플러그인입니다. 이 튜토리얼에서는 사용하지 않습니다.
 
 <!-- cell: 2ab0cf89-7974-40e6-8117-18165d1ef10f src: 3d336a7ce6 -->
 DX-Runtime은 다음을 제공합니다.
@@ -135,7 +129,7 @@ DX-Runtime은 다음을 제공합니다.
 <!-- cell: 912db406-4064-4ea1-b075-c455abeab01f src: b20e1b138c -->
 ## 2. DX-Compiler 설치
 
-<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 7b700f5a1e -->
+<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 652cd9a15d -->
 자세한 내용은 [DX-All Suite 설치 가이드](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)를 참고하세요.
 
 DX-Compiler 환경은 사전 빌드된 바이너리를 제공하며 소스 코드는 포함하지 않습니다. 설치 스크립트는 각 모듈을 원격 서버에서 다운로드합니다.
@@ -143,10 +137,9 @@ DX-Compiler 환경은 사전 빌드된 바이너리를 제공하며 소스 코�
 | 명령 | 설치 대상 | `sudo` |
 |---|---|---|
 | `./dx-compiler/install.sh --target=dx_com` | 전용 Python 환경에 설치되는 DX-COM 컴파일러(`dxcom`) | 이미 설치되어 있어도 `apt-get install python3-dev python3-venv`를 실행 |
-| `./dx-compiler/install.sh --target=dx_tron` | DX-TRON 모델 뷰어(`.deb` 패키지) | `apt-get`으로 패키지 설치 |
-| `./dx-compiler/install.sh` | 둘 다 | 위 두 가지 모두 |
+| `./dx-compiler/install.sh` | `--target=dx_com`과 동일. 기본 대상 `all`에는 이제 DX-COM만 포함됨 | 위와 동일 |
 
-이 튜토리얼은 2.1에서 DX-COM을 설치합니다. DX-TRON은 선택 사항이며 2.3에서 다룹니다.
+이 튜토리얼은 2.1에서 DX-COM을 설치합니다.
 
 <!-- cell: 3bdb9b57-de73-4186-bac9-ac1effa245da src: 54b5b0324e -->
 ### 2.1 DX-COM 설치
@@ -229,46 +222,6 @@ dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
 `--gen_log` 옵션은 컴파일 로그를 `compiler.log` 파일에 기록합니다.
 
 저장된 로그 메시지를 확인해 보겠습니다.
-
-<!-- cell: d93f93a6-c5f7-476e-9632-695968e6cc3c src: 2e60c3c391 -->
-### 2.3 DX-Tron
-
-**DX-TRON**은 DEEPX 툴체인으로 컴파일한 `.dxnn` 모델 파일을 살펴보는 그래픽 시각화 도구입니다. 
-
-모델 구조를 불러와 확인하고, 색으로 구분된 그래프로 NPU와 CPU 사이의 워크로드 분배를 볼 수 있습니다. 
-
-DX-TRON을 사용하면 모델 실행 흐름을 더 잘 이해하고 전체 성능을 개선할 수 있습니다.
-
-> **참고:** DX-TRON은 SDK와 함께 계속 배포되지만 더 이상 적극적으로 유지보수되지 않습니다. 컴파일된 모델의 리포트로는 `dxcom --export_html`이 만드는 HTML 요약(튜토리얼 05)을 권장합니다. DX-TRON은 `.dxnn` 파일을 빠르게 시각적으로 살펴볼 때 여전히 유용합니다.
-
-<img src="assets/sc-dxtron.png" style="max-width: 600px;">
-
-**주요 기능:**
-- **.dxnn 파일 지원**: DEEPX 툴체인으로 컴파일한 모델 파일을 불러와 시각화합니다.
-- **워크로드 시각화**: 워크로드 실행을 색으로 구분해 표시합니다.
-- 빨간색: NPU에서 실행되는 연산
-- 파란색: CPU 또는 호스트에서 실행되는 연산
-- **모델 탐색 컨트롤**: 왼쪽 아래의 뒤로 가기 화살표로 언제든 모델 개요 화면으로 돌아갈 수 있습니다.
-- **대화형 노드 검사**: 그래프의 노드를 더블 클릭하면 해당 연산의 상세 정보를 볼 수 있습니다.
-- 참고: DX-TRON은 DXNN을 지원하기 위해 [netron](https://netron.app/)을 기반으로 개발되었습니다.
-
-<!-- cell: cdc69460-e92c-460b-aaa5-dc0651eba2dc src: ffa894d40f -->
-#### 2.3.1 DX-TRON 설치
-
-DX-TRON은 Debian 패키지로 배포되므로 설치 스크립트가 `sudo apt-get`을 사용합니다.
-
-```bash
-cd <DX_ALL_SUITE_DIR>
-./dx-compiler/install.sh --target=dx_tron
-```
-
-2.1과 마찬가지로 세 셀이 이어집니다. **확인**(`dxtron`이 설치되어 있는지, `sudo`가 비밀번호 없이 동작하는지), **설치**(위 명령. 확인 셀이 실행해도 된다고 알려 줄 때만 실행하거나 터미널에서 실행하세요), **검증**입니다.
-
-<!-- cell: 061c3fe9-86fa-4dc3-aa5a-bf48c2365459 src: edd3da7766 -->
-#### 2.3.2 DX-TRON 실행
-
-다음 셀은 2.2.2에서 컴파일한 MobileNetV2 모델을 DX-TRON에서 엽니다. 창을 띄우려면 데스크톱 세션이 필요하고 창이 열려 있는 동안 셀이 실행 중 상태로 유지되므로, 셀 첫 줄의 `RUN_DXTRON = True`일 때만 실행됩니다. 기본값 `False`에서는 명령만 출력합니다. 3.4.4의 두 번째 DX-TRON 셀도 같은 플래그를 사용합니다.
-> **참고:** 위의 중지 버튼('■')을 클릭해 `dxtron`을 종료할 수 있습니다!
 
 <!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: bcd38bb9d2 -->
 ## 3. DX-Runtime 설치
@@ -416,7 +369,7 @@ NPU가 지원하지 않는 연산자는 CPU 오프로딩을 통해 ONNX Runtime�
 <!-- cell: 2e5f3528-1de5-45e1-87db-c8018aa6c1d6 src: da34d3824a -->
 ## 5. 요약
 
-<!-- cell: 7acbc00f-59ec-4386-b048-d447c0507bff src: 077c9eb1db -->
+<!-- cell: 7acbc00f-59ec-4386-b048-d447c0507bff src: 0521cff949 -->
 | 항목 | DX-Compiler | DX-Runtime |
 |---|---|---|
 | 역할 | 모델 컴파일 | 모델 추론 실행 |
@@ -430,7 +383,6 @@ NPU가 지원하지 않는 연산자는 CPU 오프로딩을 통해 ONNX Runtime�
 
 - [ ] `config.json`이 DX-All Suite 디렉터리를 가리키고 1.3의 상태 셀에서 모든 항목이 `OK`로 표시됨
 - [ ] `dxcom -h`가 실행되고 `MobileNetV2-1.dxnn`이 컴파일됨 (2.2)
-- [ ] `dxtron`으로 `.dxnn` 파일을 열 수 있음 (2.3, 선택)
 - [ ] `/dev/dxrt0`이 존재하고 `dxrt.service`가 활성 상태이며 `dxcli -s`에 NPU가 표시됨 (3.2)
 - [ ] 선택한 모델이 공유 워크스페이스에 다운로드됨 (3.3)
 - [ ] `dxrun`과 `dxbenchmark`로 NPU에서 모델을 실행함 (3.4)

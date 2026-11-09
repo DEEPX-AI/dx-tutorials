@@ -8,25 +8,28 @@
 <!-- cell: 8d745a2c-590f-466c-8d99-dac51463d1a7 src: 13dceb44ed -->
 在第二篇教程中,我们将介绍 DX-APP,并学习如何在 AI 应用中运行编译后的 DXNN 模型。
 
-<!-- cell: 6780ee30-ea89-4759-806a-13dc7b1667bd src: fa8fcdcd69 -->
+<!-- cell: 6780ee30-ea89-4759-806a-13dc7b1667bd src: 2957c3ce1d -->
 ## 学习目标
 
 完成本教程后,您将能够:
 
-- 了解 DX-APP 为 **[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/) 中的每一个模型**都提供了可直接运行的 C++ 和 Python 示例代码,并使用这些代码运行您选择的任意模型;
-- 描述 DX-APP 是什么,以及它的 C++ 和 Python 示例是如何组织的;
+- 了解 DX-APP 为 **[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/) 中的每一个模型**(497 个模型变体)都提供了可直接运行的 C++ 和 Python 示例代码,并使用这些代码运行您选择的任意模型;
+- 描述示例如何按任务、模型系列和变体组织,以及变体名称如何把模型文件、可执行文件和脚本关联起来;
 - 只下载教程所需的模型和视频;
-- 在图像、视频和摄像头上运行分类、检测、姿态和分割示例;
-- 在同步、异步和 PPU 执行方式之间进行选择;
-- 启动交互式演示启动器;
-- 导出独立的 C++ 或 Python 示例,并在 DX-APP 目录树之外运行它。
+- 运行分类、检测、姿态和分割示例,并在笔记本中查看保存的结果;
+- 在同步、异步和 PPU 执行方式之间进行选择,并通过测量确定哪种 Python 变体适合您的模型;
+- 使用 `dx_tool.sh` 查询示例,并启动演示启动器;
+- 导出独立的 C++ 或 Python 示例,阅读它的模型卡,并在 DX-APP 目录树之外运行它;
+- 使用多模型图把多个模型串联成一条流水线,只需编辑 JSON 文件而无需修改代码。
 
 <!-- cell: 6c593151-97c1-49c9-ac7b-d9149c7e58ba src: ffff5dd049 -->
 ## 什么是 DX-APP?
 
-<!-- cell: 4a8fc6e5-dd5e-4014-a9bd-1aacde11dea1 src: ac1c2b5a7b -->
-**DX-APP** 是面向 DEEPX NPU 的参考应用。它的核心特点是覆盖面:**[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/) 中发布的每一个模型都有与之对应、可直接运行的示例**,同时提供 C++ 和 Python 两个版本,并按任务组织(object detection、classification、face detection、pose、segmentation、depth 等)。您在 Model Zoo 页面选好一个模型,DX-APP 中就已经包含了运行它的代码。DX-APP 帮助开发者快速搭建运行时环境,
+<!-- cell: 4a8fc6e5-dd5e-4014-a9bd-1aacde11dea1 src: f4bca1a566 -->
+**DX-APP** 是面向 DEEPX NPU 的参考应用。它的核心特点是覆盖面:**[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/) 中发布的每一个模型都有与之对应、可直接运行的示例**,同时提供 C++ 和 Python 两个版本,并按任务组织(目标检测、分类、人脸检测、姿态、分割、深度等)。您在 Model Zoo 页面选好一个模型,DX-APP 中就已经包含了运行它的代码。DX-APP 帮助开发者快速搭建运行时环境,
 并可作为构建和定制自己的 AI 应用的模板。
+
+本教程使用 **DX-APP v3.3.0**,即 DX-All Suite v2.5.0 附带的版本。
 
 更多细节请参阅 [dx_app git 仓库](https://github.com/DEEPX-AI/dx_app/blob/main/README.md)中的概述,或从[这里](https://developer.deepx.ai/download/?id=580)下载 DX-APP 用户指南!
 
@@ -34,7 +37,7 @@
 
 让我们看看 DX-APP 的文件结构:
 
-<!-- cell: 61ec96cc-5fe7-4a93-a39e-709db97d0465 src: 43789987cb -->
+<!-- cell: 61ec96cc-5fe7-4a93-a39e-709db97d0465 src: e31818a20b -->
 **DX-APP** 演示程序经过优化,可用最少的配置在 DEEPX NPU 上展示预编译模型。
 每个演示程序代表一种常见的 AI 任务,可以使用图像、视频或实时摄像头
 输入来执行。
@@ -46,91 +49,79 @@
 ```shell
 dx_app/
 ├── src/
-│   ├── cpp_example/            # C++ end-to-end examples (352 models across 22 tasks)
-│   │   ├── <task>/<model>/     #   Model-specific factories, configs, and entry points
-│   │   └── common/             # Shared C++ runtime layer
-│   │       ├── base/           #   Abstract interfaces (IFactory, IProcessor, ...)
-│   │       ├── processors/     #   42 postprocessors, 4 preprocessors, and helpers
-│   │       ├── runner/         #   16 task-specific sync/async runner pairs
-│   │       ├── inputs/         #   Image, video, camera, and RTSP input sources
-│   │       ├── visualizers/    #   13 task-specific visualizers
-│   │       ├── config/         #   ModelConfig loader
-│   │       ├── trackers/       #   Shared IoU tracker
-│   │       ├── third_party/    #   Vendored header dependencies
-│   │       └── utility/        #   Labels, preprocessing, profiling, and run utilities
-│   ├── python_example/         # Python end-to-end examples (352 models across 22 tasks)
-│   │   ├── <task>/<model>/     #   Four execution/postprocessing variants per model
-│   │   └── common/             # Shared Python runtime layer
-│   │       ├── base/           #   Abstract interfaces (IFactory, IProcessor, ...)
-│   │       ├── processors/     #   41 postprocessors, 4 preprocessors, and helpers
-│   │       ├── runner/         #   SyncRunner, AsyncRunner, arguments, and run utilities
-│   │       ├── inputs/         #   Image, video, camera, and RTSP input sources
-│   │       ├── visualizers/    #   14 task-specific visualizers
-│   │       ├── config/         #   ModelConfig loader and schema
-│   │       ├── trackers/       #   Shared IoU tracker
-│   │       └── utility/        #   Labels, preprocessing, profiling, and geometry helpers
-│   ├── postprocess/            # C++ post-processing (consumed by pybind11 bindings)
-│   ├── utility/                # Shared support code used by build flow
+│   ├── cpp_example/                    # C++ end-to-end examples (497 model variants across 29 tasks)
+│   │   ├── <task>/<family>/<variant>/  #   One folder per .dxnn file: entry points, factory, config.json, README.md
+│   │   ├── multi_model_graph/          #   Multi-model graph CLI and sample graph JSON files (section 4)
+│   │   └── common/                     # Shared C++ runtime layer
+│   │       ├── base/                   #   Abstract interfaces (factories, pre/post-processors, visualizers, inputs)
+│   │       ├── processors/             #   Shared processors
+│   │       ├── runner/                 #   Task-specific sync/async runner pairs
+│   │       ├── inputs/                 #   Image, video, camera, and RTSP input sources
+│   │       ├── visualizers/            #   Task-specific visualizers
+│   │       ├── config/                 #   ModelConfig loader
+│   │       ├── graph/                  #   Multi-model graph engine
+│   │       ├── registry/               #   Model registry used by the graph engine
+│   │       ├── trackers/               #   IoU tracker
+│   │       ├── third_party/            #   Header-only third-party libraries
+│   │       └── utility/                #   Labels, preprocessing, profiling, and run utilities
+│   ├── python_example/                 # Python end-to-end examples (the same 497 variants and 29 tasks)
+│   │   ├── <task>/<family>/<variant>/  #   Four scripts per variant, config.json, and the model card files
+│   │   └── common/                     # Shared Python runtime layer (same structure as the C++ one)
+│   ├── postprocess/                    # C++ post-processing (consumed by pybind11 bindings)
+│   ├── utility/                        # Shared support code used by build flow
 │   └── bindings/
 │       └── python/
-│           └── dx_postprocess/ # pybind11 bindings wrapping src/postprocess/
+│           ├── dx_postprocess/         # pybind11 bindings wrapping src/postprocess/
+│           └── dx_graph/               # pybind11 module running multi-model graphs (./build.sh --all)
 ├── config/
-│   ├── model_registry.json     # Model registry — single source of truth
-│   ├── test_models.conf        # Test model configuration
-│   └── README.md               # Config directory documentation
-├── scripts/                    # Developer tools, validation, and helper scripts
-├── tests/                      # C++, Python, script, helper, and Windows tests
-├── assets/                     # Links to downloaded models and videos
-├── sample/                     # Bundled images and task-specific sample data
-├── bin/                        # C++ executables generated by the build
-├── cmake/                      # x86_64 and aarch64 toolchain files
-├── extern/                     # External header dependencies
-├── build.sh / build.bat        # Linux and Windows build scripts
-├── setup.sh / setup.bat        # Model, video, and dependency setup
-├── setup_sample_models.sh      # Download the sample model set only
-├── setup_sample_videos.sh      # Download the sample video set only
-├── run_demo.sh / run_demo.bat  # Interactive demo launcher
-├── run_tc.sh                   # Unified test runner for example tests
-├── install.sh                  # Dependency and OpenCV installer
-└── docs/                       # Detailed documentation
+│   ├── model_registry.json             # Model registry: one row per variant, the single source of truth
+│   ├── test_models.conf                # Test model configuration
+│   └── README.md                       # Config directory documentation
+├── scripts/                            # dx_tool.sh, extract_model_package.sh, download_models.py, and helpers
+├── tests/                              # pytest-based test suites
+├── assets/                             # Links to downloaded models and videos
+├── sample/                             # Bundled images and task-specific sample data
+├── bin/                                # C++ executables generated by the build: <variant>_sync, <variant>_async
+├── build.sh                            # Build script (default: the 26 demo models; --all: every variant)
+├── setup.sh                            # Model, video, and dependency setup
+├── run_demo.sh                         # Demo launcher: 26 demos, up to 6 execution modes
+├── run_multi_model_demo.sh             # Multi-model graph scenarios and graph checks
+├── install.sh                          # Dependency and OpenCV installer
+└── docs/                               # Detailed documentation
 ```
 ---
-**DX-APP 同时提供 C++ 和 Python 示例:**
+**任务、模型系列和变体**
 
-`cpp_example` 和 `python_example` 都遵循相同的"任务优先"结构。
+每个示例都位于 `<task>/<family>/<variant>/` 中。**变体**(variant)是 `.dxnn` 文件名去掉扩展名后的部分,属于该模型的所有内容都以它命名:
 
-两种语言目前都提供相同的 22 个任务目录:
+| 项目 | 以 `yolov7_640x640.dxnn` 为例 |
+|---|---|
+| 示例文件夹 | `src/cpp_example/object_detection/yolov7/yolov7_640x640/`,以及 `src/python_example/` 下的相同路径 |
+| C++ 可执行文件 | `bin/yolov7_640x640_sync`、`bin/yolov7_640x640_async` |
+| Python 脚本 | `yolov7_640x640_sync.py`、`yolov7_640x640_async.py`、`yolov7_640x640_sync_cpp_postprocess.py`、`yolov7_640x640_async_cpp_postprocess.py` |
+| 下载名称 | `./setup.sh --models yolov7_640x640` |
 
-- 3d_object_detection/
-- attribute_recognition/
-- classification/
-- depth_estimation/
-- embedding/
-- face_alignment/
-- face_detection/
-- hand_detection/
-- hand_landmark/
-- image_denoising/
-- image_enhancement/
-- instance_segmentation/
-- keypoint_detection/
-- obb_detection/
-- object_detection/
-- object_pose_estimation/
-- panoptic_driving_perception/
-- pose_estimation/
-- ppu/
-- reid/
-- semantic_segmentation/
-- super_resolution/
+> **从 DX-APP v3.2.x 升级而来?** 可执行文件现在以变体命名(`bin/yolov7_async` 现在是 `bin/yolov7_640x640_async`),PPU 模型移到了 `object_detection/yolo_ppu/`,并且有几个任务被重命名或拆分:`classification` 现在是 `image_classification`,`obb_detection` 改为 `oriented_object_detection`,`image_enhancement` 改为 `low_light_enhancement`,`face_alignment` 改为 `face_landmark`,而 `embedding` 拆分为 `face_recognition`、`image_retrieval`、`visual_place_recognition` 和 `zero_shot_image_classification`。
 
-<!-- cell: dx-app-prerequisites src: 5e7d954f0f -->
+**29 个任务目录**(`cpp_example` 和 `python_example` 中相同):
+
+- 检测:`object_detection`、`oriented_object_detection`、`face_detection`、`hand_detection`、`mainbody_detection`、`3d_object_detection`、`anomaly_detection`
+- 分割:`instance_segmentation`、`semantic_segmentation`、`zero_shot_instance_segmentation`、`panoptic_driving_perception`、`image_matting`
+- 姿态与关键点:`pose_estimation`、`hand_landmark`、`face_landmark`、`keypoint_detection`、`object_pose_estimation`
+- 分类与属性:`image_classification`、`zero_shot_image_classification`、`person_attribute`、`face_attribute`
+- 识别与检索:`face_recognition`、`person_reid`、`image_retrieval`、`visual_place_recognition`
+- 图像复原与深度:`image_denoising`、`super_resolution`、`low_light_enhancement`、`depth_estimation`
+
+DX-APP v3.3.0 新注册了 147 个 Model Zoo 模型,包括 RT-DETR(v1、v2 和 v3)、YOLOv12、YOLOv13、预优化的 YOLO26,以及用于新任务的模型:异常检测(PatchCore、EfficientAD)、图像抠图(PP-Matting)、CLIP 图像检索、行人重识别,以及视觉地点识别(EigenPlaces)。
+
+<!-- cell: dx-app-prerequisites src: f5f35b82be -->
 ## 前提条件
 
 - 已完成教程 01:使用 `--all` 安装了 DX-Runtime(DX-RT、DX-APP 及其 `venv-dx-runtime` Python 环境),NPU 以 `/dev/dxrt0` 的形式可见。
-- DX-APP 示例模型和视频。教程 01 的 3.3 节会下载它们;下面的第 1 节只获取仍然缺失的内容(本教程约需 300 MB 的模型,在全新主机上还需 1.2 GB 的共享示例视频压缩包)。
-- 图形桌面会话为可选项:第 2 节的演示单元格会打印帮助文本或以无显示方式运行,第 3 节以无显示方式运行独立示例,并在笔记本中显示保存的图像。
-- 不需要 `sudo`。预计约 30 分钟;3.3 节的 C++ 构建需要一到两分钟。
+- **DX-RT 3.5.0 或更高版本。** DX-APP v3.3.0 从 Model Zoo 版本 `2_5_0` 下载模型,其 `.dxnn` 文件使用 v9 容器格式。较旧的运行时会拒绝加载这些文件(参见故障排除)。`dxrt-cli --version` 会打印已安装的版本。
+- DX-APP 示例模型和视频。教程 01 的 3.3 节会下载它们;下面的下载单元格只获取仍然缺失的内容(本教程约需 300 MB 的模型,在全新主机上还需 1.2 GB 的共享示例视频压缩包)。
+- 图形桌面会话为可选项。单元格以无显示方式运行示例(`--no-display --save`),并在笔记本中显示保存的图像;会打开窗口的单元格由 `SHOW_WINDOW = False` 这样的标志关闭。
+- 不需要 `sudo`。预计约 45 分钟。有两个单元格各需一到两分钟:3.3 节的 C++ 构建,以及在缺少图可执行文件时 4.1 节的构建。
 
 下一个单元格会定位 SDK、检查这些要求并打印状态表。任何标记为 `MISSING` 的项目都会附带提供它的步骤。
 
@@ -150,12 +141,12 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 
 3. 下一个单元格会用您的实际安装路径打印同样的两条命令。
 
-<!-- cell: dx-app-setup-selection-guide src: 23faa57e4f -->
+<!-- cell: dx-app-setup-selection-guide src: cb8e8bf9e4 -->
 > ![](assets/sc-setup.png)
 
-4. 如果您有至少 29 GB 的可用存储空间,请按 **Enter** 下载所有 Model Zoo 模型。
+4. 如果您有足够的可用存储空间容纳整个 Model Zoo(数十 GB),请按 **Enter** 下载所有 Model Zoo 模型。截图来自较早的版本;当前菜单列出了更多模型和新的任务名称。
 
-5. 否则,请使用下面的代码单元格只下载本教程需要的模型。教程 01 的 3.3 节已经下载了包含此列表的 24 个模型的超集;如果您已完成该节,`--no-force` 会让单元格跳过所有文件并在几秒内完成。后面的第 3 节会以同样的方式添加它使用的两个 YOLO26 模型。
+5. 否则,请使用下面的代码单元格只下载本教程需要的模型。请传入**变体名称**,即 `.dxnn` 文件名去掉扩展名的部分,例如 `yolov7_640x640`;旧的 Model Zoo 名称(例如 `YoloV7`)仍然可以使用。教程 01 的 3.3 节已经下载了这些模型;如果您已完成该节,`--no-force` 会让单元格跳过所有文件并在几秒内完成。第 3 节和第 4 节会以同样的方式获取它们额外需要的模型。
 
 <!-- cell: feedff76-7e3e-4407-8fd4-45ce6f44bafc src: 62ee90271e -->
 6. 验证模型和视频都已按预期下载:
@@ -163,18 +154,33 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 <!-- cell: 952b336d-4a65-436a-8024-5094e7392138 src: fd09a5dbf9 -->
 ## 2. 运行演示程序
 
-<!-- cell: cc5f5be6-8a4d-49ad-9a60-a26ee425696e src: 1f26a35c90 -->
+<!-- cell: cc5f5be6-8a4d-49ad-9a60-a26ee425696e src: 736e2f2969 -->
 **DX-APP** 是一组现成的演示应用,展示如何在 DEEPX NPU 上运行编译后的模型,包括分类、检测、分割、姿态估计等多种任务。
 
 用户可以通过探索各种 DX-APP 演示程序来学习并构建应用。
 
-<!-- cell: 2cdf03bd-4b9a-4a95-baaf-62100bda6a94 src: 77e50c45c9 -->
-### 2.1 分类
-- **bin/resnet50_async** 是运行预训练图像分类模型并输出最高预测类别的 DX-APP 可执行文件。
+`bin/` 中的 C++ 可执行文件以变体命名:`bin/<variant>_sync` 和 `bin/<variant>_async`。它们都接受相同的输入选项(`-i` 图像、`-v` 视频、`-c` 摄像头、`-r` RTSP 流)和相同的输出选项:
 
-<!-- cell: 4e228439-78cd-4b7e-83dd-23bffe2def95 src: 6652a2c692 -->
+| 选项 | 作用 |
+|---|---|
+| `--no-display` | 不打开窗口,只打印性能摘要 |
+| `-s`, `--save` | 保存渲染后的结果 |
+| `--save-dir <dir>` | 保存位置;每次运行都会写入一个新的子目录 |
+| `-l`, `--loop <n>` | 将输入重复 `n` 次 |
+
+本节的单元格使用 `--no-display --save` 以无显示方式运行,并在单元格下方显示保存的图像,因此它们也能通过 SSH 使用,并且永远不会阻塞笔记本。被注释掉的行会在视频或摄像头上运行同一个示例;它们会打开窗口,因此请在桌面会话中使用。
+
+下一个单元格会创建输出目录,以及一个显示最新保存图像的小辅助函数。
+
+<!-- cell: 2cdf03bd-4b9a-4a95-baaf-62100bda6a94 src: bbf4aaaa60 -->
+### 2.1 分类
+- **bin/resnet50_224x224_sync** 运行一个预训练的 ImageNet 分类模型,并在图像上绘制预测概率最高的类别。
+
+对每个 C++ 示例来说,`-m` 都是可选的:不指定时,示例会加载其默认模型 `assets/models/<variant>.dxnn`。这些单元格仍然会传入它,以便您看清模型来自哪里。
+
+<!-- cell: 4e228439-78cd-4b7e-83dd-23bffe2def95 src: 395be1de2b -->
 ### 2.2 目标检测
-- **bin/yolov\<version>_async** 是 DX_APP 演示二进制文件,它运行基于 YOLO 的目标检测模型,在图像、视频或摄像头中检测目标。
+- **bin/yolov7_640x640_sync** 和 **bin/yolov7_640x640_async** 在图像、视频或摄像头上运行 YOLOv7 目标检测器。下一个单元格会列出默认构建生成的其他 YOLO 可执行文件。
 
 <!-- cell: dx-app-execution-mode-comparison src: f76c3f12c3 -->
 #### 执行模式
@@ -192,60 +198,85 @@ DX-APP 提供不同的执行模式,以满足不同的应用需求:
 
 <img src="https://github.com/DEEPX-AI/dx_rt/raw/main/docs/source/resources/09_01_Sync_Inference_Operation.png" style="max-width: 300px;">
 
-<!-- cell: 59d677b9-2a5b-4590-9896-09fa8a602b5f src: def72565fc -->
+<!-- cell: 59d677b9-2a5b-4590-9896-09fa8a602b5f src: 933d6309ef -->
 - **异步应用**
 
 
 <img src="https://github.com/DEEPX-AI/dx_rt/raw/main/docs/source/resources/09_01_Async_Inference_Operation.png" style="max-width: 1000px;">
 
-<!-- cell: d1f4d8e5-56ba-4aaa-b86e-9f3db0ecc1b9 src: 6feef57d39 -->
+下一个单元格用异步可执行文件处理同一段视频。将它的 `Overall FPS` 行与上面的同步运行进行比较。
+
+<!-- cell: d1f4d8e5-56ba-4aaa-b86e-9f3db0ecc1b9 src: 964c025ec3 -->
 - **PPU 与非 PPU 对比**
 
-下面两个单元格分别用非 PPU 和 PPU 版本的 YOLOv7 模型处理同一段 7 秒的视频片段。当 `SHOW_WINDOW = False`(默认值)时,它们以无显示方式运行(带 `--no-display`),只打印 FPS 摘要,因此笔记本不会阻塞;在桌面会话中设置 `SHOW_WINDOW = True`,即可在 DX-APP 窗口中观看检测结果和 FPS 计数器。比较两行 FPS 输出:PPU 模型把候选框过滤和类别选择移到了 NPU 上。
+下面两个单元格分别用非 PPU 模型(`bin/yolov7_640x640_async`)和 PPU 模型(`bin/yolov7_640x640_ppu_async`)处理同一段 7 秒的视频片段。当 `SHOW_WINDOW = False`(默认值)时,它们以无显示方式运行(带 `--no-display`),只打印 FPS 摘要,因此笔记本不会阻塞;在桌面会话中设置 `SHOW_WINDOW = True`,即可在 DX-APP 窗口中观看检测结果和 FPS 计数器。比较两行 FPS 输出:PPU 模型把候选框过滤和类别选择移到了 NPU 上。所有 PPU 示例都列在 `object_detection/yolo_ppu/` 下。
 
-<!-- cell: 322638df-c151-40e1-960f-9262f721b3dc src: 35efe0e651 -->
+<!-- cell: 322638df-c151-40e1-960f-9262f721b3dc src: 311dfc08a6 -->
 ### 2.3 姿态估计
-- **bin/yolov8s_pose_sync** 是 DX_APP 演示二进制文件,它运行姿态估计模型,在图像、视频或摄像头中检测人并估计关键点。
+- **bin/yolov8-s-pose_640x640_sync** 运行一个姿态估计模型,在图像、视频或摄像头中检测人并估计其身体关键点。
 
-<!-- cell: bed097f7-bf23-4bf7-95b3-17ee8e288cff src: aef4f46b9d -->
+<!-- cell: bed097f7-bf23-4bf7-95b3-17ee8e288cff src: 7664b14349 -->
 ### 2.4 分割
-- **bin/yolov8n_seg_async** 是 DX_APP 演示二进制文件,它运行实例分割模型,为图像、视频或摄像头生成逐像素的类别标签。
+- **bin/yolov8-n-seg_640x640_async** 运行一个实例分割模型:为它在图像、视频或摄像头中找到的每个目标生成一个边界框和一个像素掩码。
 
-<!-- cell: 9236142c-e920-47f2-81ed-2aa530727caf src: a73d6764ed -->
-### 2.5 演示脚本
+<!-- cell: 9236142c-e920-47f2-81ed-2aa530727caf src: 707b891fba -->
+### 2.5 演示启动器:使用 run_demo.sh 运行演示程序
 
-<!-- cell: e50af299-3964-4065-9c27-f35258bfba3f src: 17b6d175c7 -->
-`run_demo.sh` 是面向 C++ 和 Python 演示程序的交互式启动器。
-
-它是交互式的,因此请在终端(**File > New > Terminal**)中运行:
+<!-- cell: e50af299-3964-4065-9c27-f35258bfba3f src: de4f481f2f -->
+`run_demo.sh` 可启动 **26 个演示程序**(每个任务一个),最多支持 **6 种执行模式**:C++ 同步和异步,以及四种 Python 变体。它会询问三个问题(演示程序、模式、输入),因此需要在终端中启动并回答菜单(**File > New > Terminal**):
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 ./run_demo.sh
 ```
 
-下一个单元格会用您的实际路径打印同样的命令。
+下一个单元格会用您的实际路径打印同样的命令。在显示第一个菜单之前,启动器会下载 26 个演示模型中缺失的那些,因此首次启动可能需要几分钟。它还会自行找到 `venv-dx-runtime` 的 Python,因此 Python 模式无需激活虚拟环境。
 
-<!-- cell: dx-app-demo-selection-guide src: e1636d1d6f -->
-> ![](assets/sc-run_demo.png)
+<!-- cell: dx-app-demo-selection-guide src: eeab3bd7f9 -->
+第一个菜单列出了各个演示程序(菜单本身以英文显示):
 
-该启动器在 DX-APP 的各个任务类别中提供了 23 个可直接运行的演示程序。
+| # | 演示程序 | # | 演示程序 |
+|---|---|---|---|
+| 0 | 目标检测 (YOLOv7) | 13 | 图像增强 (Zero-DCE) |
+| 1 | 目标检测 (YOLOv11N) | 14 | 嵌入 (ArcFace) |
+| 2 | 人脸检测 (SCRFD500M) | 15 | 属性识别 (DeepMAR-ResNet50) |
+| 3 | 旋转框检测 (YOLO26N-OBB) | 16 | PPU 流水线 (YOLOv7-PPU) |
+| 4 | 姿态估计 (YOLOv8s-Pose) | 17 | 关键点检测 (SuperPoint) |
+| 5 | 手部关键点 (HandLandmarkLite) | 18 | 物体姿态估计 (DOPE) |
+| 6 | 人脸对齐 (3DDFA-V2-MobileNetV1) | 19 | 全景驾驶感知 (YOLOPv2) |
+| 7 | 实例分割 (YOLOv8N-Seg) | 20 | 3D 目标检测 (SFA3D) |
+| 8 | 语义分割 (DeepLabV3+MobileNet) | 21 | 手部检测 (MediaPipe Palm) |
+| 9 | 分类 (ResNet50) | 22 | 图像检索 (CLIP RN50) |
+| 10 | 深度估计 (YOLO26-Depth-S) | 23 | 视觉地点识别 (EigenPlaces R18) |
+| 11 | 图像去噪 (DnCNN-50) | 24 | 行人重识别 (RepVGG-A0) |
+| 12 | 超分辨率 (ESPCN-X4) | 25 | 图像抠图 (PP-Matting HRNet-W48) |
 
-如果选择 `0` Object Detection,可用的执行选项如下:
+第二个菜单选择执行模式。模式 1 和 2 运行 C++ 可执行文件,模式 3 到 6 运行 3.4 节介绍的四种 Python 变体:
+
 > ![](assets/sc-run_demo2.png)
 
-选项 [1, 2] 运行基于 C++ 的应用,选项 [3–6] 运行基于 Python 的应用。
+第三个菜单选择输入:`1` 表示该演示程序的示例视频,`2` 表示其示例图像。
 
-> **注意:** 要运行基于 Python 的应用,请先激活安装了 `dx-engine` 的 Python 虚拟环境。
+这三个答案也可以通过选项给出,从而跳过所有菜单:`--task`、`--mode` 和 `--input`。下一个单元格会打印启动器的帮助。当 `RUN_DEMO_LAUNCHER = True` 时,它接着会以模式 `2`(C++ 异步)在示例图像上启动演示程序 `0`(YOLOv7)。该演示程序会打开窗口,因此请只在桌面会话中设置此标志。
 
-示例:
-> ![](assets/sc-run_demo3.png)
+<!-- cell: aa6c7d5b-a586-4724-9c06-a0b4512c7cb5 src: eed71bf863 -->
+### 2.6 使用 dx_tool.sh 查找、查看和导出示例
 
-<!-- cell: aa6c7d5b-a586-4724-9c06-a0b4512c7cb5 src: b0879909c6 -->
-### 2.6 提取用 C++ 和 Python 编写的示例应用
+<!-- cell: dx-app-dx-tool-query-intro src: e27cae447d -->
+`scripts/dx_tool.sh` 用于管理示例。不带参数启动时,它会打开一个交互式菜单,但它的查询命令也可以直接运行,因此在笔记本中使用很方便:
 
-<!-- cell: 1fdb3a9f-7bb1-4f96-b645-dda897a5cf2e src: 4cfb1b4aa0 -->
-`scripts/dx_tool.sh` 是一个用于管理和导出示例的交互式终端工具。它的 `extract` 菜单会把某个模型的示例连同共享的 `common/` 运行时层一起复制成一个自包含的软件包,可以在 DX-APP 目录树**之外**构建和运行。请在终端(File > New > Terminal)中运行:
+| 命令 | 作用 |
+|---|---|
+| `dx_tool.sh list [FILTER]` | 列出示例,可按任务过滤(例如 `det`) |
+| `dx_tool.sh search <KEYWORD>` | 按模型名称或任务查找示例 |
+| `dx_tool.sh info <MODEL>` | 显示某个示例的文件、工厂类和 `config.json` |
+| `dx_tool.sh run` / `dx_tool.sh bench` | 一次运行或基准测试多个示例(交互式过滤) |
+| `dx_tool.sh extract` | 导出独立软件包(交互式) |
+
+下一个单元格会搜索 YOLO26-S 的示例,并打印检测器的详细信息。`search` 会以 `<task>/<family>/<variant>` 的形式打印每个匹配项,这正是第 3 节中导出脚本所接受的形式。`info` 会显示默认的示例图像和视频,以及 `config.json` 中的分数阈值和 NMS 阈值等信息。
+
+<!-- cell: 1fdb3a9f-7bb1-4f96-b645-dda897a5cf2e src: ed48a8e0f1 -->
+交互式菜单还提供导出功能。它会向您提问,因此请在终端(File > New > Terminal)中运行:
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
@@ -254,70 +285,81 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 
 下一个单元格会用您的实际路径打印同样的命令。菜单出现后,请按其下方的步骤操作。
 
-该菜单在后台调用 `scripts/extract_model_package.sh`。第 3 节直接使用该脚本,因为它通过参数接收模型和语言,因此可以在笔记本单元格中运行。
-
-<!-- cell: 203b3870-66e6-425d-a483-6415a06a7f87 src: 3731ac4d34 -->
-运行 `dx_tool.sh` 后,您会看到以下菜单。 
-- 选择 `3` 查看您感兴趣的可用模型列表。
-- 选择 `2` 提取示例代码。
-- 选择编程语言。(C++、Python)
-- 输入您的应用对应的类别和模型。(例如 `object_detection/yolo26s`)
+<!-- cell: 203b3870-66e6-425d-a483-6415a06a7f87 src: 150f88aeeb -->
+菜单出现后:
+- 选择 `2`(Extract Package)。
+- 选择编程语言:`1` C++、`2` Python 或 `3` 两者。
+- 以 `<task>/<family>/<variant>` 形式输入示例路径,例如 `object_detection/yolo26/yolo26-s_640x640`。按 Tab 键可补全路径。
+- 按 Enter 接受默认输出目录 `output`。
 
 > ![](assets/sc-extract.png)
 
-几秒钟后,示例代码会生成到 `output` 目录中。
+截图来自较早的版本,当时路径只有两级(`object_detection/yolo26s`)。几秒钟后,软件包会被写入 `output/cpp/<task>/<family>/<variant>` 和 `output/py/<task>/<family>/<variant>`。
 
-> ![](assets/sc-extract2.png)
+该菜单在后台调用 `scripts/extract_model_package.sh`。第 3 节直接使用该脚本,因为它通过参数接收模型和语言,因此可以在笔记本单元格中运行。
 
-<!-- cell: 0de95d78-8360-4516-968b-aaf8d0ee949c src: b708a6fcb8 -->
+<!-- cell: 0de95d78-8360-4516-968b-aaf8d0ee949c src: 5627b8ffee -->
 ## 3. 运行提取出的独立示例
 
-2.6 节以交互方式导出了一个示例。本节在笔记本中用 `scripts/extract_model_package.sh` 完成同样的事情,然后在 **DX-APP 目录树之外**构建并运行导出的软件包,就像在您自己的项目中那样。三个示例覆盖了两种语言以及四种 Python 变体中的两种:
+2.6 节展示了交互式导出。本节在笔记本中用 `scripts/extract_model_package.sh` 完成同样的事情,然后在 **DX-APP 目录树之外**构建并运行导出的软件包,就像在您自己的项目中那样:
 
-| 示例 | 模型(任务) | 语言与变体 | 展示内容 |
+| 小节 | 示例(`<task>/<family>/<variant>`) | 语言与变体 | 展示内容 |
 |---|---|---|---|
-| 3.2 | `object_detection/yolo26s` | Python,`*_sync.py` | 运行任意 Model Zoo 模型的最简单方式 |
-| 3.3 | `object_detection/yolo26s` | C++,`*_sync` | 使用 CMake 构建导出的 C++ 软件包 |
-| 3.4 | `pose_estimation/yolo26s_pose` | Python,`*_async_cpp_postprocess.py` | 另一种任务,吞吐量最高的变体 |
+| 3.2 | `object_detection/yolo26/yolo26-s_640x640` | Python,`*_sync.py` | 运行任意 Model Zoo 模型的最简单方式 |
+| 3.3 | `object_detection/yolo26/yolo26-s_640x640` | C++,`*_sync` | 使用 CMake 构建导出的 C++ 软件包 |
+| 3.4 | `pose_estimation/yolo26_pose/yolo26-s-pose_640x640` | Python,`*_async_cpp_postprocess.py` | 另一种任务,使用 C++ 后处理 |
+| 3.5 | `object_detection/yolo26/yolo26-s_640x640` | Python,全部四种变体 | 通过测量确定使用哪种变体 |
 
-每个导出的 Python 示例都会导入 `dx_engine` 和 `dx_postprocess`,它们由 DX-Runtime 安装到 `dx-runtime/venv-dx-runtime` 中。因此这些单元格会显式调用该解释器。导出的示例不包含示例图像,所以单元格会传入 `dx_app/sample/img` 中的一张图像并以无显示方式运行(`--no-display --save`),然后在笔记本中显示保存的结果。
+每个导出的 Python 示例都会导入 `dx_engine` 和 `dx_postprocess`,它们由 DX-Runtime 安装到 `dx-runtime/venv-dx-runtime` 中。因此这些单元格会显式调用该解释器,并使用 `--no-prune` 导出 Python 软件包(3.1 节会解释原因)。在 DX-APP 目录树内部,如果不指定输入,示例会回退到默认的示例图像,但导出的软件包不包含示例图像。因此单元格会传入 `dx_app/sample/img` 中的一张图像,以无显示方式运行(`--no-display --save`),并在笔记本中显示保存的结果。
 
 ### 3.1 导出软件包
 
-先从脚本自带的帮助开始。它列出了下一个单元格使用的参数:以 `<task>/<model>` 形式指定的模型、`--lang cpp|py|both` 和 `--output-dir`。
+先从脚本自带的帮助开始。它列出了接下来的单元格使用的参数:以 `<task>/<family>/<variant>` 形式指定的示例(或以 `<task>/<family>` 指定某个模型系列的所有变体)、`--lang cpp|py|both`、`--output-dir` 和 `--no-prune`。
 
-<!-- cell: c8018ff0-ede6-47ed-809c-da06a2d7a021 src: 867cd9e0a5 -->
-不加 `--output-dir` 时,脚本会在 `dx_app` 内部就地准备软件包;加上它后,软件包会被复制到 `<dir>/cpp/<task>/<model>` 和 `<dir>/py/<task>/<model>`。下一个单元格把三个软件包导出到本教程的 `workspace/` 目录中,该目录被 git 忽略。
+<!-- cell: c8018ff0-ede6-47ed-809c-da06a2d7a021 src: 1c4f5c4c05 -->
+不加 `--output-dir` 时,脚本会在 `dx_app` 内部就地准备软件包;加上它后,软件包会被复制到 `<dir>/cpp/<task>/<family>/<variant>` 和 `<dir>/py/<task>/<family>/<variant>`。下一个单元格会下载两个 YOLO26 模型,并把三个软件包导出到本教程的 `workspace/` 目录中(该目录被 git 忽略):C++ 目标检测器,以及 Python 目标检测器和姿态估计器。
 
-<!-- cell: f53338d7-a29a-4940-9827-4a1c2be39a23 src: 09b46cfa3b -->
+<!-- cell: dx-app-prune-intro src: f6df5d7c31 -->
+#### 裁剪后的软件包与 `--no-prune`
+
+默认情况下,导出会**裁剪** `common/`:只复制该示例实际使用的共享文件,而不是整个运行时层。这样软件包更小、更易阅读,但只能运行这一个示例。`--no-prune` 会复制完整的 `common/`;如果您打算在同一个软件包中加入第二个模型,也需要使用它。上一个单元格中的 C++ 软件包是裁剪过的。下一个单元格会使用默认的裁剪方式再次导出 Python YOLO26-S 示例,并将其与完整副本进行比较。
+
+> **DX-APP v3.3.0 注意事项:** 裁剪后的 **Python** 软件包缺少其 `config.json` 中指定的处理器类,因此会在启动时报错并停止:`VariantConfigError: processor class 'LetterboxPreprocessor' is exported by neither common.processors nor common.visualizers`。在此问题修复之前,请像本教程这样使用 `--no-prune` 导出 Python 软件包。裁剪后的 C++ 软件包不受影响。
+
+<!-- cell: dx-app-model-card-intro src: 93b7e37de4 -->
+#### 模型卡
+
+每个示例文件夹都带有一张由 Model Zoo 生成的**模型卡**。`README.md` 描述该模型:它是什么、它的精度和速度及其数据来源、它的下载内容,以及如何运行它。Python 示例文件夹中还有 `model.html`(可在浏览器中离线查看的同一张模型卡)和 `result.webp`(参考结果)。导出的 Python 软件包会保留这三个文件。下一个单元格会显示您刚刚导出的软件包的参考图像和模型卡。
+
+<!-- cell: f53338d7-a29a-4940-9827-4a1c2be39a23 src: a2c178bc3e -->
 ### 3.2 示例 1:Python 独立运行,目标检测
 
-`yolo26s_sync.py` 是最基本的同步变体:纯 Python 后处理,一次处理一帧。它是最适合首先阅读的变体。DX-APP 中每个 Python 示例的参数都相同:`--model`、一个输入选项(`--image`、`--video`、`--camera`、`--rtsp`),以及用于无显示运行的 `--no-display --save`。
+`yolo26-s_640x640_sync.py` 是最基本的同步变体:纯 Python 后处理,一次处理一帧。它是最适合首先阅读的变体。DX-APP 中每个 Python 示例的参数都相同:`--model`、一个输入选项(`--image`、`--video`、`--camera`、`--rtsp`),以及用于无显示运行的 `--no-display --save`。
 
 ```bash
-cd <workspace>/standalone/py/object_detection/yolo26s
-<dx-runtime>/venv-dx-runtime/bin/python yolo26s_sync.py \
+cd <workspace>/standalone/py/object_detection/yolo26/yolo26-s_640x640
+<dx-runtime>/venv-dx-runtime/bin/python yolo26-s_640x640_sync.py \
     --model <workspace>/res/models/yolo26-s_640x640.dxnn \
     --image <dx_app>/sample/img/sample_street.jpg \
     --no-display --save --save-dir <output-dir>
 ```
 
-<!-- cell: 8ef7c53a-d140-421f-bf05-dbb99cb34759 src: 07003a5f95 -->
+<!-- cell: 8ef7c53a-d140-421f-bf05-dbb99cb34759 src: 85c8c27e49 -->
 ### 3.3 示例 2:C++ 独立运行,目标检测
 
-导出的 C++ 软件包包含 `yolo26s_sync.cpp`、`yolo26s_async.cpp`、共享的 `common/` 层,以及一个链接到已安装 DX-RT 的自动生成的 `CMakeLists.txt`。构建它就是标准的 CMake 流程;没有任何内容回指 DX-APP 目录树。
+导出的 C++ 软件包包含 `yolo26-s_640x640_sync.cpp`、`yolo26-s_640x640_async.cpp`、共享的 `common/` 层,以及一个链接到已安装 DX-RT 的自动生成的 `CMakeLists.txt`。构建它就是标准的 CMake 流程;没有任何内容回指 DX-APP 目录树。
 
 ```bash
-cd <workspace>/standalone/cpp/object_detection/yolo26s
+cd <workspace>/standalone/cpp/object_detection/yolo26/yolo26-s_640x640
 mkdir -p build && cd build
 cmake .. && make -j$(nproc)
-./yolo26s_sync -m <workspace>/res/models/yolo26-s_640x640.dxnn \
+./yolo26-s_640x640_sync -m <workspace>/res/models/yolo26-s_640x640.dxnn \
     -i <dx_app>/sample/img/sample_street.jpg --no-display --save --save-dir <output-dir>
 ```
 
-请注意,C++ 示例的选项写作 `-m/--model_path` 和 `-i/--image_path`;`./yolo26s_sync --help` 会列出它们。构建需要一到两分钟。
+请注意,C++ 示例的选项写作 `-m/--model_path` 和 `-i/--image_path`;`./yolo26-s_640x640_sync --help` 会列出它们。构建需要一到两分钟。
 
-<!-- cell: d643e80f-bbc3-4b0d-ba3c-291446e0d634 src: a0c6ea69d7 -->
+<!-- cell: d643e80f-bbc3-4b0d-ba3c-291446e0d634 src: 04d6bec0f3 -->
 ### 3.4 示例 3:Python 独立运行,姿态估计,异步 + C++ 后处理
 
 每个 Python 示例都有四种变体。文件名会告诉您正在运行的是哪一种:
@@ -325,89 +367,172 @@ cmake .. && make -j$(nproc)
 | 变体 | 后处理 | 线程模型 | 适用场景 |
 |---|---|---|---|
 | `*_sync.py` | 纯 Python | 同步 | 学习和调试逻辑 |
-| `*_async.py` | 纯 Python | 异步 | 性能优化的第一步 |
-| `*_sync_cpp_postprocess.py` | C++ 绑定(`dx_postprocess`) | 同步 | CPU 后处理负担较重时 |
-| `*_async_cpp_postprocess.py` | C++ 绑定(`dx_postprocess`) | 异步 | 最高 FPS;用于部署的变体 |
+| `*_async.py` | 纯 Python | 异步 | 更高的吞吐量;部署时通常的起点 |
+| `*_sync_cpp_postprocess.py` | C++ 绑定(`dx_postprocess`) | 同步 | 后处理较重,一次处理一帧 |
+| `*_async_cpp_postprocess.py` | C++ 绑定(`dx_postprocess`) | 异步 | 后处理较重,且需要高帧率 |
 
-本示例切换到另一种任务和最快的变体。命令形式不变:只有目录、脚本名和模型不同。
+> 在 DX-APP v3.2.x 中,`*_cpp_postprocess.py` 脚本实际上会悄悄地运行 Python 后处理器;v3.3.0 修复了这个问题。因此,用旧版本测得的结果在各变体之间不会显示出差异。
+
+本示例切换到另一种任务,以及异步 C++ 后处理变体。命令形式不变:只有目录、脚本名和模型不同。
 
 ```bash
-cd <workspace>/standalone/py/pose_estimation/yolo26s_pose
-<dx-runtime>/venv-dx-runtime/bin/python yolo26s_pose_async_cpp_postprocess.py \
+cd <workspace>/standalone/py/pose_estimation/yolo26_pose/yolo26-s-pose_640x640
+<dx-runtime>/venv-dx-runtime/bin/python yolo26-s-pose_640x640_async_cpp_postprocess.py \
     --model <workspace>/res/models/yolo26-s-pose_640x640.dxnn \
     --image <dx_app>/sample/img/sample_people.jpg \
     --no-display --save --save-dir <output-dir>
 ```
 
-<!-- cell: 49083464-b187-4ce2-9440-533681001c7b src: 36b094d0ca -->
-### 3.5 动手尝试:Model Zoo 中的任意模型
+<!-- cell: dx-app-variant-timing-intro src: 6c1488d8f6 -->
+### 3.5 先测量,再选择变体
 
-这三个示例遵循同一种模式,并且该模式适用于全部 352 个模型:
+四种变体中哪一种最快,取决于时间花在了哪里。设置环境变量 `DXAPP_PROGRESS=1` 后,每个示例大约每秒打印一行 `[PROGRESS]`,并在结束时打印最后一行。每一行都包含吞吐量(`fps`、`avg_fps`)以及每个阶段每帧的平均耗时:读取输入(`read_ms`)、预处理(`pre_ms`)、NPU 推理(`infer_ms`)和后处理(`post_ms`)。
 
-1. 在 [Model Zoo](https://developer.deepx.ai/modelzoo/) 页面选择一个模型,并用 `./scripts/dx_tool.sh search <keyword>` 或 `./scripts/dx_tool.sh list <category>` 找到它的 DX-APP 名称。
-2. 下载它:`./setup.sh --models <name> --no-force`。
-3. 导出它:`scripts/extract_model_package.sh <task>/<name> --lang py --output-dir <dir>`。
-4. 运行它:`<dir>/py/<task>/<name>/<name>_sync.py --model <file>.dxnn --image <image>`。
+下一个单元格会以无显示方式在同一段 588 帧的视频上运行全部四种 YOLO26-S 变体,并把每种变体的最后一行整理成表格。单次运行如下所示:
 
-下一个单元格会在 `config/model_registry.json` 中查找一个模型,并打印针对它的四条命令。把 `MODEL_NAME` 改成您想尝试的模型,然后在单元格或终端中运行打印出的命令。例如 `scrfd500m`(人脸检测,配合 `sample_face.jpg`)或 `resnet50`(分类,配合 `sample/ILSVRC2012` 中的一张图像)。
+```bash
+DXAPP_PROGRESS=1 <dx-runtime>/venv-dx-runtime/bin/python yolo26-s_640x640_sync.py \
+    --model <workspace>/res/models/yolo26-s_640x640.dxnn --video <dx_app>/assets/videos/boat.mp4 --no-display
+```
 
-<!-- cell: d4f00dc6-dde3-4742-a170-fa8699a69c6a src: cf07613229 -->
-## 4. 故障排除
+该单元格大约需要 40 秒。
+
+<!-- cell: dx-app-variant-timing-reading src: c638ed5e7a -->
+如何解读该表格(具体数值取决于主机 CPU 和 NPU 卡):
+
+- **异步与同步对比:** 异步变体会让多帧同时在 NPU 上处理,因此能达到高得多的帧率。在一块 DX-M1 卡上,YOLO26-S 异步运行约为 200 FPS,同步运行约为 50 FPS。异步模式下 `infer_ms` 会变大,因为它测量的是每帧从提交到得到结果的周转时间,而不仅仅是 NPU 时间。
+- **C++ 与 Python 后处理对比:** `cpp_postprocess` 变体可以缩短 `post_ms`,但 YOLO26-S 的后处理耗时远低于一毫秒,因此帧率几乎没有变化。当 `post_ms` 在每帧耗时中占比较大时(例如分割掩码、大量锚框或主机 CPU 较慢),C++ 后处理才会带来收益。
+- **经验法则:** 从 `*_async.py` 开始,用 `DXAPP_PROGRESS=1` 进行测量,只有当后处理成为瓶颈时才切换到 `cpp_postprocess` 变体。
+
+<!-- cell: 49083464-b187-4ce2-9440-533681001c7b src: fa03a225fb -->
+### 3.6 动手尝试:Model Zoo 中的任意模型
+
+上述示例遵循同一种模式,并且该模式适用于全部 497 个变体:
+
+1. 在 [Model Zoo](https://developer.deepx.ai/modelzoo/) 页面选择一个模型,并用 `./scripts/dx_tool.sh search <keyword>` 找到它的示例。
+2. 就地运行它。在 DX-APP 目录树内部,模型和输入都是可选的:不指定 `--model` 时,示例会加载 `assets/models/<variant>.dxnn`(如果缺失则先下载);不指定输入时,它会使用其任务的默认示例图像。
+3. 想在它的基础上开发时,导出它:`scripts/extract_model_package.sh <task>/<family>/<variant> --lang py --output-dir <dir>`。
+
+下一个单元格会在 `config/model_registry.json` 中查找一个变体,并在不指定模型和输入的情况下就地运行它的同步 Python 示例,这是最简短的运行方式。它会显示结果并打印导出命令。把 `VARIANT` 改成其他值即可尝试另一个模型,例如 `resnet50_224x224`(分类)、`yolov12-n_640x640`(YOLOv12)或 `rtdetr-r18vd-6x_640x640`(RT-DETR)。尚未下载到本地的模型会先被下载,这需要几秒到一分钟。
+
+<!-- cell: dx-app-graph-intro src: addf2cbb2a -->
+## 4. 多模型图:无需编写代码即可串联模型
+
+实际应用中经常需要对每一帧运行多个模型:检测器找到人,第二个模型读取他们的属性;或者手掌检测器找到手,关键点模型定位手指关节。DX-APP v3.3.0 为此新增了**多模型图**(multi-model graph)。您在 JSON 文件中描述流水线,由一个可执行文件来运行它:
+
+- **节点**(nodes)是输入源和各个模型,每个模型以其变体名称指定;
+- **边**(edges)将它们连接起来;带有 `"roi"` 的边会裁剪出第一个模型找到的每个框,并将裁剪结果送入下一个模型。
+
+无需编辑 C++ 代码,也无需重新构建:要尝试其他模型,只需修改 JSON 文件中的一个字符串。可执行文件是 `bin/multi_model_graph_sync` 和 `bin/multi_model_graph_async`,示例图位于 `src/cpp_example/multi_model_graph/` 中。
+
+| 选项 | 作用 |
+|---|---|
+| `--graph <file>` | 运行该图 |
+| `--check <file>` | 在不使用 NPU 的情况下验证该图及其模型文件 |
+| `--output <file>` | 保存合成后的结果图像 |
+| `--report <file>` | 以 JSON 格式保存每个节点的结果 |
+| `--list-models` | 列出图中可以使用的模型(`--consumes roi` 列出第二阶段模型) |
+
+> Python 模块 `dx_graph` 可以在 Python 中运行同样的图。它只有在执行 `./build.sh --all` 时才会被构建,因此本教程使用可执行文件。
+
+### 4.1 构建图可执行文件并下载模型
+
+如果您的 DX-APP 构建中还没有这两个可执行文件,下一个单元格会构建它们,大约需要一分钟。然后它会下载本节的图所使用的三个额外模型:一个手掌检测器、一个手部关键点模型和一个行人属性模型。
+
+<!-- cell: dx-app-graph-hand-intro src: d37e7d1cc8 -->
+### 4.2 两阶段级联:先手掌检测,再手部关键点
+
+`hand_cascade.json` 是最小的示例图:
+
+<!-- cell: dx-app-graph-hand-run-intro src: 482277b95a -->
+源 `cam` 是一张示例图像。`palm` 在整帧中查找手。从 `palm` 到 `landmark` 的边带有 `"roi"`,因此每个手部框在向外扩展 15% 后被裁剪出来,并传给关键点模型。
+
+`--check` 会在 NPU 上运行任何内容之前验证该图:它解析每个模型,显示其 `produces` 和 `consumes`,并确认 `.dxnn` 文件存在。随后 `--graph` 运行该图,`--output` 保存合成图像,`--report` 写出每个节点的结果。示例图使用相对于 `dx_app` 的路径,因此请在该目录下运行它们。
+
+<!-- cell: dx-app-graph-report-intro src: 2c05298a39 -->
+报告按帧列出每个节点的结果。在整帧上运行的模型位于 `nodes` 下;在裁剪图上运行的模型位于 `roi_nodes` 下,并附带每个裁剪图在帧中对应的框。下一个单元格会汇总第一帧的结果。
+
+<!-- cell: dx-app-graph-edit-intro src: 7f40a53e80 -->
+### 4.3 通过编辑 JSON 替换模型
+
+`cascade_od_attr.json` 会检测人,并把每个人的裁剪图传给 `deepmar_resnet50_224x224`,这是一个行人属性模型(性别、年龄段、衣着等)。它的检测器是 `yolov8-n_640x640`,而本教程并未下载该模型。下一个单元格不去下载它,而是把该图的一个副本写入工作区,并把检测器替换为第 3 节中的 `yolo26-s_640x640`。由于该副本位于 `dx_app` 之外,单元格还会把源图像路径改为绝对路径。然后它会检查并运行编辑后的图;无需重新构建任何内容。
+
+<!-- cell: dx-app-graph-more-intro src: d848216d40 -->
+### 4.4 哪些模型适用,以及更多示例
+
+并非每个模型都适用于每个位置。第二阶段模型必须能够接受裁剪图:它的 `consumes` 列必须是 `roi` 或 `either`。`--list-models --consumes roi` 会从注册表中筛选出这些模型;`file` 列显示 `.dxnn` 是否已在本地。下一个单元格会打印前几行和总数。
+
+随后 `run_multi_model_demo.sh --list` 会列出示例图。它们涵盖级联(检测器为属性、重识别或分类模型提供输入)、扇出(在同一帧上进行检测、分割和姿态估计)、链式处理(在检测之前进行超分辨率或低光增强),以及用于过滤、计数、跟踪和检查区域或越线的逻辑节点。`bash run_multi_model_demo.sh --check` 会在不使用 NPU 的情况下验证所有示例图,并为每个缺失的模型打印下载命令。
+
+<!-- cell: d4f00dc6-dde3-4742-a170-fa8699a69c6a src: ba63e660bb -->
+## 5. 故障排除
 
 | 症状 | 看到的内容 | 可能原因 | 解决方法 |
 |---|---|---|---|
-| 缺少可执行文件 | `./bin/yolov7_async: No such file or directory` | DX-APP 未构建,或构建时未包含该目标 | 在终端中于 `dx_app` 下运行 `./build.sh`(或 `./build.sh --target yolov7_async`) |
-| 模型无法加载 | `Failed to load model`,路径位于 `assets/models` 下 | 模型未下载 | 带上模型名运行第 1 节的下载单元格,然后重新运行 |
-| 没有输出窗口 | `cannot open display`,或单元格结束时没有出现窗口 | 没有图形会话(SSH 或无显示主机) | 在桌面会话中运行,或使用图像输入(`-i`)并检查保存的结果 |
+| 找不到旧的可执行文件名 | `./bin/yolov7_async: No such file or directory` | DX-APP v3.3.0 以变体命名可执行文件 | 使用新名称,例如 `./bin/yolov7_640x640_async`;`ls bin` 会列出它们 |
+| 缺少可执行文件 | `./bin/<variant>_sync: No such file or directory` | 默认构建(`--minimal`)只构建 26 个演示模型 | 在终端中于 `dx_app` 下运行 `./build.sh --target <variant>` 或 `./build.sh --all` |
+| 模型在加载时被拒绝 | `.dxnn container v9 needs DX-RT >= 3.5.0, but this runtime is 3.4.1` 或 `Model file format version 9 is not supported` | Model Zoo `2_5_0` 的文件需要 DX-RT 3.5.0 或更高版本 | 更新 DX-Runtime(教程 01 第 3 节);`dxrt-cli --version` 会显示已安装的版本 |
+| `import dx_engine` 失败 | `dx_engine and DX-RT versions do not match` | `venv-dx-runtime` 中的 `dx_engine` 是为另一个 DX-RT 版本构建的 | 重新安装 DX-Runtime,使两者都为 3.5.x |
+| 模型无法加载 | `Failed to load model`,路径位于 `assets/models` 下 | 模型未下载 | 带上变体名称运行第 1 节的下载单元格,然后重新运行 |
+| 图检查报告缺少模型 | `MISSING: 1 model file is not in .../assets/models` | 图中指定的模型未下载 | 运行 `--check` 打印出的下载命令,或运行 `bash setup.sh --models <variant> --no-force` |
+| 没有输出窗口 | `cannot open display`,或单元格结束时没有出现窗口 | 没有图形会话(SSH 或无显示主机) | 在桌面会话中运行,或保留 `--no-display --save` 并查看保存的结果 |
 | 无法打开摄像头 | `Could not open camera 0` | 没有 `/dev/video0`,或用户不在 `video` 组中 | `v4l2-ctl --list-devices`;`sudo usermod -aG video $USER` 然后重新登录 |
-| `run_demo.sh` 自动启动了某个演示 | 10 秒后运行了选项 0 | 启动器有 10 秒的输入超时 | 菜单出现后立即输入选项编号 |
+| `run_demo.sh` 在显示菜单前停止 | `Failed to download demo models.` | 自动下载演示模型时没有网络连接 | 连接网络,或在有网络时运行一次 `./setup.sh --demo-models` |
+| 导出的 Python 示例在启动时停止 | `VariantConfigError: processor class '...' is exported by neither common.processors nor common.visualizers` | 软件包使用默认裁剪方式导出,缺少 `config.json` 中指定的类(DX-APP v3.3.0) | 使用 `--no-prune` 重新导出 |
 | 导出的 Python 示例无法导入 `dx_engine` | `ModuleNotFoundError: No module named 'dx_engine'` | 使用了 Jupyter 的 Python 而不是 DX-Runtime 环境运行 | 像第 3 节的单元格那样使用 `<dx-runtime>/venv-dx-runtime/bin/python` |
 | 导出的 C++ 软件包无法完成配置 | `Could not find a package configuration file provided by "dxrt"` | DX-RT 未安装,或安装在自定义前缀下 | 安装 DX-Runtime(教程 01 第 3 节),或在 `cmake` 命令行中添加 `-DCMAKE_PREFIX_PATH=<prefix>` |
 | 导出的示例找不到输入 | `Input file not found: sample/img/...` | 软件包不包含示例图像 | 使用 `dx_app/sample/img` 中的文件通过 `--image`(Python)或 `-i`(C++)传入 |
 
-<!-- cell: dx-app-summary src: 43a530c056 -->
-## 5. 总结
+<!-- cell: dx-app-summary src: 2d8a7ea04c -->
+## 6. 总结
 
-### 5.1 已完成的 DX-APP 工作流程
+### 6.1 已完成的 DX-APP 工作流程
 
 ```text
 Load SDK paths
        │
        ▼
-Prepare selected models and videos
+Download the selected models by variant name
        │
        ▼
-Run C++ or Python examples
+Run C++ or Python examples headless and view the saved results
        │
        ├── Synchronous
        ├── Asynchronous
        └── PPU
        │
        ▼
-Use run_demo.sh or export a standalone example
+Find an example with dx_tool.sh, export it, and measure its variants
+       │
+       ▼
+Chain several models with a multi-model graph
 ```
 
-### 5.2 学习成果一览
+### 6.2 学习成果一览
 
 | 领域 | 您现在能做的事 |
 |---|---|
 | SDK 路径 | 从 `config.json` 加载 `DX_APP_DIR` 及相关路径 |
-| 模型准备 | 只下载练习所需的模型和视频 |
-| 示例选择 | 按任务、模型、语言和执行模式查找示例 |
+| 命名 | 根据 `<task>/<family>/<variant>` 中的变体名称找到示例、其可执行文件和脚本 |
+| 模型准备 | 按变体名称只下载练习所需的模型和视频 |
 | 执行模式 | 根据目标选择同步、异步或 PPU 执行 |
-| 演示启动器 | 使用 `run_demo.sh` 启动已安装的示例 |
-| 独立代码 | 使用 `scripts/extract_model_package.sh` 导出任意模型的示例,然后在 DX-APP 之外构建和运行 |
+| 测量 | 在选择之前用 `DXAPP_PROGRESS=1` 比较四种 Python 变体 |
+| 演示启动器 | 使用 `run_demo.sh` 启动演示程序,可通过菜单,也可通过 `--task`、`--mode` 和 `--input` |
+| 独立代码 | 使用 `scripts/extract_model_package.sh` 导出任意模型的示例,阅读其模型卡,然后在 DX-APP 之外构建和运行 |
 | Model Zoo 覆盖 | 通过 `config/model_registry.json` 或 `dx_tool.sh search` 找到任意 Model Zoo 模型对应的 DX-APP 示例 |
+| 多模型图 | 检查、运行和编辑串联多个模型的图 JSON |
 
-### 5.3 完成清单
+### 6.3 完成清单
 
-- [ ] 确认 DX-RT 能够识别 DEEPX NPU
+- [ ] 确认 DX-RT 能够识别 DEEPX NPU,并且 DX-RT 为 3.5.0 或更高版本
 - [ ] 准备所需的 DX-APP 模型和视频资源
-- [ ] 至少运行一个端到端推理示例
+- [ ] 至少运行一个端到端推理示例,并查看其保存的结果
 - [ ] 比较可用的执行模式
-- [ ] 为目标任务找到一个参考实现
+- [ ] 使用 `dx_tool.sh search` 为目标任务找到一个参考实现
 - [ ] 打开 `run_demo.sh`
 - [ ] 在 DX-APP 目录树之外导出、构建并运行独立的 Python 和 C++ 示例
+- [ ] 测量四种 Python 变体,并为您的模型选择一种
 - [ ] 运行一个您自己选择的 Model Zoo 模型
+- [ ] 运行一个多模型图,并替换其中的一个模型
 
 > **下一步:** 继续学习教程 03,改造一个已训练的模型,将其编译为 DXNN,并集成到 DX-APP 运行时配置中。

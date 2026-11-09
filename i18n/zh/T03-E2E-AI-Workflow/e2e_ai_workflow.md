@@ -177,12 +177,12 @@ wget -nc https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolov7-forklift-per
 <!-- cell: 6daf1b20-9182-4a77-82d0-8188d9c6e257 src: c0768f5b3c -->
 ## 5. AI 工作流 - 在 DEEPX NPU 上部署
 
-<!-- cell: 4d54f93a-31ff-4f9c-8fd5-1de4776cc622 src: f2166618d1 -->
+<!-- cell: 4d54f93a-31ff-4f9c-8fd5-1de4776cc622 src: 6291ba5212 -->
 ### 5.1 为自定义 YOLOv7 模型配置 DX-APP
 
 当前的 DX-APP 不需要为自定义类别数修改 C++ 源码。YOLOv7 工厂从运行时配置文件读取 `num_classes` 和 `class_names`,后处理器在解码检测结果时使用这些值。
 
-> **参考:** 本节遵循 [DX-APP YOLO Customizing Guide](https://github.com/DEEPX-AI/dx_app/blob/main/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md#step-3-tune-configjson) 的 **Step 3, "Tune `config.json`"**(位于您检出的 `dx_app/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md`)。该指南列出了 YOLO 后处理器读取的每个键(`obj_threshold`、`score_threshold`、`nms_threshold`、`num_classes`、`class_names`、`anchors`、`strides`),并展示了一个三类别模型的同类文件。随附的 YOLOv7 示例在 `src/cpp_example/object_detection/yolov7/config.json` 中提供默认值;下面写入的文件会针对双类别的 Forklift 和 Worker 模型覆盖这些默认值。
+> **参考:** 本节遵循 [DX-APP YOLO Customizing Guide](https://github.com/DEEPX-AI/dx_app/blob/main/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md#step-3-tune-configjson) 的 **Step 3, "Tune `config.json`"**(位于您检出的 `dx_app/docs/source/docs/12_DX-APP_YOLO_Customizing_Guide.md`)。该指南列出了 YOLO 后处理器读取的每个键(`obj_threshold`、`score_threshold`、`nms_threshold`、`num_classes`、`class_names`、`anchors`、`strides`),并展示了一个三类别模型的同类文件。随附的 YOLOv7 示例在 `src/cpp_example/object_detection/yolov7/yolov7_640x640/config.json` 中提供默认值;下面写入的文件会针对双类别的 Forklift 和 Worker 模型覆盖这些默认值。
 
 请勿混淆本教程中使用的两个 JSON 配置文件:
 
@@ -208,10 +208,10 @@ wget -nc https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolov7-forklift-per
 
 > **注意:** 正如该指南所警告的,`num_classes` 必须与编译后模型的输出一致。类别数在编译时就已固定;仅修改运行时 JSON 无法修复张量形状不匹配的问题。
 
-<!-- cell: 12ba0bdd-1df3-47d2-a454-a1bc39c8768c src: d725d9b9f9 -->
+<!-- cell: 12ba0bdd-1df3-47d2-a454-a1bc39c8768c src: c710c552be -->
 ### 5.2 验证 YOLOv7 可执行文件
 
-运行时配置通过 `--config` 在 DX-APP 创建 YOLOv7 后处理器之前加载。由于没有改动任何 C++ 源码,当 `bin/yolov7_async` 已存在时无需重新构建 DX-APP。
+运行时配置通过 `--config` 在 DX-APP 创建 YOLOv7 后处理器之前加载。由于没有改动任何 C++ 源码,当 `bin/yolov7_640x640_async` 已存在时无需重新构建 DX-APP。
 
 模型运行时,DX-APP 会记录 `Config loaded: yolov7-forklift-runtime.json (4 keys)`。该计数仅涵盖标量值;`class_names` 是一个列表,单独存储,因此全部五项设置都会生效。
 
@@ -219,28 +219,28 @@ wget -nc https://cs.deepx.ai/_deepx_fae_archive/dx-tutorials/yolov7-forklift-per
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
-./build.sh --target yolov7_async
+./build.sh --target yolov7_640x640_async
 ```
 
-<!-- cell: aef5fbb5-57c5-425b-bb18-be6c09f84008 src: 548c63ca47 -->
+<!-- cell: aef5fbb5-57c5-425b-bb18-be6c09f84008 src: 3605a3a8c9 -->
 ### 5.3 使用图像运行自定义模型
 
 将自定义 DXNN 及其运行时配置传给标准的 YOLOv7 可执行文件;共享的 DX-APP 源码保持不变。该单元格以无头模式运行(`--no-display --save`),因此无需显示器也能工作,并在下方显示保存的结果。去掉 `--no-display` 则会改为打开 DX-APP 窗口;此时单元格会一直处于运行状态,直到窗口关闭。
 
 ```bash
 cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
-./bin/yolov7_async -m <workspace>/output/yolov7-forklift-person.dxnn \
+./bin/yolov7_640x640_async -m <workspace>/output/yolov7-forklift-person.dxnn \
     --config <workspace>/yolov7-forklift-runtime.json \
     -i <tutorial>/assets/forklift-worker.png --no-display --save --save-dir <workspace>/outputs
 ```
 
-<!-- cell: c6d86bb5-c77a-4144-8072-4c30ac0e0386 src: 2dbebc5c03 -->
+<!-- cell: c6d86bb5-c77a-4144-8072-4c30ac0e0386 src: 90b10f1ee4 -->
 ### 5.4 使用视频运行自定义模型
 
 视频运行使用同一命令,只是改用 `-v`。视频片段长 80 秒(2001 帧)。当 `SHOW_WINDOW = False`(默认值)时,应用以无头模式运行,将渲染后的视频写入工作区,并且**在完成之前不打印任何内容**;在 DX-M1 上大约需要 20 秒,因此单元格并没有卡住。保存的视频随后会在笔记本中显示。设置 `SHOW_WINDOW = True` 则改为在 DX-APP 窗口中实时观看(单元格会一直处于运行状态,直到窗口关闭)。
 
 ```bash
-./bin/yolov7_async -m <workspace>/output/yolov7-forklift-person.dxnn \
+./bin/yolov7_640x640_async -m <workspace>/output/yolov7-forklift-person.dxnn \
     --config <workspace>/yolov7-forklift-runtime.json -v <workspace>/forklift-worker.mp4 \
     --no-display --save --save-dir <workspace>/outputs
 ```
@@ -257,7 +257,7 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_app
 | 5.3 或 5.4 没有出现窗口 | 单元格仅以性能摘要结束 | 单元格默认以无头模式运行 | 打开 `workspace/outputs/` 下保存的结果,或在桌面会话中去掉 `--no-display` / 设置 `SHOW_WINDOW = True` |
 | 边界框标签错误 | 叉车被标为 Worker,或者相反 | `class_names` 的顺序与训练顺序不一致 | 修正运行时 JSON 中的顺序并重新运行;`num_classes` 必须保持为 2 |
 
-<!-- cell: 2df122e0-2ea3-4c2e-b294-6fee2d7c5b24 src: 4848d5487c -->
+<!-- cell: 2df122e0-2ea3-4c2e-b294-6fee2d7c5b24 src: b518f75933 -->
 ## 7. 总结
 
 ### 7.1 已完成的工作流
@@ -275,7 +275,7 @@ Export ONNX and compile to DXNN with dxcom
 Describe classes and thresholds in a DX-APP runtime config
        │
        ▼
-Run the custom model on the NPU with yolov7_async
+Run the custom model on the NPU with yolov7_640x640_async
 ```
 
 ### 7.2 完成清单

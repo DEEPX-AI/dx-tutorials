@@ -152,8 +152,8 @@ dxcom -h
 
 JSON 파일의 입력 이름은 ONNX 그래프 입력 이름과 정확히 일치해야 합니다. 형상 추론과 `onnx.checker`는 컴파일 전에 많은 내보내기 오류를 잡아냅니다.
 
-<!-- cell: 96ab8536 src: 372ae5a1e1 -->
-ONNX 파일을 [Netron](https://netron.app/)에서 열어 텐서 이름, 형상, 연산자를 확인할 수도 있습니다. 컴파일된 `.dxnn`은 `--export_html`로 생성한 DX-COM HTML 요약이나 DX-TRON(튜토리얼 01, 2.3절)을 사용하세요. DX-TRON은 SDK와 함께 계속 배포되지만 더 이상 적극적으로 유지보수되지 않으므로 HTML 요약을 권장합니다.
+<!-- cell: 96ab8536 src: de38742e03 -->
+ONNX 파일을 [Netron](https://netron.app/)에서 열어 텐서 이름, 형상, 연산자를 확인할 수도 있습니다. 컴파일된 `.dxnn`은 `--export_html`로 생성한 DX-COM HTML 요약(6.5절)을 열어 보세요. 컴파일된 그래프와 NPU/CPU 분할을 확인할 수 있습니다.
 
 <!-- cell: 0898f061 src: 1303aaeedb -->
 ## 4. 캘리브레이션 설정 만들기

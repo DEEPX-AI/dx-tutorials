@@ -440,10 +440,6 @@ CHECKS: dict[str, Callable[["TutorialContext"], CheckResult]] = {
         "Install DX-Runtime with --all (Tutorial 01, section 3)",
     ),
     "gst_dxstream": _check_gst_dxstream,
-    "dx_tron": _check_command(
-        "dx_tron", "dxtron",
-        "Run ./dx-compiler/install.sh --target=dx_tron in the SDK directory (Tutorial 01, section 2.3)",
-    ),
     "cmake": _check_command("cmake", "cmake", "sudo apt install cmake"),
     "git": _check_command("git", "git", "sudo apt install git"),
     "uv": _check_command(

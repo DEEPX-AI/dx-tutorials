@@ -152,8 +152,8 @@ dxcom -h
 
 JSON 文件中的输入名称必须与 ONNX 图的输入名称完全一致。形状推断和 `onnx.checker` 可以在编译前捕获许多导出错误。
 
-<!-- cell: 96ab8536 src: 372ae5a1e1 -->
-您也可以在 [Netron](https://netron.app/) 中打开 ONNX 文件,检查张量名称、形状和算子。对于编译后的 `.dxnn`,请使用 `--export_html` 生成的 DX-COM HTML 摘要,或使用 DX-TRON(教程 01 第 2.3 节)。DX-TRON 仍随 SDK 一起发布,但已不再积极维护,因此推荐以 HTML 摘要作为报告。
+<!-- cell: 96ab8536 src: de38742e03 -->
+您也可以在 [Netron](https://netron.app/) 中打开 ONNX 文件,检查张量名称、形状和算子。对于编译后的 `.dxnn`,请打开 `--export_html` 生成的 DX-COM HTML 摘要(第 6.5 节),其中可以看到编译后的图以及 NPU/CPU 的划分。
 
 <!-- cell: 0898f061 src: 1303aaeedb -->
 ## 4. 创建校准配置
