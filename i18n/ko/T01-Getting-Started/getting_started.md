@@ -73,24 +73,24 @@ DX-All Suite를 사용하면 두 구성 요소를 따로 관리하지 않고도 
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 8212e20324 -->
+<!-- cell: dx-all-suite-branch-heading src: f5bad50ef2 -->
 #### 1.1.2 Git 브랜치
 
 다른 SDK 버전이 필요할 때만 아래 브랜치 또는 태그 이름을 변경하세요.
-현재 기본값은 **v2.5.0** 사전 릴리즈 라인인 `staging` 브랜치입니다. `v2.4.2` 같은 릴리즈 태그는 고정된 버전을 가리키고, `main`은 최신 개발 상태입니다. `v2.5.0` 태그가 공개되면 기본값을 그쪽으로 옮길 예정입니다.
+기본값은 최신 DX-All Suite 릴리즈(**v2.5.0**)와 그 이후에 공개된 수정 사항을 담고 있는 `main` 브랜치입니다. 정확한 릴리즈로 고정하려면 `v2.5.0` 같은 해당 릴리즈의 태그를 사용하세요.
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: ce888d0946 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: a00056cdf5 -->
 ### 1.2 DX-All Suite 클론
 
 다음 셀은 설정한 위치에 **DX-All Suite가 없을 때만** 아래 명령을 실행합니다. 디렉터리와 브랜치는 위에서 저장한 설정에서 가져오며, 셀에는 `{DX_ALL_SUITE_DIR}`와 `{DX_ALL_SUITE_BRANCH}`로 표시됩니다.
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch staging https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
-- `--branch`에는 브랜치나 태그를 쓸 수 있습니다. 튜토리얼은 현재 `staging` 브랜치(v2.5.0 사전 릴리즈)를 사용합니다. 고정된 버전이 필요하면 `v2.4.2` 같은 릴리즈 태그를 쓰세요.
-- `--depth 1 --shallow-submodules`는 모든 저장소의 최신 커밋만 가져옵니다. `staging`에서는 최상위 저장소만으로도 디스크 약 1.1 GB(`dx-ai-studio`와 `dx-agent-dev-showcase`가 포함됨)이고, 서브모듈까지 합치면 약 2 GB를 예상하세요. `v2.4.2` 같은 릴리즈 태그는 더 작습니다(다운로드 약 600 MB, 디스크 1.6 GB).
+- `--branch`에는 브랜치나 태그를 쓸 수 있습니다. 튜토리얼은 `main` 브랜치(최신 릴리즈, v2.5.0)를 사용합니다. 고정된 버전이 필요하면 `v2.5.0` 같은 릴리즈 태그를 쓰세요.
+- `--depth 1 --shallow-submodules`는 모든 저장소의 최신 커밋만 가져옵니다. 최상위 저장소만으로도 디스크 약 1.1 GB(`dx-ai-studio`와 `dx-agent-dev-showcase`가 포함됨)이고, 서브모듈까지 합치면 약 2 GB를 예상하세요.
 - `--recurse-submodules`는 서브모듈(`dx-runtime`, `dx-compiler`, `dx-modelzoo` 및 그 안의 저장소)도 함께 체크아웃합니다.
 - `--progress`는 출력이 터미널이 아닐 때도 진행 상황을 출력하므로 셀 안에서 진행 상황을 볼 수 있습니다.
 
@@ -109,14 +109,14 @@ git -C <DX_ALL_SUITE_DIR> submodule update --init --recursive --depth 1 --progre
 
 다음 셀은 지금까지 설치된 항목을 보여 주고, `MISSING`으로 표시된 항목에 대해서는 그것을 제공하는 정확한 단계를 알려 줍니다. 이 노트북으로 돌아올 때마다 다시 실행하세요. 반복 실행해도 안전합니다.
 
-<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: 5f78225be6 -->
+<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: b65287e16c -->
 ### 1.4 DX-All Suite 구성
 
 클론에는 다음 Git 서브모듈이 들어 있습니다(튜토리얼은 앞의 세 개를 사용합니다).
  - `dx-compiler` (**DX-Compiler**): ONNX 모델을 DXNN으로 변환합니다. 2절에서 설치합니다.
  - `dx-runtime` (**DX-Runtime**): 컴파일된 모델을 DEEPX NPU에서 실행합니다. 3절에서 설치합니다.
  - `dx-modelzoo`: 이후 튜토리얼에서 사용하는 사전 컴파일된 모델과 컴파일러 설정입니다.
- - `dx-k8s-device-plugin` (`staging`에 포함): NPU용 Kubernetes 디바이스 플러그인입니다. 이 튜토리얼에서는 사용하지 않습니다.
+ - `dx-k8s-device-plugin`: NPU용 Kubernetes 디바이스 플러그인입니다. 이 튜토리얼에서는 사용하지 않습니다.
 
 <!-- cell: 2ab0cf89-7974-40e6-8117-18165d1ef10f src: 3d336a7ce6 -->
 DX-Runtime은 다음을 제공합니다.
@@ -264,13 +264,13 @@ NPU 드라이버 설치 후에는 **재부팅**이 필요하며, 펌웨어 업�
 
 설치 디렉터리와 Git 브랜치는 설정 셀에서 이미 `dx-tutorials/config.json`에 저장되었습니다. 이 검증은 저장소, 브랜치, 서브모듈, DX-Compiler 환경, DX-Runtime CLI, NPU 장치 노드를 확인합니다. 그다음 셀들은 PCIe 링크, 커널 드라이버, 서비스를 더 자세히 살펴봅니다.
 
-<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 68dd0ab6ce -->
+<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 72d3d28b80 -->
 ### 3.3 권장: 선택한 모델만 다운로드
 
 다음 코드 셀은 `SELECTED_MODELS`를 허용 목록으로 사용해 해당 모델만 다운로드합니다. 이 튜토리얼에서 권장하는 기본 방식입니다. 다른 모델 집합이 필요하면 셀을 실행하기 전에 목록을 수정하세요.
 
 > **경고 — 꼭 필요한 경우가 아니면 전체 다운로드 명령을 사용하지 마세요.**  
-> `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""`를 실행하면 대화형 프롬프트에 빈 답변이 입력됩니다. 빈 답변은 모든 카테고리와 모든 모델을 선택하므로 352개 모델(`dx_app` v3.2.2 매니페스트 기준)이 전부 다운로드됩니다. 전체 집합은 많은 네트워크 트래픽과 약 29 GB의 저장 공간이 필요합니다.
+> `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""`를 실행하면 대화형 프롬프트에 빈 답변이 입력됩니다. 빈 답변은 모든 카테고리와 모든 모델을 선택하므로 497개 모델(`dx_app` v3.3.0 매니페스트 기준)이 전부 다운로드됩니다. 전체 집합은 많은 네트워크 트래픽과 약 45 GB의 저장 공간이 필요합니다.
 
 권장 셀은 `SELECTED_MODELS`를 `setup.sh --models`에 전달하고 `--no-force`를 사용해 이미 있는 모델 파일은 다시 다운로드하지 않습니다. 나열된 24개 모델은 튜토리얼 02~24에서 사용하는 모델이며, 네트워크에 따라 다운로드에 몇 분 정도 걸립니다. 이후 튜토리얼은 필요한 모델만 지정해 같은 `setup.sh --models ... --no-force`를 호출하므로, 이 셀을 한 번 실행해 두면 그쪽 다운로드 셀은 모두 건너뛰고 몇 초 만에 끝납니다.
 

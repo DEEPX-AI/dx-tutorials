@@ -5,7 +5,7 @@
 
 **Welcome!** This repository is a collection of hands-on JupyterLab tutorials for the DEEPX SDK (DX-All Suite). It starts with installing the SDK, continues with the compiler and the runtime, and ends with complete Python and C++ applications on the DEEPX NPU.
 
-> The tutorials currently clone the dx-all-suite `staging` branch (v2.5.0 pre-release; the default in Tutorial 01 section 1.1.2) and will move to the `v2.5.0` tag once it is published. The last fully validated release is tag `v2.4.2`: DX-COM 2.4.1, DX-RT 3.4.2, DX-APP 3.2.2, DX-STREAM 3.1.2.
+> The tutorials clone the dx-all-suite `main` branch (the default in Tutorial 01 section 1.1.2), which carries release **v2.5.0**: DX-COM 2.5.0, DX-RT 3.5.0, DX-APP 3.3.0, DX-STREAM 3.2.0, NPU Driver 2.7.0, firmware 2.7.6. To pin that exact release, set the branch to the `v2.5.0` tag.
 
 ## 📚 Tutorials
 

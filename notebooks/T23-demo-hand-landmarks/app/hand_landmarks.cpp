@@ -1269,7 +1269,9 @@ void run_detection_loop(const Options& options, FrameView* view, std::atomic<boo
 
         cv::VideoCapture cap;
         if (options.use_camera) {
-            cap.open(options.camera_index, cv::CAP_ANY);
+            // V4L2 directly: with CAP_ANY OpenCV may pick its GStreamer backend, which ignores the
+            // MJPG/size requests below, so cameras that offer 1280x720 only as MJPG fail to open.
+            cap.open(options.camera_index, cv::CAP_V4L2);
             cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
             cap.set(cv::CAP_PROP_FRAME_WIDTH, options.camera_width);
             cap.set(cv::CAP_PROP_FRAME_HEIGHT, options.camera_height);

@@ -105,14 +105,14 @@ With PPU Type 0 or Type 1
 
 主要收益是降低主机 CPU 的工作量并减少中间检测数据。具体的端到端收益取决于模型、阈值、场景、主机 CPU 以及应用的后处理。
 
-<!-- cell: ppu-types src: 7508872dcf -->
+<!-- cell: ppu-types src: 69849e3a90 -->
 ### 3.2 根据模型架构选择模式
 
 | 模式 | 架构 | 典型模型 | 层映射 | 执行位置 |
 |---|---|---|---|---|
 | PPU Type 0 | 基于锚框(anchor-based) | YOLOv3、YOLOv4、YOLOv5、YOLOv7 | 检测 Conv 节点 → 锚框数量 | PPU 硬件 |
 | PPU Type 1 | 无锚框(anchor-free) | YOLOX、YOLOv8–YOLOv12 | `bbox`、`obj_conf`(如存在)和 `cls_conf` 节点 | PPU 硬件 |
-| `pre_optimize()` | TopK 优先的 ONNX 重写 | YOLOv8 系列、YOLOv10、YOLO26 | 每个尺度的 bbox/class 输出张量 | NPU + 主机 CPU 图 |
+| `pre_optimize()` | TopK 优先的 ONNX 重写 | YOLOv8、v9、v11、v12、v13 和 YOLO26(检测、分割、姿态);RTMDet | 每个尺度的检测头输出张量 | NPU + 主机 CPU 图 |
 
 不要仅凭模型名称选择类型。请确认导出的 ONNX 检测头结构,并使用该文件中的实际节点名。
 
@@ -266,10 +266,10 @@ dxrun -m outputs/yolox_s_type1_ppu/<compiled-model>.dxnn --use-ort -t 5
 
 请结合 `dxparse` 显示的任务结构来解读这个合成基准测试。即使这个单一的 FPS 数字没有提高,PPU 模型也可以减少主机侧处理和输出传输量。
 
-<!-- cell: topk-heading src: a8f8add50a -->
+<!-- cell: topk-heading src: e2dab2a4c4 -->
 ## 6. YOLO26 基于 TopK 的优化(n / s / m / l / x)
 
-YOLO26 使用一对一的解耦检测头。`yolo26_postprocess` 变换把 TopK 选择移到开销较大的 CPU 侧解码工作之前。这与 PPU Type 0/1 不同:它重写 ONNX 图,减少 NPU 推理之后需要处理的候选框工作量。
+YOLO26 使用一对一的解耦检测头。`yolo_no_dfl_postprocess` pass(在 DX-COM v2.5.0 之前名为 `yolo26_postprocess`)把 TopK 选择移到开销较大的 CPU 侧解码工作之前。这与 PPU Type 0/1 不同:它重写 ONNX 图,减少 NPU 推理之后需要处理的候选框工作量。
 
 ```text
 Baseline: 8,400 candidates → decode and score all candidates → TopK 300
@@ -300,10 +300,12 @@ Optimized: 8,400 candidates → TopK 300 → decode and score only 300 candidate
 
 该变换需要三个检测尺度上各一个边界框张量和一个类别置信度张量。这些是**输出张量名**,而不是从其他模型复制来的显示标签。导出到 Model Zoo 的所有 YOLO26 尺寸共享相同的检测头布局(边界框为 `/model.23/one2one_cv2.<scale>/...`,类别得分为 `/model.23/one2one_cv3.<scale>/...`),因此下面的名称由一个模式生成,再对照实际下载的 ONNX 进行检查。如果检查失败,请在 Netron 中打开模型并更新该模式。
 
-<!-- cell: apply-topk-heading src: 1ac20c8599 -->
-### 6.3 应用 `yolo26_postprocess`
+<!-- cell: apply-topk-heading src: add3ef0512 -->
+### 6.3 应用 `yolo_no_dfl_postprocess`
 
 该变换使用 DX-COM Python 环境运行,因为 `dx_com` 安装在那里。它会创建一个单独的 ONNX 文件,因此基线保持不变。
+
+> **DX-COM v2.5.0 中的变更。** 原名 `yolo26_postprocess` 的 pass 现在是 `yolo_no_dfl_postprocess`(YOLO26 的框检测头中没有 DFL),`yolo_postprocess` 现在是 `yolo_dfl_postprocess`(YOLOv8 到 v13)。使用旧名称会报错。每个 YOLO pass 都需要一个 `task` 键(检测用 `base`,或 `seg`、`pose`),并且不再接受 `input_height` / `input_width`:输入尺寸从模型中读取,传入它们会引发 `ValueError`。
 
 脚本以基线 ONNX 和目标路径作为参数,因此同一个脚本适用于所有变体。接下来的两个单元格分别写入脚本并运行它。对于默认的 `n` 变体,运行它等价于:
 

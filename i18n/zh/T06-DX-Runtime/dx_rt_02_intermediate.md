@@ -80,11 +80,12 @@ uv pip install --python <T06>/workspace/.venv-dxrt/bin/python \
 
 <img src="assets/dx-rt-execution-modes.svg" style="max-width: 1100px; width: 100%;" alt="同步、异步和批处理执行模式">
 
-<!-- cell: 3e183092 src: de13644a11 -->
-这三个计时回答的是不同的问题:
+<!-- cell: 3e183092 src: 726f414385 -->
+这四个计时回答的是不同的问题:
 
 - **主机观测时间** 包括 Python 调用及其周围的主机端开销。
-- **DX-RT 延迟** 是运行时最近一次请求的延迟。
+- **E2E 响应时间** 是 DX-RT 处理最近一次请求所用的时间,从提交到得到结果,包括等待 NPU 缓冲区和队列等待的时间。自 DX-RT v3.5.0 起,`get_latency()` 返回的就是这个值。
+- **核心延迟(Core latency)** 是去除缓冲池等待和队列等待后的 E2E 响应时间(`get_core_latency()`,v3.5.0 新增)。两者差距较大说明请求在运行时中等待,而不是在 NPU 上运行缓慢。
 - **NPU 推理时间** 只涵盖 NPU 执行,仅是端到端延迟的一部分。
 
 不要把 NPU 时间标注为从摄像头到显示的延迟。

@@ -2,10 +2,10 @@
 <!-- i18n lang: zh -->
 <!-- One block per Markdown cell of the source notebook. Keep the markers; translate the text. -->
 
-<!-- cell: 1726e9e4-5821-4f34-add4-37f1fb44ee77 src: c7877fefea -->
+<!-- cell: 1726e9e4-5821-4f34-add4-37f1fb44ee77 src: 9e8ae4ac00 -->
 # DEEPX Tutorial 04 - DX-STREAM 工作流
 
-本教程介绍 DX-STREAM v3.1.x,并展示如何在 DEEPX NPU 上构建端到端的视觉 AI 流水线。
+本教程介绍 DX-STREAM v3.2.0(DX-All Suite v2.5.0),并展示如何在 DEEPX NPU 上构建端到端的视觉 AI 流水线。
 
 ## 学习目标
 
@@ -48,7 +48,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 
 完整的元素与属性参考,请参阅 [DEEPX Developer Portal](https://developer.deepx.ai/download/?id=583) 提供的 DX-STREAM 用户手册。需要登录。
 
-<!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: fe4feb49aa -->
+<!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: 476739e28b -->
 ## 2. 前提条件
 
 - 已按教程 01 使用 `./dx-runtime/install.sh --all` 完成安装:DX-RT、DX-APP 和 DX-STREAM 已构建,NPU 可见。推荐先完成教程 03;第 5 节在其叉车与工人(Forklift and Worker)模型存在时会复用该模型。
@@ -56,7 +56,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 - 可选硬件:用于 4.3 的 V4L2 摄像头(`RUN_CAMERA`)、用于 4.9 的可访问 RTSP 流、用于 4.11 的 MQTT 或 Kafka 代理。
 - 工具:`gstreamer1.0-tools`、`v4l-utils`、`jq`(`setup.sh` 使用)、用于 7.3 的 `graphviz`。5.7 节使用 `meson` 重新构建 DX-STREAM,需要 `sudo`。
 - DX-STREAM GStreamer 插件必须对 `gst-inspect-1.0` 可见。`build.sh` 会打印 `export GST_PLUGIN_PATH=...` 这一行;设置单元格会检查这一点,并在插件位于默认位置时为内核设置该变量。
-- 下载量:`setup.sh` 获取 17 个示例模型(约 300 MB)和共享示例视频归档(约 1.1 GB,存放在 `<dx-all-suite>/workspace/res/videos` 下,与 DX-APP 共享)。第 5 节复用教程 03 的模型和视频,否则下载 90 MB。
+- 下载量:`setup.sh` 获取 15 个示例模型(约 280 MB)和共享示例视频归档(约 1.1 GB,存放在 `<dx-all-suite>/workspace/res/videos` 下,与 DX-APP 共享)。第 5 节复用教程 03 的模型和视频,否则下载 90 MB。
 - 本教程创建的文件存放在 `notebooks/T04-DX-STREAM/workspace/`,git 会忽略该目录。SDK 树中唯一的改动是 5.6 中的后处理补丁,这正是该节的目的。
 
 下一个单元格会定位 SDK、检查这些要求并打印状态表。
@@ -106,7 +106,7 @@ dxpreprocess preprocess-id=1 resize-width=640 resize-height=640
 
 `preprocess-id` 标识生成的输入张量。下游的 `dxinfer` 必须引用相同的 ID。
 
-<!-- cell: 286b0cb5-2662-454e-a1a3-ae94aff066ce src: 5260c0d019 -->
+<!-- cell: 286b0cb5-2662-454e-a1a3-ae94aff066ce src: a6e689698b -->
 #### 3.2.2 DxInfer 与推理后端
 
 ```bash
@@ -117,7 +117,7 @@ dxinfer preprocess-id=1 inference-id=1 model-path=/path/to/model.dxnn backend=au
 - `dxrt`: 使用 DEEPX Runtime 后端
 - `dxvnpu`: 当 DX-STREAM 以 VNPU 支持构建时,使用 VNPU 后端
 
-`inference-id` 标识供 `dxpostprocess` 消费的输出张量。DX-STREAM v3.1.x 内部使用异步 Put/Get 后端接口;流水线语法保持不变。
+`inference-id` 标识供 `dxpostprocess` 消费的输出张量。自 v3.1 起,DX-STREAM 内部使用异步 Put/Get 后端接口;流水线语法保持不变。
 
 <!-- cell: eba1a455-60a5-4898-99b4-ab0a40a00f21 src: b9001c0bcb -->
 #### 3.2.3 DxPostprocess
@@ -149,10 +149,10 @@ DxOsd 读取推理元数据,并把可视化结果叠加到视频帧上。
 
 本笔记本中的流水线在显示 sink 之前以软件 `videoconvert` 结尾。硬件 `dxconvert` 速度更快,但在本 SDK 版本上,它对某些片段(例如第 5 节的叉车与工人视频)会间歇性地产生全绿的帧。捆绑脚本通过其 `VIDEOCONVERT_PIPELINE` 变量按平台选择转换器;如果您把 `SINK` 切换为 `dxconvert` 后看到绿帧,请切换回来。
 
-<!-- cell: a2bacdbc-f65c-4c63-804d-88241bb9f07a src: 17eb05a204 -->
+<!-- cell: a2bacdbc-f65c-4c63-804d-88241bb9f07a src: 24ea1eec76 -->
 ## 4. 运行捆绑的演示流水线
 
-`run_demo.sh` 提供 12 个选项:`0` 到 `9`、代表 Secondary Mode 的 `-`,以及代表深度估计的 `=`。如果十秒内未收到选择,它会运行选项 `0`。下一个单元格打印已安装的菜单。
+`run_demo.sh` 提供 10 个选项:`0` 到 `9`。在连接了摄像头的 Raspberry Pi 上,它还会列出用于 Raspberry Pi 摄像头流水线的 `c`、`p`、`s` 和 `d`。如果十秒内未收到选择,它会运行选项 `0`。下一个单元格打印已安装的菜单。
 
 这些演示会打开原生窗口,并在流水线退出前一直占用单元格,因此下面的单元格仅在桌面会话中且 `RUN_DEMOS = True`(设置单元格)时才会运行。推荐的方式是使用终端(File > New > Terminal):
 
@@ -182,10 +182,10 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_stream     # the setup cell printed your act
 
 关注要点: 4.1 的结构,配合人脸模型和 `libpostprocess_yolov5s_face.so`;`dxosd` 绘制人脸框和关键点。
 
-<!-- cell: 95a894ed-f224-4e72-b6f3-b2fc702b4f9e src: 51efb7d6f3 -->
-下一个示例使用带 PPU 输出的 SCRFD500M 模型。
+<!-- cell: 95a894ed-f224-4e72-b6f3-b2fc702b4f9e src: 45bd045bb9 -->
+下一个示例使用 SCRFD500M 人脸检测器。DX-STREAM v3.2.0 移除了该演示的 PPU 版本,而 `run_demo.sh` 不列出非 PPU 版本,因此单元格直接运行其脚本。
 
-关注要点: 通用的 `libpostprocess_ppu.so`。对于 PPU 模型,一个共享库可以服务多种架构。
+关注要点: 与 YOLOv5s-Face 相同的链;只有 `model-path`(`scrfd-500m_640x640.dxnn`)和 `library-file-path=.../libpostprocess_scrfd500m.so` 发生变化。如果模型缺失,脚本会在首次使用时下载它。
 
 <!-- cell: bed6a8d7-6e12-444d-85c4-72c6e7dab466 src: f29ec878ae -->
 #### 使用摄像头源
@@ -197,35 +197,30 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_stream     # the setup cell printed your act
 
 关注要点: `libpostprocess_yolo26pose.so` 把关键点写入 `DXObjectMeta`,`dxosd` 据此绘制骨架。
 
-<!-- cell: 70f47140-89cd-477b-abfe-e5c5ed869042 src: b99cd2cfe3 -->
-下一个示例使用带 PPU 输出的 YOLOv5 Pose。
-
-关注要点: 再次使用 `libpostprocess_ppu.so`。与 4.4 对比,只有模型和库发生了变化。
-
-<!-- cell: fc15ee5e-4fc9-4595-a4e2-3da2f54f5420 src: eece8565d4 -->
+<!-- cell: fc15ee5e-4fc9-4595-a4e2-3da2f54f5420 src: b2b62f3da7 -->
 ### 4.5 实例分割 - YOLO26n-Seg
 
-选项 `6` 运行分割演示。在当前 SDK 布局中,该脚本位于 `instance_segmentation` 下。
+选项 `4` 运行分割演示。在当前 SDK 布局中,该脚本位于 `instance_segmentation` 下。
 
 关注要点: 位于 `dxpostprocess` 和 `dxosd` 之间的 `dxtracker` 元素;分割演示还会为掩码分配跟踪 ID。
 
-<!-- cell: ba5d8d52-5fe5-4cd2-93b8-b2db52570a1a src: 2a8e38c8f9 -->
+<!-- cell: ba5d8d52-5fe5-4cd2-93b8-b2db52570a1a src: b63093d8f7 -->
 ### 4.6 多目标跟踪
 
-选项 `7` 先运行目标检测,再进行跟踪。
+选项 `6` 先运行目标检测,再进行跟踪。
 
 ![单路跟踪流水线](assets/pipline-single-tracking.png)
 
 关注要点: 4.2 的检测链加上 `dxtracker config-file-path=.../tracker_config.json`。跟踪器配置选择算法及其阈值。
 
-<!-- cell: 154b4e5c-5a1f-4036-9be6-fd8e8e1a39ab src: ea853b3cad -->
+<!-- cell: 154b4e5c-5a1f-4036-9be6-fd8e8e1a39ab src: 3c94f04409 -->
 ### 4.7 多通道目标检测
 
-选项 `8` 运行四个独立的推理分支,并将它们的输出合成在一起。
+选项 `7` 运行四个独立的推理分支,并将它们的输出合成在一起。
 
 ![多通道流水线](assets/pipeline-multi-stream.png)
 
-关注要点: 四个 `filesrc ... ! dxscale` 分支,各自拥有自己的预处理、推理和后处理,由 `compositor` 合并。模型在每个分支中各加载一次。
+关注要点: 四个 `urisourcebin ... ! decodebin` 分支,各自拥有自己的预处理、推理、后处理和 `dxosd`,然后由 `dxscale` 和 `compositor` 将结果拼接显示。模型在每个分支中各加载一次。
 
 <!-- cell: 30471517-0937-4f1a-bd77-f41ac4749987 src: 3b21ecdbaf -->
 ### 4.8 DX 多流域
@@ -272,14 +267,14 @@ N × video/x-raw
 
 关注要点: 环绕一条共享链的 `dxinputselector name=in` 和 `dxoutputselector name=out`。数一数 DX 元素的数量,并与 4.7 对比。
 
-<!-- cell: e8f05808-0f68-475f-b0b0-d9ee7ba85240 src: c7e15732ef -->
+<!-- cell: e8f05808-0f68-475f-b0b0-d9ee7ba85240 src: af0923b989 -->
 ### 4.9 多通道 RTSP
 
-选项 `9` 演示多个 RTSP 源。实时流水线受益于 v3.1.x 中修正的延迟和 QoS 报告。
+选项 `8` 演示多个 RTSP 源。实时流水线受益于 v3.1 中修正的延迟和 QoS 报告。
 
 关注要点: 4.8 的选择器布局,输入换成 `rtspsrc`。流 URL 是脚本顶部的变量;请根据您的摄像头进行编辑。
 
-<!-- cell: 317ba344-632d-4528-964e-4411d31d7b56 src: 98c893db6e -->
+<!-- cell: 317ba344-632d-4528-964e-4411d31d7b56 src: 06c946340c -->
 ### 4.10 Secondary Mode
 
 ![Secondary Mode 流水线](assets/pipeline-secondary.png)
@@ -287,9 +282,9 @@ N × video/x-raw
 - **主模式(Primary Mode)** 对整帧进行预处理和推理。后处理通常会创建新的 `DXObjectMeta` 对象。
 - **次级模式(Secondary Mode)** 对检测到的目标区域进行预处理。后处理会更新或丰富已有的目标元数据。
 
-关注要点: 第二组预处理、推理和后处理三元组上的 `secondary-mode=true`。SCRFD 找到人脸,然后 EfficientNet 对每个人脸区域而非整帧进行分类。
+关注要点: YOLOv5s(PPU)在整帧上检测并跟踪目标。随后 `tee` 馈送两个次级分支,每个分支的预处理、推理和后处理上都设置了 `secondary-mode=true`:EfficientNet-Lite0(224x224)对每个检测到的目标进行分类,SCRFD500M 仅在人物框内(`target-class-id=0`)搜索人脸。`dxgather` 把两个结果合并回一个流。
 
-<!-- cell: c73d9a02-064d-4b78-a062-5598aa8546cc src: 6c9c479a23 -->
+<!-- cell: c73d9a02-064d-4b78-a062-5598aa8546cc src: 0994afeb5b -->
 ### 4.11 将推理结果发布到 MQTT 或 Kafka
 
 `dxmsgconv` 使用自定义消息转换库转换推理元数据。`dxmsgbroker` 把载荷发布到 MQTT 或 Kafka 代理。
@@ -298,7 +293,7 @@ N × video/x-raw
 ... → dxpostprocess → dxmsgconv → dxmsgbroker
 ```
 
-在 v3.1.x 中,`include-frame=true` 会把当前帧作为 Base64 编码的 JPEG 添加到消息中。这会增加 JPEG 编码工作量、消息大小和网络流量,因此仅在消费者需要图像时才启用。
+自 v3.1 起,`include-frame=true` 会把当前帧作为 Base64 编码的 JPEG 添加到消息中。这会增加 JPEG 编码工作量、消息大小和网络流量,因此仅在消费者需要图像时才启用。
 
 ```bash
 dxmsgconv library-file-path=/path/to/libmessage_convert.so include-frame=true ! \
@@ -316,8 +311,8 @@ dxmsgbroker broker-name=mqtt conn-info=localhost:1883 topic=test
 
 <img src="assets/detection-goal.jpg" style="max-width: 1400px;">
 
-<!-- cell: 66060d59-25bd-463a-8c02-e67713decc74 src: 423cab8027 -->
-### 5.1 DX-STREAM v3.1.x 自定义库 API
+<!-- cell: 66060d59-25bd-463a-8c02-e67713decc74 src: 221a92fe66 -->
+### 5.1 自定义库 API(DX-STREAM v3.1 及更高版本)
 
 为旧版本编写的自定义预处理和后处理库必须按如下方式更新:
 
@@ -328,7 +323,7 @@ dxmsgbroker broker-name=mqtt conn-info=localhost:1883 topic=test
 - 在 Primary Mode 下,后处理创建结果对象。
 - 在 Secondary Mode 下,后处理更新通过 `object_meta` 传入的对象。
 
-当前的 YoloV7 库已经使用 v3.1.x 的函数形式:
+当前的 YoloV7 库已经使用 v3.1+ 的函数形式:
 
 ```cpp
 extern "C" void PostProcess(
@@ -695,8 +690,8 @@ GST_DEBUG=2,dxinfer:4 GST_DEBUG_FILE=/tmp/dxstream.log ./run_demo.sh
 
 在进行性能测量时请关闭详细日志,因为日志输出会影响时序。
 
-<!-- cell: 13445965-9c30-429f-80ff-3acf97fd6cee src: 771d6ca90f -->
-### 7.2 理解 v3.1.x 的失败行为
+<!-- cell: 13445965-9c30-429f-80ff-3acf97fd6cee src: d22844ae3b -->
+### 7.2 理解失败行为
 
 - 不兼容的链接会在 caps 协商阶段失败。
 - 模型文件缺失、NPU 初始化失败和自定义库错误会作为 GStreamer 元素错误报告,而不是以 `abort()` 终止。
@@ -721,10 +716,17 @@ sudo apt install graphviz
 GST_DEBUG_DUMP_DOT_DIR=<workspace>/dot gst-launch-1.0 filesrc location=... ! ... ! fakesink
 ```
 
-<!-- cell: af463f4c-5ea2-4477-b67c-fcc4cad871b7 src: f4e26083b6 -->
-### 7.4 DX-STREAM v3.1.x 中的变化
+<!-- cell: af463f4c-5ea2-4477-b67c-fcc4cad871b7 src: f6e1933e6c -->
+### 7.4 DX-STREAM v3.1 和 v3.2 中的变化
 
-本教程使用 DX-STREAM v3.1.2 进行了验证。v3.1.x 系列引入了本教程所依赖的运行时行为:
+本教程面向 DX-STREAM v3.2.0(DX-All Suite v2.5.0)。v3.2.0 改变了您在第 4 节中看到的内容:
+
+- 移除了 SCRFD500M PPU 和 YOLOv5Pose PPU 演示;4.3 节改为运行非 PPU 的 SCRFD500M 脚本。
+- `run_demo.sh` 菜单重新编号为 `0`-`9`,并新增用于 YOLO26n 深度估计的 `5`;在 Raspberry Pi 上还会列出用于 `libcamerasrc` 摄像头流水线的 `c`、`p`、`s`、`d`。
+- 次级模式分类器为 EfficientNet-Lite0 224x224(256x256 模型已停用)。
+- 在具有 EGL/GLES 3.0 的 ARM 主机上(已在 Raspberry Pi 5 上验证),可选的 `gstdxstream-gles` 后端在 GPU 上执行裁剪、缩放、letterbox 和颜色转换。
+
+v3.1 系列引入了本教程其余部分所依赖的运行时行为:
 
 - 基于 `application/x-dxvideoraw` 的统一多流域
 - 在共享处理链中保留每个流的生命周期和时间线
@@ -735,7 +737,7 @@ GST_DEBUG_DUMP_DOT_DIR=<workspace>/dot gst-launch-1.0 filesrc location=... ! ...
 
 可用的后端和元素属性取决于 DX-STREAM 的构建方式。请使用 `gst-inspect-1.0` 检查已安装的构建。
 
-<!-- cell: 325d5d11-7b12-4ddb-83e2-f1cb7ce17a91 src: 9ef3c41d4e -->
+<!-- cell: 325d5d11-7b12-4ddb-83e2-f1cb7ce17a91 src: dde652494e -->
 ## 8. 故障排除
 
 | 症状 | 看到的内容 | 可能原因 | 解决方法 |
@@ -747,7 +749,7 @@ GST_DEBUG_DUMP_DOT_DIR=<workspace>/dot gst-launch-1.0 filesrc location=... ! ...
 | `build.sh` 停止 | 单元格内出现 `sudo` 密码提示或 `meson` 错误 | 构建会进行系统级安装,需要 `sudo` | 在终端(File > New > Terminal)中运行 `./build.sh` |
 | 某些帧完全是绿色 | 窗口或保存的帧间歇性地闪现绿色 | 显示 sink 之前的 `dxconvert` 错误处理了某些解码后的缓冲区 | 使用 `videoconvert ! fpsdisplaysink`(笔记本默认值);仅在 3.3 的 `dxscale`/`dxconvert` 实验中保留 `dxconvert` |
 | 未生成 DOT 图 | `No DOT file was generated` | 演示在流水线进入 PLAYING 之前就被停止了 | 让视频开始播放,然后再停止单元格 |
-| 示例模型在加载时被拒绝 | 来自 `dxinfer` 的 DX-RT 版本或格式错误 | 示例模型是为 Model Zoo 发布版 `2_4_0` 编译的;较旧的运行时无法加载它们 | 使用本教程验证所用的 DX-RT 版本(3.4.2),或用您的 DX-COM 重新编译模型 |
+| 示例模型在加载时被拒绝 | 来自 `dxinfer` 的 DX-RT 版本或格式错误 | 示例模型是用 DX-COM v2.5.0 编译的(Model Zoo 发布版 `2_5_0`,`.dxnn` 容器 v9),需要 DX-RT v3.5.0 或更高版本 | 将 DX-Runtime 更新到 DX-All Suite v2.5.0 对应的版本(教程 01),或用您的 DX-COM 重新编译模型 |
 | `setup.sh` 要求输入密码 | 安装 `jq` 时出现 `[sudo] password for ...` | 缺少 `jq`,脚本用 `apt` 安装它 | 在终端中运行一次 `sudo apt install jq`,然后重新运行单元格 |
 | `import pydxs` 失败 | `ModuleNotFoundError: No module named 'pydxs'` | DX-STREAM 尚未构建,或使用了 Jupyter 的 Python 而不是 `venv-dx_stream` | 运行 5.7(构建),然后像单元格那样使用 `venv-dx_stream/bin/python` |
 | `build.sh` 立即失败 | `Build data file ... was generated with an old version of meson` | 上一个 DX-STREAM 版本遗留的 `builddir` | 运行 `./build.sh --clean`(5.7 中的单元格在首次尝试失败时会自动执行此操作) |

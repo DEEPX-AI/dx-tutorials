@@ -73,24 +73,24 @@ DX-All Suite を使えば、両方のコンポーネントを個別に管理す�
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 8212e20324 -->
+<!-- cell: dx-all-suite-branch-heading src: f5bad50ef2 -->
 #### 1.1.2 Git ブランチ
 
 別の SDK バージョンが必要な場合にのみ、下のブランチ名またはタグ名を変更してください。
-現在の既定値は **v2.5.0** のプレリリース系統である `staging` ブランチです。`v2.4.2` のようなリリースタグは固定バージョンを指し、`main` は最新の開発状態です。`v2.5.0` タグが公開され次第、既定値をそちらに移す予定です。
+既定値は `main` ブランチで、最新の DX-All Suite リリース(**v2.5.0**)とその後に公開された修正が含まれています。特定のリリースに固定したい場合は、そのタグ(たとえば `v2.5.0`)を指定してください。
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: ce888d0946 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: a00056cdf5 -->
 ### 1.2 DX-All Suite のクローン
 
 次のセルは、設定した場所に **DX-All Suite が存在しない場合にのみ**、以下のコマンドを実行します。ディレクトリとブランチは上で保存した設定から取得され、セル内では `{DX_ALL_SUITE_DIR}` と `{DX_ALL_SUITE_BRANCH}` として表示されます。
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch staging https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
-- `--branch` にはブランチ名でもタグ名でも指定できます。チュートリアルは現在 `staging` ブランチ(v2.5.0 プレリリース)を使います。固定バージョンが必要な場合は `v2.4.2` のようなリリースタグを指定してください。
-- `--depth 1 --shallow-submodules` はすべてのリポジトリの最新コミットだけを取得します。`staging` ではトップレベルのリポジトリだけでディスク上約 1.1 GB(`dx-ai-studio` と `dx-agent-dev-showcase` を含む)になり、サブモジュールを含めるとおよそ 2 GB を見込んでください。`v2.4.2` のようなリリースタグはより小さく済みます(ダウンロード約 600 MB、ディスク上 1.6 GB)。
+- `--branch` にはブランチ名でもタグ名でも指定できます。チュートリアルは `main` ブランチ(最新リリース、v2.5.0)を使います。固定バージョンが必要な場合は `v2.5.0` のようなリリースタグを指定してください。
+- `--depth 1 --shallow-submodules` はすべてのリポジトリの最新コミットだけを取得します。トップレベルのリポジトリだけでディスク上約 1.1 GB(`dx-ai-studio` と `dx-agent-dev-showcase` を含む)になり、サブモジュールを含めるとおよそ 2 GB を見込んでください。
 - `--recurse-submodules` はサブモジュール(`dx-runtime`、`dx-compiler`、`dx-modelzoo` とその内部のリポジトリ)もチェックアウトします。
 - `--progress` は出力がターミナルでなくても進捗を表示するので、セル内で進み具合を確認できます。
 
@@ -109,14 +109,14 @@ git -C <DX_ALL_SUITE_DIR> submodule update --init --recursive --depth 1 --progre
 
 次のセルは、これまでにインストールされたものと、`MISSING` と表示された項目についてはそれを提供する正確な手順を表示します。このノートブックに戻ってくるたびに再実行してください。繰り返し実行しても安全です。
 
-<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: 5f78225be6 -->
+<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: b65287e16c -->
 ### 1.4 DX-All Suite の中身
 
 クローンには次の Git サブモジュールが含まれています(チュートリアルで使うのは最初の 3 つです)。
  - `dx-compiler` (**DX-Compiler**): ONNX モデルを DXNN に変換します。第 2 節でインストールします。
  - `dx-runtime` (**DX-Runtime**): コンパイル済みモデルを DEEPX NPU 上で実行します。第 3 節でインストールします。
  - `dx-modelzoo`: 後のチュートリアルで使用するコンパイル済みモデルとコンパイラ設定です。
- - `dx-k8s-device-plugin`(`staging` に含まれる): NPU 用の Kubernetes デバイスプラグインです。これらのチュートリアルでは使用しません。
+ - `dx-k8s-device-plugin`: NPU 用の Kubernetes デバイスプラグインです。これらのチュートリアルでは使用しません。
 
 <!-- cell: 2ab0cf89-7974-40e6-8117-18165d1ef10f src: 3d336a7ce6 -->
 DX-Runtime は次を提供します。
@@ -264,13 +264,13 @@ NPU ドライバーのインストール後は**再起動**が必要で、ファ
 
 インストールディレクトリと Git ブランチは、設定セルによってすでに `dx-tutorials/config.json` に保存されています。この検証では、リポジトリ、ブランチ、サブモジュール、DX-Compiler 環境、DX-Runtime CLI、NPU デバイスノードを確認します。その後のセルでは、PCIe リンク、カーネルドライバー、サービスをより詳しく調べます。
 
-<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 68dd0ab6ce -->
+<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 72d3d28b80 -->
 ### 3.3 推奨: 選択したモデルのみダウンロードする
 
 次のコードセルは `SELECTED_MODELS` を許可リストとして使い、それらのモデルだけをダウンロードします。これがこのチュートリアルで推奨する既定の方法です。別のモデルセットが必要な場合は、セルを実行する前にリストを編集してください。
 
 > **警告 — 必要な場合を除き、全件ダウンロードのコマンドは使用しないでください。**  
-> `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""` を実行すると、対話型プロンプトに空の回答が与えられます。空の回答はすべてのカテゴリとすべてのモデルを選択するため、352 個のモデル(`dx_app` v3.2.2 のマニフェスト)がすべてダウンロードされます。全セットには大量のネットワークトラフィックと約 29 GB のストレージが必要です。
+> `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""` を実行すると、対話型プロンプトに空の回答が与えられます。空の回答はすべてのカテゴリとすべてのモデルを選択するため、497 個のモデル(`dx_app` v3.3.0 のマニフェスト)がすべてダウンロードされます。全セットには大量のネットワークトラフィックと約 45 GB のストレージが必要です。
 
 推奨セルは `SELECTED_MODELS` を `setup.sh --models` に渡し、`--no-force` を使って既存のモデルファイルを再ダウンロードしないようにします。リストされている 24 個のモデルはチュートリアル 02〜24 で使用するもので、ダウンロードにはネットワークによって数分かかります。以降のチュートリアルは必要なモデルだけを指定して同じ `setup.sh --models ... --no-force` を呼ぶため、このセルを一度実行しておけば、それらのダウンロードセルはすべてスキップされ数秒で終わります。
 

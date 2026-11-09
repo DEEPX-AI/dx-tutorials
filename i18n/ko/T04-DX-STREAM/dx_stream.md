@@ -2,10 +2,10 @@
 <!-- i18n lang: ko -->
 <!-- One block per Markdown cell of the source notebook. Keep the markers; translate the text. -->
 
-<!-- cell: 1726e9e4-5821-4f34-add4-37f1fb44ee77 src: c7877fefea -->
+<!-- cell: 1726e9e4-5821-4f34-add4-37f1fb44ee77 src: 9e8ae4ac00 -->
 # DEEPX Tutorial 04 - DX-STREAM 워크플로
 
-이 튜토리얼은 DX-STREAM v3.1.x를 소개하고 DEEPX NPU에서 엔드투엔드 비전 AI 파이프라인을 구축하는 방법을 보여 줍니다.
+이 튜토리얼은 DX-STREAM v3.2.0(DX-All Suite v2.5.0)을 소개하고 DEEPX NPU에서 엔드투엔드 비전 AI 파이프라인을 구축하는 방법을 보여 줍니다.
 
 ## 학습 목표
 
@@ -48,7 +48,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 
 전체 요소 및 속성 레퍼런스는 [DEEPX Developer Portal](https://developer.deepx.ai/download/?id=583)에서 제공하는 DX-STREAM User Manual을 참고하세요. 로그인이 필요합니다.
 
-<!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: fe4feb49aa -->
+<!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: 476739e28b -->
 ## 2. 사전 요구 사항
 
 - `./dx-runtime/install.sh --all`로 튜토리얼 01을 완료: DX-RT, DX-APP, DX-STREAM이 빌드되고 NPU가 인식됨. 튜토리얼 03을 권장하며, 5절은 해당 튜토리얼의 Forklift and Worker 모델이 있으면 재사용합니다.
@@ -56,7 +56,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 - 선택 하드웨어: 4.3용 V4L2 카메라(`RUN_CAMERA`), 4.9용 접근 가능한 RTSP 스트림, 4.11용 MQTT 또는 Kafka 브로커.
 - 도구: `gstreamer1.0-tools`, `v4l-utils`, `jq`(`setup.sh`가 사용), 7.3용 `graphviz`. 5.7절은 `meson`으로 DX-STREAM을 다시 빌드하며 `sudo`가 필요합니다.
 - DX-STREAM GStreamer 플러그인이 `gst-inspect-1.0`에서 보여야 합니다. `build.sh`가 `export GST_PLUGIN_PATH=...` 줄을 출력합니다. 설정 셀이 이를 확인하고, 플러그인이 기본 위치에 있으면 커널에 변수를 설정합니다.
-- 다운로드: `setup.sh`가 샘플 모델 17개(약 300 MB)와 공유 샘플 영상 아카이브(약 1.1 GB, `<dx-all-suite>/workspace/res/videos`에 저장되며 DX-APP과 공유)를 받습니다. 5절은 튜토리얼 03의 모델과 영상을 재사용하거나 90 MB를 다운로드합니다.
+- 다운로드: `setup.sh`가 샘플 모델 15개(약 280 MB)와 공유 샘플 영상 아카이브(약 1.1 GB, `<dx-all-suite>/workspace/res/videos`에 저장되며 DX-APP과 공유)를 받습니다. 5절은 튜토리얼 03의 모델과 영상을 재사용하거나 90 MB를 다운로드합니다.
 - 이 튜토리얼이 생성하는 파일은 git이 무시하는 `notebooks/T04-DX-STREAM/workspace/`에 저장됩니다. SDK 트리 안에서 바뀌는 것은 5.6의 후처리 패치뿐이며, 그것이 해당 절의 목적입니다.
 
 다음 셀은 SDK를 찾고 이 요구 사항을 확인한 뒤 상태 표를 출력합니다.
@@ -106,7 +106,7 @@ dxpreprocess preprocess-id=1 resize-width=640 resize-height=640
 
 `preprocess-id`는 생성된 입력 텐서를 식별합니다. 다운스트림의 `dxinfer`는 같은 ID를 참조해야 합니다.
 
-<!-- cell: 286b0cb5-2662-454e-a1a3-ae94aff066ce src: 5260c0d019 -->
+<!-- cell: 286b0cb5-2662-454e-a1a3-ae94aff066ce src: a6e689698b -->
 #### 3.2.2 DxInfer와 추론 백엔드
 
 ```bash
@@ -117,7 +117,7 @@ dxinfer preprocess-id=1 inference-id=1 model-path=/path/to/model.dxnn backend=au
 - `dxrt`: DEEPX Runtime 백엔드를 사용
 - `dxvnpu`: DX-STREAM이 VNPU 지원으로 빌드된 경우 VNPU 백엔드를 사용
 
-`inference-id`는 `dxpostprocess`가 소비하는 출력 텐서를 식별합니다. DX-STREAM v3.1.x는 내부적으로 비동기 Put/Get 백엔드 인터페이스를 사용하며, 파이프라인 문법은 변하지 않았습니다.
+`inference-id`는 `dxpostprocess`가 소비하는 출력 텐서를 식별합니다. v3.1부터 DX-STREAM은 내부적으로 비동기 Put/Get 백엔드 인터페이스를 사용하며, 파이프라인 문법은 변하지 않았습니다.
 
 <!-- cell: eba1a455-60a5-4898-99b4-ab0a40a00f21 src: b9001c0bcb -->
 #### 3.2.3 DxPostprocess
@@ -149,10 +149,10 @@ DxOsd는 추론 메타데이터를 읽어 영상 프레임 위에 시각적 결�
 
 이 노트북의 파이프라인은 디스플레이 싱크 앞에 소프트웨어 `videoconvert`를 두고 끝납니다. 하드웨어 `dxconvert`가 더 빠르지만, 이 SDK 릴리스에서는 일부 클립(예: 5절의 Forklift and Worker 영상)에서 간헐적으로 전체가 녹색인 프레임이 발생했습니다. 번들 스크립트는 `VIDEOCONVERT_PIPELINE` 변수를 통해 플랫폼별로 컨버터를 선택합니다. `SINK`를 `dxconvert`로 바꿨다가 녹색 프레임이 보이면 다시 되돌리세요.
 
-<!-- cell: a2bacdbc-f65c-4c63-804d-88241bb9f07a src: 17eb05a204 -->
+<!-- cell: a2bacdbc-f65c-4c63-804d-88241bb9f07a src: 24ea1eec76 -->
 ## 4. 번들 데모 파이프라인 실행
 
-`run_demo.sh`는 12가지 선택지를 제공합니다. `0`~`9`, Secondary Mode용 `-`, Depth Estimation용 `=`입니다. 10초 안에 입력이 없으면 옵션 `0`을 실행합니다. 다음 셀은 설치된 메뉴를 출력합니다.
+`run_demo.sh`는 `0`~`9`의 10가지 선택지를 제공합니다. 카메라가 연결된 Raspberry Pi에서는 Raspberry Pi 카메라 파이프라인용 `c`, `p`, `s`, `d`도 표시합니다. 10초 안에 입력이 없으면 옵션 `0`을 실행합니다. 다음 셀은 설치된 메뉴를 출력합니다.
 
 이 데모들은 네이티브 창을 열고 파이프라인이 종료될 때까지 셀을 실행 중 상태로 유지하므로, 아래 셀들은 데스크톱 세션에서 `RUN_DEMOS = True`(설정 셀)일 때만 실행됩니다. 권장 방법은 터미널(File > New > Terminal)입니다.
 
@@ -182,10 +182,10 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_stream     # the setup cell printed your act
 
 확인할 점: 얼굴 모델과 `libpostprocess_yolov5s_face.so`를 사용하는 4.1의 구조. `dxosd`가 얼굴 박스와 랜드마크를 그립니다.
 
-<!-- cell: 95a894ed-f224-4e72-b6f3-b2fc702b4f9e src: 51efb7d6f3 -->
-다음 예제는 PPU 출력을 사용하는 SCRFD500M 모델을 사용합니다.
+<!-- cell: 95a894ed-f224-4e72-b6f3-b2fc702b4f9e src: 45bd045bb9 -->
+다음 예제는 SCRFD500M 얼굴 검출기를 사용합니다. DX-STREAM v3.2.0에서 이 데모의 PPU 버전이 제거되었고 `run_demo.sh`는 PPU가 아닌 버전을 메뉴에 표시하지 않으므로, 셀이 해당 스크립트를 직접 실행합니다.
 
-확인할 점: 범용 `libpostprocess_ppu.so`. PPU 모델에서는 하나의 공유 라이브러리가 여러 아키텍처를 처리합니다.
+확인할 점: YOLOv5s-Face와 같은 체인이며, `model-path`(`scrfd-500m_640x640.dxnn`)와 `library-file-path=.../libpostprocess_scrfd500m.so`만 바뀝니다. 모델이 없으면 스크립트가 처음 사용할 때 다운로드합니다.
 
 <!-- cell: bed6a8d7-6e12-444d-85c4-72c6e7dab466 src: f29ec878ae -->
 #### 카메라 소스 사용
@@ -197,35 +197,30 @@ cd <DX_ALL_SUITE_DIR>/dx-runtime/dx_stream     # the setup cell printed your act
 
 확인할 점: `libpostprocess_yolo26pose.so`가 `DXObjectMeta`에 키포인트를 기록하고, `dxosd`가 이를 바탕으로 스켈레톤을 그립니다.
 
-<!-- cell: 70f47140-89cd-477b-abfe-e5c5ed869042 src: b99cd2cfe3 -->
-다음 예제는 PPU 출력을 사용하는 YOLOv5 Pose를 사용합니다.
-
-확인할 점: 다시 `libpostprocess_ppu.so`입니다. 4.4와 비교하면 모델과 라이브러리만 바뀝니다.
-
-<!-- cell: fc15ee5e-4fc9-4595-a4e2-3da2f54f5420 src: eece8565d4 -->
+<!-- cell: fc15ee5e-4fc9-4595-a4e2-3da2f54f5420 src: b2b62f3da7 -->
 ### 4.5 인스턴스 세그멘테이션 - YOLO26n-Seg
 
-옵션 `6`은 세그멘테이션 데모를 실행합니다. 현재 SDK 레이아웃에서 스크립트는 `instance_segmentation` 아래에 있습니다.
+옵션 `4`는 세그멘테이션 데모를 실행합니다. 현재 SDK 레이아웃에서 스크립트는 `instance_segmentation` 아래에 있습니다.
 
 확인할 점: `dxpostprocess`와 `dxosd` 사이의 `dxtracker` 요소. 세그멘테이션 데모는 마스크에도 트랙 ID를 부여합니다.
 
-<!-- cell: ba5d8d52-5fe5-4cd2-93b8-b2db52570a1a src: 2a8e38c8f9 -->
+<!-- cell: ba5d8d52-5fe5-4cd2-93b8-b2db52570a1a src: b63093d8f7 -->
 ### 4.6 다중 객체 추적
 
-옵션 `7`은 객체 검출에 이어 추적을 실행합니다.
+옵션 `6`은 객체 검출에 이어 추적을 실행합니다.
 
 ![단일 추적 파이프라인](assets/pipline-single-tracking.png)
 
 확인할 점: 4.2의 검출 체인에 `dxtracker config-file-path=.../tracker_config.json`이 추가되었습니다. 트래커 설정이 알고리즘과 임계값을 선택합니다.
 
-<!-- cell: 154b4e5c-5a1f-4036-9be6-fd8e8e1a39ab src: ea853b3cad -->
+<!-- cell: 154b4e5c-5a1f-4036-9be6-fd8e8e1a39ab src: 3c94f04409 -->
 ### 4.7 멀티 채널 객체 검출
 
-옵션 `8`은 네 개의 독립적인 추론 브랜치를 실행하고 그 출력을 합성합니다.
+옵션 `7`은 네 개의 독립적인 추론 브랜치를 실행하고 그 출력을 합성합니다.
 
 ![멀티 채널 파이프라인](assets/pipeline-multi-stream.png)
 
-확인할 점: 각각 자체 전처리, 추론, 후처리를 가진 네 개의 `filesrc ... ! dxscale` 브랜치가 `compositor`로 병합됩니다. 모델은 브랜치마다 한 번씩 로드됩니다.
+확인할 점: 각각 자체 전처리, 추론, 후처리, `dxosd`를 가진 네 개의 `urisourcebin ... ! decodebin` 브랜치가 있고, 이어서 `dxscale`과 `compositor`가 결과를 타일 형태로 배치합니다. 모델은 브랜치마다 한 번씩 로드됩니다.
 
 <!-- cell: 30471517-0937-4f1a-bd77-f41ac4749987 src: 3b21ecdbaf -->
 ### 4.8 DX 멀티스트림 도메인
@@ -272,14 +267,14 @@ N × video/x-raw
 
 확인할 점: 하나의 공유 체인을 감싸는 `dxinputselector name=in`과 `dxoutputselector name=out`. DX 요소 수를 세어 4.7과 비교해 보세요.
 
-<!-- cell: e8f05808-0f68-475f-b0b0-d9ee7ba85240 src: c7e15732ef -->
+<!-- cell: e8f05808-0f68-475f-b0b0-d9ee7ba85240 src: af0923b989 -->
 ### 4.9 멀티 채널 RTSP
 
-옵션 `9`는 여러 RTSP 소스를 시연합니다. 라이브 파이프라인은 v3.1.x에서 수정된 지연 시간 및 QoS 보고의 이점을 얻습니다.
+옵션 `8`은 여러 RTSP 소스를 시연합니다. 라이브 파이프라인은 v3.1에서 수정된 지연 시간 및 QoS 보고의 이점을 얻습니다.
 
 확인할 점: `rtspsrc` 입력을 사용하는 4.8의 셀렉터 레이아웃. 스트림 URL은 스크립트 상단의 변수이며, 사용하는 카메라에 맞게 수정하세요.
 
-<!-- cell: 317ba344-632d-4528-964e-4411d31d7b56 src: 98c893db6e -->
+<!-- cell: 317ba344-632d-4528-964e-4411d31d7b56 src: 06c946340c -->
 ### 4.10 Secondary Mode
 
 ![Secondary Mode 파이프라인](assets/pipeline-secondary.png)
@@ -287,9 +282,9 @@ N × video/x-raw
 - **Primary Mode**(기본 모드)는 전체 프레임을 전처리하고 추론합니다. 후처리는 보통 새 `DXObjectMeta` 객체를 생성합니다.
 - **Secondary Mode**(보조 모드)는 검출된 객체 영역을 전처리합니다. 후처리는 기존 객체 메타데이터를 갱신하거나 보강합니다.
 
-확인할 점: 두 번째 전처리·추론·후처리 3종 세트에 설정된 `secondary-mode=true`. SCRFD가 얼굴을 찾은 뒤 EfficientNet이 전체 프레임이 아닌 각 얼굴 영역을 분류합니다.
+확인할 점: YOLOv5s(PPU)가 전체 프레임에서 객체를 검출하고 추적합니다. 이어서 `tee`가 두 개의 Secondary 브랜치로 데이터를 보내며, 각 브랜치의 전처리·추론·후처리에는 `secondary-mode=true`가 설정되어 있습니다. EfficientNet-Lite0(224x224)은 검출된 모든 객체를 분류하고, SCRFD500M은 사람 박스 안에서만 얼굴을 찾습니다(`target-class-id=0`). `dxgather`가 두 결과를 다시 하나의 스트림으로 병합합니다.
 
-<!-- cell: c73d9a02-064d-4b78-a062-5598aa8546cc src: 6c9c479a23 -->
+<!-- cell: c73d9a02-064d-4b78-a062-5598aa8546cc src: 0994afeb5b -->
 ### 4.11 추론 결과를 MQTT 또는 Kafka로 발행
 
 `dxmsgconv`는 사용자 정의 메시지 변환 라이브러리로 추론 메타데이터를 변환합니다. `dxmsgbroker`는 페이로드를 MQTT 또는 Kafka 브로커에 발행합니다.
@@ -298,7 +293,7 @@ N × video/x-raw
 ... → dxpostprocess → dxmsgconv → dxmsgbroker
 ```
 
-v3.1.x에서는 `include-frame=true`가 현재 프레임을 Base64로 인코딩된 JPEG로 메시지에 추가합니다. 이는 JPEG 인코딩 작업, 메시지 크기, 네트워크 트래픽을 늘리므로 소비자가 이미지를 필요로 할 때만 활성화하세요.
+v3.1부터 `include-frame=true`가 현재 프레임을 Base64로 인코딩된 JPEG로 메시지에 추가합니다. 이는 JPEG 인코딩 작업, 메시지 크기, 네트워크 트래픽을 늘리므로 소비자가 이미지를 필요로 할 때만 활성화하세요.
 
 ```bash
 dxmsgconv library-file-path=/path/to/libmessage_convert.so include-frame=true ! \
@@ -316,8 +311,8 @@ dxmsgbroker broker-name=mqtt conn-info=localhost:1883 topic=test
 
 <img src="assets/detection-goal.jpg" style="max-width: 1400px;">
 
-<!-- cell: 66060d59-25bd-463a-8c02-e67713decc74 src: 423cab8027 -->
-### 5.1 DX-STREAM v3.1.x 사용자 정의 라이브러리 API
+<!-- cell: 66060d59-25bd-463a-8c02-e67713decc74 src: 221a92fe66 -->
+### 5.1 사용자 정의 라이브러리 API (DX-STREAM v3.1 이상)
 
 이전 버전용으로 작성된 사용자 정의 전처리 및 후처리 라이브러리는 다음과 같이 업데이트해야 합니다.
 
@@ -328,7 +323,7 @@ dxmsgbroker broker-name=mqtt conn-info=localhost:1883 topic=test
 - Primary Mode에서는 후처리가 결과 객체를 생성합니다.
 - Secondary Mode에서는 후처리가 `object_meta`로 전달된 객체를 갱신합니다.
 
-현재 YoloV7 라이브러리는 이미 v3.1.x 함수 형식을 사용합니다.
+현재 YoloV7 라이브러리는 이미 v3.1+ 함수 형식을 사용합니다.
 
 ```cpp
 extern "C" void PostProcess(
@@ -695,8 +690,8 @@ GST_DEBUG=2,dxinfer:4 GST_DEBUG_FILE=/tmp/dxstream.log ./run_demo.sh
 
 로그 출력이 타이밍에 영향을 주므로 성능 측정 중에는 상세 로깅을 비활성화하세요.
 
-<!-- cell: 13445965-9c30-429f-80ff-3acf97fd6cee src: 771d6ca90f -->
-### 7.2 v3.1.x 실패 동작 이해하기
+<!-- cell: 13445965-9c30-429f-80ff-3acf97fd6cee src: d22844ae3b -->
+### 7.2 실패 동작 이해하기
 
 - 호환되지 않는 링크는 caps 협상 중에 실패합니다.
 - 모델 파일 누락, NPU 초기화 실패, 사용자 정의 라이브러리 오류는 `abort()`로 종료되는 대신 GStreamer 요소 오류로 보고됩니다.
@@ -721,10 +716,17 @@ sudo apt install graphviz
 GST_DEBUG_DUMP_DOT_DIR=<workspace>/dot gst-launch-1.0 filesrc location=... ! ... ! fakesink
 ```
 
-<!-- cell: af463f4c-5ea2-4477-b67c-fcc4cad871b7 src: f4e26083b6 -->
-### 7.4 DX-STREAM v3.1.x에서 달라진 점
+<!-- cell: af463f4c-5ea2-4477-b67c-fcc4cad871b7 src: f6e1933e6c -->
+### 7.4 DX-STREAM v3.1 및 v3.2에서 달라진 점
 
-이 튜토리얼은 DX-STREAM v3.1.2로 검증되었습니다. v3.1.x 계열은 이 튜토리얼이 의존하는 다음 런타임 동작을 도입했습니다.
+이 튜토리얼은 DX-STREAM v3.2.0(DX-All Suite v2.5.0)을 대상으로 합니다. v3.2.0에서는 4절에서 보이는 내용이 다음과 같이 바뀌었습니다.
+
+- SCRFD500M PPU 및 YOLOv5Pose PPU 데모가 제거되었습니다. 4.3절은 대신 PPU가 아닌 SCRFD500M 스크립트를 실행합니다.
+- `run_demo.sh` 메뉴 번호가 `0`-`9`로 다시 매겨졌고 YOLO26n Depth Estimation용 `5`가 추가되었습니다. Raspberry Pi에서는 `libcamerasrc` 카메라 파이프라인용 `c`, `p`, `s`, `d`도 표시합니다.
+- Secondary Mode 분류기는 EfficientNet-Lite0 224x224입니다(256x256 모델은 더 이상 사용하지 않음).
+- EGL/GLES 3.0을 지원하는 ARM 호스트(Raspberry Pi 5에서 검증)에서는 선택 사항인 `gstdxstream-gles` 백엔드가 크롭, 리사이즈, letterbox, 색 변환을 GPU에서 실행합니다.
+
+v3.1 계열은 이 튜토리얼의 나머지 부분이 의존하는 다음 런타임 동작을 도입했습니다.
 
 - `application/x-dxvideoraw` 기반의 통합 멀티스트림 도메인
 - 공유 처리 체인에서 스트림별 생명 주기와 타임라인 보존
@@ -735,7 +737,7 @@ GST_DEBUG_DUMP_DOT_DIR=<workspace>/dot gst-launch-1.0 filesrc location=... ! ...
 
 사용 가능한 백엔드와 요소 속성은 DX-STREAM 빌드 방식에 따라 다릅니다. `gst-inspect-1.0`으로 설치된 빌드를 확인하세요.
 
-<!-- cell: 325d5d11-7b12-4ddb-83e2-f1cb7ce17a91 src: 9ef3c41d4e -->
+<!-- cell: 325d5d11-7b12-4ddb-83e2-f1cb7ce17a91 src: dde652494e -->
 ## 8. 문제 해결
 
 | 증상 | 표시되는 내용 | 원인 | 해결 |
@@ -747,7 +749,7 @@ GST_DEBUG_DUMP_DOT_DIR=<workspace>/dot gst-launch-1.0 filesrc location=... ! ...
 | `build.sh`가 멈춤 | 셀 안에서 `sudo` 비밀번호 프롬프트 또는 `meson` 오류 | 빌드가 시스템 전역에 설치되어 `sudo`가 필요함 | 터미널(File > New > Terminal)에서 `./build.sh` 실행 |
 | 일부 프레임이 전체 녹색 | 창이나 저장된 프레임이 간헐적으로 녹색으로 깜박임 | 디스플레이 싱크 앞의 `dxconvert`가 일부 디코딩된 버퍼를 잘못 처리 | `videoconvert ! fpsdisplaysink`(노트북 기본값) 사용. `dxconvert`는 3.3의 `dxscale`/`dxconvert` 실험에서만 유지 |
 | DOT 그래프가 생성되지 않음 | `No DOT file was generated` | 파이프라인이 PLAYING에 도달하기 전에 데모가 중지됨 | 영상이 재생되기 시작한 뒤 셀을 중지 |
-| 샘플 모델이 로드 시 거부됨 | `dxinfer`의 DX-RT 버전 또는 형식 오류 | 샘플 모델이 Model Zoo 릴리스 `2_4_0`용으로 컴파일되어 이전 런타임에서는 로드할 수 없음 | 이 튜토리얼이 검증된 DX-RT 버전(3.4.2)을 사용하거나 사용 중인 DX-COM으로 모델 재컴파일 |
+| 샘플 모델이 로드 시 거부됨 | `dxinfer`의 DX-RT 버전 또는 형식 오류 | 샘플 모델이 DX-COM v2.5.0(Model Zoo 릴리스 `2_5_0`, `.dxnn` 컨테이너 v9)으로 컴파일되어 DX-RT v3.5.0 이상이 필요함 | DX-Runtime을 DX-All Suite v2.5.0 버전으로 업데이트(튜토리얼 01)하거나 사용 중인 DX-COM으로 모델 재컴파일 |
 | `setup.sh`가 비밀번호를 요구 | `jq` 설치 중 `[sudo] password for ...` | `jq`가 없어 스크립트가 `apt`로 설치함 | 터미널에서 `sudo apt install jq`를 한 번 실행한 뒤 셀 재실행 |
 | `import pydxs` 실패 | `ModuleNotFoundError: No module named 'pydxs'` | DX-STREAM이 아직 빌드되지 않았거나 `venv-dx_stream` 대신 Jupyter Python을 사용함 | 5.7(빌드)을 실행한 뒤 셀과 같이 `venv-dx_stream/bin/python` 사용 |
 | `build.sh`가 즉시 실패 | `Build data file ... was generated with an old version of meson` | 이전 DX-STREAM 버전이 남긴 `builddir` | `./build.sh --clean` 실행(5.7의 셀은 첫 시도가 실패하면 자동으로 수행) |

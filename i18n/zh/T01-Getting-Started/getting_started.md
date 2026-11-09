@@ -73,24 +73,24 @@ DEEPX SDK 主要分为两个关键部分。
 python tutorial_paths.py --set ~/my/dx-all-suite
 ```
 
-<!-- cell: dx-all-suite-branch-heading src: 8212e20324 -->
+<!-- cell: dx-all-suite-branch-heading src: f5bad50ef2 -->
 #### 1.1.2 Git 分支
 
 只有在需要其他 SDK 版本时才修改下面的分支名或标签名。
-当前默认值是 `staging` 分支,即 **v2.5.0** 的预发布线。像 `v2.4.2` 这样的发布标签对应固定版本;`main` 是最新的开发状态。`v2.5.0` 标签发布后,默认值将切换到该标签。
+默认值是 `main` 分支,它包含最新的 DX-All Suite 发布版(**v2.5.0**)以及之后发布的修复。如果要固定到某个确切的发布版,请改用其标签,例如 `v2.5.0`。
 
-<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: ce888d0946 -->
+<!-- cell: 8d2496bb-a3a2-460c-a891-1979b3cfab1d src: a00056cdf5 -->
 ### 1.2 克隆 DX-All Suite
 
 下一个单元格**仅当所配置的位置不存在 DX-All Suite 时**才会运行以下命令。目录和分支来自您上面保存的设置,在单元格中显示为 `{DX_ALL_SUITE_DIR}` 和 `{DX_ALL_SUITE_BRANCH}`。
 
 ```bash
 git clone --depth 1 --shallow-submodules --recurse-submodules --progress \
-    --branch staging https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
+    --branch main https://github.com/DEEPX-AI/dx-all-suite.git <DX_ALL_SUITE_DIR>
 ```
 
-- `--branch` 既可以是分支也可以是标签;教程目前使用 `staging` 分支(v2.5.0 预发布)。需要固定版本时请使用 `v2.4.2` 这样的发布标签。
-- `--depth 1 --shallow-submodules` 只获取每个仓库的最新提交。在 `staging` 上,仅顶层仓库就占用约 1.1 GB 磁盘空间(其中包含 `dx-ai-studio` 和 `dx-agent-dev-showcase`),加上子模块大约需要 2 GB。像 `v2.4.2` 这样的发布标签更小(下载约 600 MB,占用磁盘 1.6 GB)。
+- `--branch` 既可以是分支也可以是标签;教程使用 `main` 分支(最新发布版 v2.5.0)。需要固定版本时请使用 `v2.5.0` 这样的发布标签。
+- `--depth 1 --shallow-submodules` 只获取每个仓库的最新提交。仅顶层仓库就占用约 1.1 GB 磁盘空间(其中包含 `dx-ai-studio` 和 `dx-agent-dev-showcase`),加上子模块大约需要 2 GB。
 - `--recurse-submodules` 同时检出子模块(`dx-runtime`、`dx-compiler`、`dx-modelzoo` 及其内部的仓库)。
 - `--progress` 即使输出不是终端也会打印进度,因此您可以在单元格中查看进度。
 
@@ -109,14 +109,14 @@ git -C <DX_ALL_SUITE_DIR> submodule update --init --recursive --depth 1 --progre
 
 下一个单元格显示目前已安装的内容,并针对每个标记为 `MISSING` 的项目指出提供它的具体步骤。每次回到本笔记本时都可以再次运行它;重复运行是安全的。
 
-<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: 5f78225be6 -->
+<!-- cell: ee6ce747-f96c-417f-917f-9cccd54be3ec src: b65287e16c -->
 ### 1.4 DX-All Suite 包含的内容
 
 克隆下来的仓库包含以下 Git 子模块(教程使用前三个):
  - `dx-compiler`(**DX-Compiler**): 将 ONNX 模型转换为 DXNN。在第 2 节安装。
  - `dx-runtime`(**DX-Runtime**): 在 DEEPX NPU 上运行编译后的模型。在第 3 节安装。
  - `dx-modelzoo`: 后续教程使用的预编译模型和编译器配置。
- - `dx-k8s-device-plugin`(`staging` 中包含): 面向 NPU 的 Kubernetes 设备插件,本教程不使用。
+ - `dx-k8s-device-plugin`: 面向 NPU 的 Kubernetes 设备插件,本教程不使用。
 
 <!-- cell: 2ab0cf89-7974-40e6-8117-18165d1ef10f src: 3d336a7ce6 -->
 DX-Runtime 提供:
@@ -264,13 +264,13 @@ cd <DX_ALL_SUITE_DIR>
 
 配置单元格已经把安装目录和 Git 分支保存到了 `dx-tutorials/config.json`。本验证检查仓库、分支、子模块、DX-Compiler 环境、DX-Runtime CLI 以及 NPU 设备节点。之后的单元格会更详细地检查 PCIe 链路、内核驱动和服务。
 
-<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 68dd0ab6ce -->
+<!-- cell: 8019bed5-064a-4d2f-b1c6-28e4608c977e src: 72d3d28b80 -->
 ### 3.3 推荐:仅下载选定的模型
 
 下一个代码单元格使用 `SELECTED_MODELS` 作为允许列表,只下载这些模型。这是本教程推荐的默认方式。如果需要其他模型集合,请在运行单元格前编辑该列表。
 
 > **警告 — 除非确有必要,否则不要使用全量下载命令。**  
-> 运行 `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""` 会向交互式提示提供空答案。空答案会选中所有类别和所有模型,因此会下载全部 352 个模型(`dx_app` v3.2.2 清单)。完整集合需要大量网络流量和约 29 GB 的存储空间。
+> 运行 `!cd $DX_ALL_SUITE_DIR/dx-runtime/dx_app && bash setup.sh <<< ""` 会向交互式提示提供空答案。空答案会选中所有类别和所有模型,因此会下载全部 497 个模型(`dx_app` v3.3.0 清单)。完整集合需要大量网络流量和约 45 GB 的存储空间。
 
 推荐的单元格把 `SELECTED_MODELS` 传给 `setup.sh --models`,并使用 `--no-force`,这样已有的模型文件不会被重复下载。列出的 24 个模型是教程 02 到 24 使用的模型;根据网络情况,下载需要几分钟。后续教程会用同样的 `setup.sh --models ... --no-force` 只请求各自需要的模型,因此只要运行过本单元格一次,它们的下载单元格都会跳过并在几秒内完成。
 

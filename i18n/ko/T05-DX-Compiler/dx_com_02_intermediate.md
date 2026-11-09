@@ -105,14 +105,14 @@ With PPU Type 0 or Type 1
 
 주된 이점은 호스트 CPU 작업량 감소와 중간 검출 데이터 감소입니다. 정확한 종단 간(end-to-end) 이득은 모델, 임계값, 장면, 호스트 CPU, 애플리케이션 후처리에 따라 달라집니다.
 
-<!-- cell: ppu-types src: 7508872dcf -->
+<!-- cell: ppu-types src: 69849e3a90 -->
 ### 3.2 모델 아키텍처에 따라 모드 선택
 
 | 모드 | 아키텍처 | 대표 모델 | 레이어 매핑 | 실행 위치 |
 |---|---|---|---|---|
 | PPU Type 0 | 앵커 기반(anchor-based) | YOLOv3, YOLOv4, YOLOv5, YOLOv7 | 검출 Conv 노드 → 앵커 수 | PPU 하드웨어 |
 | PPU Type 1 | 앵커 프리(anchor-free) | YOLOX, YOLOv8–YOLOv12 | `bbox`, (있는 경우) `obj_conf`, `cls_conf` 노드 | PPU 하드웨어 |
-| `pre_optimize()` | TopK 우선 ONNX 재작성 | YOLOv8 계열, YOLOv10, YOLO26 | 스케일별 bbox/class 출력 텐서 | NPU + 호스트 CPU 그래프 |
+| `pre_optimize()` | TopK 우선 ONNX 재작성 | YOLOv8, v9, v11, v12, v13 및 YOLO26(검출, 세그멘테이션, 포즈); RTMDet | 스케일별 헤드 출력 텐서 | NPU + 호스트 CPU 그래프 |
 
 모델 이름만으로 타입을 선택하지 마세요. 내보낸 ONNX의 헤드 구조를 확인하고, 바로 그 파일의 노드 이름을 사용하세요.
 
@@ -266,10 +266,10 @@ dxrun -m outputs/yolox_s_type1_ppu/<compiled-model>.dxnn --use-ort -t 5
 
 이 합성 벤치마크는 `dxparse`가 보여 주는 태스크 구조와 함께 해석하세요. PPU 모델은 이 단일 FPS 수치가 올라가지 않더라도 호스트 측 처리와 출력 트래픽을 줄일 수 있습니다.
 
-<!-- cell: topk-heading src: a8f8add50a -->
+<!-- cell: topk-heading src: e2dab2a4c4 -->
 ## 6. YOLO26 TopK 기반 최적화 (n / s / m / l / x)
 
-YOLO26은 일대일(one-to-one) 분리형 검출 헤드를 사용합니다. `yolo26_postprocess` 변환은 TopK 선택을 비용이 큰 CPU 측 디코딩 작업보다 앞으로 옮깁니다. 이는 PPU Type 0/1과는 다릅니다. ONNX 그래프를 재작성하여 NPU 추론 이후에 처리되는 후보 작업량을 줄입니다.
+YOLO26은 일대일(one-to-one) 분리형 검출 헤드를 사용합니다. `yolo_no_dfl_postprocess` 변환(DX-COM v2.5.0 이전 이름은 `yolo26_postprocess`)은 TopK 선택을 비용이 큰 CPU 측 디코딩 작업보다 앞으로 옮깁니다. 이는 PPU Type 0/1과는 다릅니다. ONNX 그래프를 재작성하여 NPU 추론 이후에 처리되는 후보 작업량을 줄입니다.
 
 ```text
 Baseline: 8,400 candidates → decode and score all candidates → TopK 300
@@ -300,10 +300,12 @@ Optimized: 8,400 candidates → TopK 300 → decode and score only 300 candidate
 
 이 변환에는 세 검출 스케일마다 바운딩 박스 텐서 하나와 클래스 신뢰도 텐서 하나가 필요합니다. 이것들은 다른 모델에서 복사한 표시용 레이블이 아니라 **출력 텐서 이름**입니다. Model Zoo에 내보낸 모든 YOLO26 크기는 같은 헤드 레이아웃(박스는 `/model.23/one2one_cv2.<scale>/...`, 클래스 점수는 `/model.23/one2one_cv3.<scale>/...`)을 공유하므로, 아래 이름은 하나의 패턴으로 만든 뒤 실제로 다운로드한 ONNX와 대조해 확인합니다. 확인에 실패하면 Netron에서 모델을 열어 패턴을 수정하세요.
 
-<!-- cell: apply-topk-heading src: 1ac20c8599 -->
-### 6.3 `yolo26_postprocess` 적용
+<!-- cell: apply-topk-heading src: add3ef0512 -->
+### 6.3 `yolo_no_dfl_postprocess` 적용
 
 `dx_com`이 설치된 곳이 DX-COM Python 환경이므로 변환은 이 환경에서 실행합니다. 별도의 ONNX 파일을 생성하므로 기준 모델은 그대로 유지됩니다.
+
+> **DX-COM v2.5.0에서 변경됨.** 이전에 `yolo26_postprocess`라고 불리던 변환은 이제 `yolo_no_dfl_postprocess`이고(YOLO26의 박스 헤드에는 DFL이 없음), `yolo_postprocess`는 이제 `yolo_dfl_postprocess`입니다(YOLOv8~v13). 이전 이름을 사용하면 오류가 발생합니다. 각 YOLO 변환에는 `task` 키(검출은 `base`, 또는 `seg`, `pose`)가 필요하며, `input_height` / `input_width`는 더 이상 허용되지 않습니다. 입력 크기는 모델에서 읽어 오며, 이 값을 전달하면 `ValueError`가 발생합니다.
 
 스크립트는 기준 ONNX와 대상 경로를 인수로 받으므로 같은 스크립트를 모든 변형에 사용할 수 있습니다. 다음 두 셀은 스크립트를 작성하고 실행합니다. 기본 `n` 변형의 경우 실행은 다음과 동일합니다.
 
