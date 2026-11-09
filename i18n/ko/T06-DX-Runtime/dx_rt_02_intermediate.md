@@ -2,7 +2,7 @@
 <!-- i18n lang: ko -->
 <!-- One block per Markdown cell of the source notebook. Keep the markers; translate the text. -->
 
-<!-- cell: 20e090c0 src: bc1aa2e5f2 -->
+<!-- cell: 20e090c0 src: d28eecdb2f -->
 # DEEPX Tutorial 06-2 - DX-RT 중급
 
 이 노트북은 CLI 검증에서 한 걸음 나아가 DX-RT Python 및 C++ API를 사용한 애플리케이션 수준의 추론을 다룹니다.
@@ -13,9 +13,9 @@
 
 - Jupyter 커널에 맞는 사전 빌드된 <code>dx_engine</code> wheel을 설치하고,
 - 텐서 메타데이터를 읽어 요구되는 shape과 dtype으로 입력을 할당하고,
-- 동기 추론을 구현하고,
-- 작업 ID와 <code>wait()</code>를 사용한 비동기 추론을 구현하고,
-- 콜백과 버퍼 수명 규칙을 설명하고,
+- 동기 추론을 구현하고 실제 이미지를 전처리부터 top-5 레이블까지 분류하고,
+- 작업 ID와 <code>wait()</code>를 사용한 비동기 추론과 등록된 콜백을 사용한 비동기 추론을 구현하고,
+- 버퍼 수명 규칙을 설명하고,
 - 배치 API로 독립적인 샘플을 묶어 처리하고,
 - <code>InferenceOption.buffer_count</code>를 의도에 맞게 사용하고,
 - <code>dxrt_cxx_api.h</code>로 최소한의 C++14 애플리케이션을 빌드하고,
@@ -54,12 +54,12 @@ uv pip install --python <T06>/workspace/.venv-dxrt/bin/python \
 
 이 과정은 공유 Jupyter 환경을 수정하지 않으며 DX-RT를 다시 빌드하지도 않습니다. 셀을 다시 실행할 때 로컬 환경에 이미 일치하는 wheel이 있으면 생성과 설치를 건너뜁니다.
 
-<!-- cell: 3d715559 src: 463872b41b -->
+<!-- cell: 3d715559 src: d07404bdbe -->
 ## 3. 메모리를 할당하기 전에 텐서 메타데이터 읽기
 
-모델 이름으로 입력 shape이나 dtype을 추측하지 마세요. 엔진에 계약을 물어보세요. DX-RT v3.4는 정의되지 않은 동작을 막기 위해 NumPy dtype을 검증합니다.
+모델 이름으로 입력 shape이나 dtype을 추측하지 마세요. 엔진에 계약을 물어보세요. DX-RT는 v3.4부터 정의되지 않은 동작을 막기 위해 NumPy dtype을 검증합니다.
 
-아래 헬퍼는 <code>np.empty(...)</code>를 사용한 뒤 버퍼를 채웁니다. 이렇게 하면 실제로 쓰기 가능한 페이지가 할당되므로 DMA 고정(pinning) 중에 copy-on-write 제로 페이지 문제를 피할 수 있습니다.
+아래 헬퍼는 <code>np.empty(...)</code>를 사용한 뒤 버퍼를 채웁니다. 이렇게 하면 실제로 쓰기 가능한 페이지가 할당되므로 DMA 고정(pinning) 중에 copy-on-write 제로 페이지 문제를 피할 수 있습니다. `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python`의 SDK Python 예제도 같은 패턴을 사용합니다.
 
 <!-- cell: b3a1916a src: b039b75719 -->
 ### 3.1 텐서 소유권 체크리스트
@@ -90,6 +90,29 @@ uv pip install --python <T06>/workspace/.venv-dxrt/bin/python \
 
 NPU 시간을 카메라에서 화면까지의 지연 시간으로 표기하지 마세요.
 
+<!-- cell: real-image-heading src: 404e895e5a -->
+### 4.1 실제 이미지 분류
+
+위의 더미 입력은 호출이 동작한다는 것을 보여 줄 뿐, 결과가 올바르다는 것을 보여 주지는 않습니다. 다음 셀들은 같은 `run()`을 실제 사진에 실행하고 출력을 ImageNet 레이블로 변환합니다. 이것이 DX-RT를 둘러싼 최소한의 애플리케이션, 즉 전처리, 추론, 후처리입니다.
+
+3절의 모델 계약이 전처리를 결정합니다.
+
+| 계약 항목 | `resnet50_224x224.dxnn`의 값 | 애플리케이션이 하는 일 |
+|---|---|---|
+| 입력 | `[1, 224, 224, 3]`, `uint8` | 이미지를 224x224로 리사이즈하고, 8비트 값과 HWC 순서를 유지하고, 배치 축을 추가 |
+| 색상 순서 | RGB | OpenCV는 BGR로 읽으므로 BGR을 RGB로 변환 |
+| 정규화 | DXNN에 컴파일되어 있음 | 없음: `uint8` 입력은 모델이 내부에서 정규화한다는 것을 보여 줌 |
+| 출력 | `[1, 1000]`, `float32` 클래스 점수 | softmax를 적용한 뒤 점수가 가장 높은 5개 클래스를 선택 |
+
+이 단계들은 DX-APP의 ResNet50 예제(`SimpleResizePreprocessor`와 `ClassificationPostprocessor`)와 같습니다. 이미지는 해당 예제의 DX-APP 기본 샘플이며, ImageNet 레이블 목록도 DX-APP(`src/python_example/common/utility/labels.py`)에서 가져옵니다.
+
+<!-- cell: real-image-notes src: e33455d041 -->
+결과를 읽는 방법:
+
+- 사진 속 개는 Shiba Inu입니다. ImageNet-1k에는 Shiba Inu 클래스가 없으므로 확률이 가장 가까운 스피츠 계열 견종(husky, Norwegian Elkhound, Siberian Husky 등)으로 분산됩니다. 이런 분산은 label set의 특성이지 런타임 오류가 아닙니다.
+- DX-APP의 `resnet50_224x224_sync.py`도 이 이미지에 대해 같은 top-5를 출력합니다. 직접 만든 파이프라인과 참조 애플리케이션의 결과가 일치하면 전처리와 출력 매핑이 올바른 것입니다.
+- 색상 순서가 틀리거나 리사이즈가 빠져도 오류 없이 실행되며 레이블만 달라집니다. 파이프라인을 신뢰하기 전에 레이블이 있는 데이터로 정확도를 확인하세요.
+
 <!-- cell: 54f7a81f src: bb3c7d9b98 -->
 ## 5. 작업 ID를 사용한 비동기 추론
 
@@ -107,6 +130,16 @@ NPU 시간을 카메라에서 화면까지의 지연 시간으로 표기하지 �
 | <code>run()</code> | 가장 단순한 제어 흐름 | 호출 스레드가 블록되는 것을 감수 |
 
 콜백 출력은 콜백 범위 안에서만 유효합니다. 후속 작업에서 이를 보관해야 한다면 콜백 안에서 필요한 데이터를 복사하고 무거운 작업은 다른 큐로 옮기세요.
+
+<!-- cell: callback-intro src: eb74f2ee1e -->
+다음 셀은 콜백 방식을 사용합니다. `register_callback()`은 각 `run_async()` 작업이 끝날 때 DX-RT가 자체 worker thread에서 호출하는 함수를 설정합니다. `user_arg`는 작업과 함께 전달되므로 콜백은 어떤 요청(예: 프레임 번호)이 끝났는지 알 수 있습니다. 이 셀은 다음을 수행합니다.
+
+1. 콜백을 등록하고,
+2. 4.1절의 실제 이미지로 작업 8개를 제출하면서 각 작업의 인덱스를 `user_arg`로 전달하고,
+3. 마지막 작업이 끝난 뒤 콜백이 설정하는 이벤트를 기다리고,
+4. `register_callback(None)`으로 콜백을 해제합니다.
+
+콜백은 공유 데이터를 변경하기 전에 lock을 획득하고, 필요한 작은 결과(top-1 레이블)만 보관하고, `0`을 반환합니다. 무거운 후처리는 다른 스레드나 큐에서 처리해야 런타임의 worker thread가 블록되지 않습니다. 이것이 DX-APP의 `AsyncRunner`가 기반으로 삼는 패턴입니다.
 
 <!-- cell: af9ec43d src: 35292b89d9 -->
 ## 6. 배치 API
@@ -135,10 +168,10 @@ DX-RT 배치 실행은 여러 독립적인 샘플을 묶어 런타임 내부에�
 
 가장 큰 값이 최선이라고 가정하지 말고 대표적인 값들을 측정하세요. 고급 튜토리얼에서 통제된 버퍼 개수 실험을 수행합니다.
 
-<!-- cell: 485e925a src: f6386e2aa5 -->
+<!-- cell: 485e925a src: fcff455a41 -->
 ## 8. 최소한의 C++14 애플리케이션 빌드
 
-DX-RT v3.4는 안정적인 C ABI와 헤더 전용 C++14 래퍼를 제공합니다. 새로 작성하는 C++ 코드는 다음만 포함해야 합니다.
+DX-RT는 v3.4부터 안정적인 C ABI와 헤더 전용 C++14 래퍼를 제공합니다. 새로 작성하는 C++ 코드는 다음만 포함해야 합니다.
 
 ~~~cpp
 #include <dxrt/dxrt_cxx_api.h>
@@ -163,7 +196,7 @@ cmake --build <T06>/workspace/cpp/build --parallel
 
 빌드 디렉터리는 T06 안에 유지됩니다.
 
-<!-- cell: 1d3ac8cb src: d3fa81e622 -->
+<!-- cell: 1d3ac8cb src: 98e8643d77 -->
 ### 8.2 C++ 애플리케이션 실행
 
 동일한 터미널 명령은 다음과 같습니다.
@@ -172,6 +205,8 @@ cmake --build <T06>/workspace/cpp/build --parallel
 <T06>/workspace/cpp/build/dxrt_sync \
   <T06>/workspace/models/resnet50_224x224.dxnn
 ~~~
+
+C++로 비동기, 콜백, 멀티스레드, 다중 입력, 프로파일러 프로그램을 작성할 때는 `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/cpp`의 SDK 예제(예: `run_async_model`, `run_async_model_thread`, `run_batch_model`, `multi_input_model_inference`)에서 시작하세요.
 
 <!-- cell: 68c92258 src: 34a1319a55 -->
 ## 9. 실행 방식 선택
@@ -187,18 +222,19 @@ cmake --build <T06>/workspace/cpp/build --parallel
 
 올바른 선택은 애플리케이션 전체에 따라 달라집니다. 큐가 너무 깊어지면 추론 FPS가 높아져도 사용자가 체감하는 지연 시간은 오히려 나빠질 수 있습니다.
 
-<!-- cell: 3fd7908b-0ab7-49ad-a0a4-2513fcb1771d src: 04785bad99 -->
+<!-- cell: 3fd7908b-0ab7-49ad-a0a4-2513fcb1771d src: 9921b5ad10 -->
 ## 10. 문제 해결
 
 | 증상 | 표시되는 내용 | 원인 | 해결 |
 |---|---|---|---|
 | `uv` 또는 `cmake`가 없음 | `[MISSING] uv` 또는 `[MISSING] cmake` | 설치되지 않음 | `curl -LsSf https://astral.sh/uv/install.sh | sh`; `sudo apt install cmake build-essential` |
 | 이 Python용 wheel이 없음 | `No dx_engine wheel for cp3XY` | 커널의 Python 버전에 맞는 wheel이 `/usr/share/libdxrt-bin/python` 아래에 없음 | 지원되는 Python 버전으로 튜토리얼 `.venv`를 생성 |
-| `import dx_engine` 실패 | `ImportError` 또는 버전 불일치 메시지 | `workspace/.venv-dxrt`의 wheel이 `libdxrt.so`보다 오래됨 | 2절을 다시 실행해 wheel을 재설치 |
+| `import dx_engine` 실패 | import 시 버전 불일치에 관한 `RuntimeError` 또는 `ImportError` | DX-RT v3.5.0부터 `import dx_engine`은 wheel의 major.minor 버전이 설치된 `libdxrt.so`와 다르면 중단됨. `workspace/.venv-dxrt`의 wheel이 이전 런타임에서 온 것임 | 2절을 다시 실행해 일치하는 wheel을 설치. `DX_ENGINE_SKIP_VERSION_CHECK=1`로 검사를 건너뛸 수 있지만 진단 용도로만 사용 |
+| 콜백이 도착하지 않음 | `TimeoutError: Only N of 8 callbacks arrived` | 콜백 내부에서 예외가 발생했거나, 작업이 끝나기 전에 콜백이 해제됨 | 콜백을 짧게 유지하고 예외가 나지 않게 함. `register_callback(None)`으로 해제하는 것은 마지막 작업 이후에만 |
 | CMake가 DX-RT를 찾지 못함 | `Could not find a package configuration file provided by "dxrt"` | DX-RT가 사용자 지정 prefix에 설치되어 `dxrtConfig.cmake`가 기본 검색 경로에 없음 | `cmake -S ... -B ...` 줄에 `-DCMAKE_PREFIX_PATH=<prefix>`를 추가 |
 | 비동기 출력이 이상함 | `wait()` 이후 쓰레기 값 | `wait()`가 반환되기 전에 입력 버퍼가 해제되거나 재사용됨 | `wait()`가 반환될 때까지 입력 배열을 살려 둠 |
 
-<!-- cell: b69fd536 src: 8d0b95c249 -->
+<!-- cell: b69fd536 src: 5b51c96421 -->
 ## 11. 요약
 
 ### 11.1 완료한 API 워크플로
@@ -206,7 +242,8 @@ cmake --build <T06>/workspace/cpp/build --parallel
 **텐서 메타데이터 읽기**  
 → **정확한 dtype과 shape으로 할당**  
 → **동기 실행**  
-→ **비동기 제출 및 대기**  
+→ **실제 이미지 분류**  
+→ **비동기 제출 및 대기, 또는 콜백으로 완료**  
 → **독립 샘플 묶기**  
 → **같은 흐름을 C++로 빌드**
 
@@ -227,6 +264,8 @@ cmake --build <T06>/workspace/cpp/build --parallel
 - [ ] Jupyter Python ABI에 맞는 wheel 설치
 - [ ] 런타임 메타데이터로 연속 텐서 할당
 - [ ] 동기 호스트, 런타임, NPU 시간 측정
+- [ ] 실제 이미지를 분류하고 DX-APP 예제의 결과와 일치하는지 확인
+- [ ] `user_arg`를 사용하는 스레드 안전한 콜백으로 비동기 작업 완료
 - [ ] <code>wait()</code>까지 비동기 입력 수명 유지
 - [ ] 모델 배치 크기를 바꾸지 않고 배치 API 사용
 - [ ] <code>buffer_count</code>의 메모리/처리량 트레이드오프 설명
@@ -235,6 +274,15 @@ cmake --build <T06>/workspace/cpp/build --parallel
 
 > **기억하세요:** 버퍼 소유권은 정확성의 일부입니다. 성능 튜닝은 shape, dtype, 레이아웃, 수명, 출력 매핑을 검증한 뒤에 합니다.
 
-### 11.4 다음 단계
+### 11.4 SDK 예제
+
+SDK에는 이 노트북에서 다룬 각 API의 실행 가능한 예제가 포함되어 있으며, 직접 코드를 작성할 때 좋은 출발점이 됩니다.
+
+| 언어 | 디렉터리 | 예제 |
+|---|---|---|
+| Python | `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python` | `run_sync_model.py`, `run_async_model_wait.py`, `run_async_model_callback.py`, `run_async_model_thread.py`, `run_batch_model.py`, `run_sync_model_bufcount.py`, `multi_input_model_inference.py` |
+| C++ | `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/cpp` | `run_sync_model`, `run_async_model_wait`, `run_async_model_thread`, `run_batch_model`, `run_async_model_bufcount`, `multi_input_model_inference` |
+
+### 11.5 다음 단계
 
 **고급 튜토리얼**로 이어서 장치와 코어 바인딩, 개별 단계 프로파일링, 장치 상태 모니터링, 메모리 로드 모델과 다중 입력 모델 테스트, 재현 가능한 릴리스 증빙 자료 작성을 진행하세요.

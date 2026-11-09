@@ -161,6 +161,18 @@ cd <T06-DX-Runtime>/workspace
 dxrun -m models/resnet50_224x224.dxnn --single --loops 1 --verbose
 ```
 
+<!-- cell: single-run-verbose-fields src: 1a06dd41a8 -->
+`--verbose`를 사용하면 `dxrun`은 **Benchmark Result** 아래에 요청에 대한 네 가지 시간을 보고합니다(DX-RT v3.5.0).
+
+| 필드 | 측정 대상 |
+|---|---|
+| NPU Processing Time | 요청 하나에 대한 NPU 코어 연산 시간 |
+| Queue Wait Time | NPU 및 CPU 태스크 큐에서 대기한 시간. E2E response time에 포함됨 |
+| E2E Response Time | 제출부터 결과까지의 시간. 데이터 전송과 런타임 오버헤드를 포함함 |
+| Latency | Core latency: 버퍼 풀 대기와 큐 대기를 제외한 E2E response time |
+
+E2E Response Time과 Latency의 차이가 크다면 요청이 느리게 실행되는 것이 아니라 런타임 내부에서 대기하고 있다는 뜻입니다. DX-RT v3.5.0부터 Latency에는 이러한 대기 시간이 더 이상 포함되지 않습니다. 튜토리얼 06-2 4절에서는 같은 값을 Python API로 읽습니다.
+
 <!-- cell: a0ae40f8 src: 126816c0da -->
 ### 5.2 최대 처리량 측정
 

@@ -2,7 +2,7 @@
 <!-- i18n lang: zh -->
 <!-- One block per Markdown cell of the source notebook. Keep the markers; translate the text. -->
 
-<!-- cell: 20e090c0 src: bc1aa2e5f2 -->
+<!-- cell: 20e090c0 src: d28eecdb2f -->
 # DEEPX Tutorial 06-2 - DX-RT 中级
 
 本笔记本从 CLI 验证进入应用层面的推理,使用 DX-RT 的 Python 和 C++ API。
@@ -13,9 +13,9 @@
 
 - 在 Jupyter 内核中安装匹配的预构建 <code>dx_engine</code> wheel,
 - 读取张量元数据,并按所需的形状和 dtype 分配输入,
-- 实现同步推理,
-- 使用作业 ID 和 <code>wait()</code> 实现异步推理,
-- 说明回调与缓冲区生命周期的规则,
+- 实现同步推理,并对真实图像完成从预处理到 top-5 标签的分类,
+- 使用作业 ID 和 <code>wait()</code>,以及通过注册的回调实现异步推理,
+- 说明缓冲区生命周期的规则,
 - 使用批处理 API 将相互独立的样本分组,
 - 有意识地使用 <code>InferenceOption.buffer_count</code>,
 - 使用 <code>dxrt_cxx_api.h</code> 构建一个最小的 C++14 应用,以及
@@ -54,12 +54,12 @@ uv pip install --python <T06>/workspace/.venv-dxrt/bin/python \
 
 这不会修改共享的 Jupyter 环境,也不会重新构建 DX-RT。当本地环境中已经包含匹配的 wheel 时,重新运行这些单元格会跳过创建和安装。
 
-<!-- cell: 3d715559 src: 463872b41b -->
+<!-- cell: 3d715559 src: d07404bdbe -->
 ## 3. 分配内存前先读取张量元数据
 
-不要根据模型名称推断输入形状或 dtype。请向引擎查询其契约。DX-RT v3.4 会校验 NumPy dtype,以防止未定义行为。
+不要根据模型名称推断输入形状或 dtype。请向引擎查询其契约。自 v3.4 起,DX-RT 会校验 NumPy dtype,以防止未定义行为。
 
-下面的辅助函数使用 <code>np.empty(...)</code>,然后填充缓冲区。这会强制分配真正可写的页面,避免在 DMA 固定(pinning)期间出现写时复制零页问题。
+下面的辅助函数使用 <code>np.empty(...)</code>,然后填充缓冲区。这会强制分配真正可写的页面,避免在 DMA 固定(pinning)期间出现写时复制零页问题。`<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python` 中的 SDK Python 示例也使用相同的模式。
 
 <!-- cell: b3a1916a src: b039b75719 -->
 ### 3.1 张量所有权检查清单
@@ -90,6 +90,29 @@ uv pip install --python <T06>/workspace/.venv-dxrt/bin/python \
 
 不要把 NPU 时间标注为从摄像头到显示的延迟。
 
+<!-- cell: real-image-heading src: 404e895e5a -->
+### 4.1 对真实图像进行分类
+
+上面的虚拟输入只能证明调用可以工作,不能证明结果正确。接下来的单元格会对一张真实照片运行同样的 `run()`,并把输出转换为 ImageNet 标签。这就是围绕 DX-RT 的最小应用:预处理、推理和后处理。
+
+第 3 节中的模型契约决定了预处理方式:
+
+| 契约项目 | `resnet50_224x224.dxnn` 的取值 | 应用的处理 |
+|---|---|---|
+| 输入 | `[1, 224, 224, 3]`、`uint8` | 将图像缩放到 224x224,保留 8 位值和 HWC 顺序,并添加批处理轴 |
+| 颜色顺序 | RGB | OpenCV 以 BGR 读取图像,因此要将 BGR 转换为 RGB |
+| 归一化 | 已编译进 DXNN | 无需处理: `uint8` 输入表明模型在内部进行归一化 |
+| 输出 | `[1, 1000]`、`float32` 类别分数 | 先做 softmax,再取分数最高的五个类别 |
+
+这些步骤与 DX-APP 的 ResNet50 示例(`SimpleResizePreprocessor` 和 `ClassificationPostprocessor`)相同。所用图像是 DX-APP 为该示例提供的默认样本,ImageNet 标签列表同样来自 DX-APP(`src/python_example/common/utility/labels.py`)。
+
+<!-- cell: real-image-notes src: e33455d041 -->
+如何解读结果:
+
+- 照片中是一只柴犬。ImageNet-1k 中没有柴犬这一类别,因此概率分散到最接近的狐狸犬类犬种上(husky、Norwegian Elkhound、Siberian Husky 等)。这种分散是标签集本身的特性,而不是运行时错误。
+- DX-APP 的 `resnet50_224x224_sync.py` 对这张图像打印出相同的 top-5。当您自己的流水线与参考应用的结果一致时,说明预处理和输出映射是正确的。
+- 颜色顺序错误或缺少缩放时,程序仍会正常运行而不报错,只是产生不同的标签。在信任一条流水线之前,请先用带标签的数据检查精度。
+
 <!-- cell: 54f7a81f src: bb3c7d9b98 -->
 ## 5. 使用作业 ID 的异步推理
 
@@ -107,6 +130,16 @@ uv pip install --python <T06>/workspace/.venv-dxrt/bin/python \
 | <code>run()</code> | 最简单的控制流 | 接受调用线程被阻塞 |
 
 回调输出仅在回调作用域内有效。如果下游工作必须保留它们,请在回调内复制所需数据,并把繁重的工作转移到另一个队列。
+
+<!-- cell: callback-intro src: eb74f2ee1e -->
+下一个单元格使用回调方式。`register_callback()` 设置一个函数,每当一个 `run_async()` 作业完成时,DX-RT 会在自己的 worker thread 上调用该函数。`user_arg` 随作业一起传递,因此回调能知道完成的是哪一个请求,例如帧编号。该单元格会:
+
+1. 注册回调,
+2. 使用第 4.1 节的真实图像提交八个作业,每个作业以其索引作为 `user_arg`,
+3. 等待回调在最后一个作业完成后设置的事件,以及
+4. 用 `register_callback(None)` 清除回调。
+
+回调在修改共享数据之前先获取锁,只保留所需的少量结果(top-1 标签),并返回 `0`。繁重的后处理应放到另一个线程或队列中,以免阻塞运行时的 worker thread。DX-APP 的 `AsyncRunner` 正是基于这一模式构建的。
 
 <!-- cell: af9ec43d src: 35292b89d9 -->
 ## 6. 批处理 API
@@ -135,10 +168,10 @@ DX-RT 批处理执行将多个相互独立的样本分组,并在运行时内部�
 
 请测量有代表性的取值,而不是假设最大值就是最佳值。高级教程会进行一次受控的缓冲区数量实验。
 
-<!-- cell: 485e925a src: f6386e2aa5 -->
+<!-- cell: 485e925a src: fcff455a41 -->
 ## 8. 构建一个最小的 C++14 应用
 
-DX-RT v3.4 提供稳定的 C ABI 和一个仅头文件的 C++14 包装器。新的 C++ 代码只应包含:
+自 v3.4 起,DX-RT 提供稳定的 C ABI 和一个仅头文件的 C++14 包装器。新的 C++ 代码只应包含:
 
 ~~~cpp
 #include <dxrt/dxrt_cxx_api.h>
@@ -163,7 +196,7 @@ cmake --build <T06>/workspace/cpp/build --parallel
 
 构建目录保留在 T06 内。
 
-<!-- cell: 1d3ac8cb src: d3fa81e622 -->
+<!-- cell: 1d3ac8cb src: 98e8643d77 -->
 ### 8.2 运行 C++ 应用
 
 等价的终端命令:
@@ -172,6 +205,8 @@ cmake --build <T06>/workspace/cpp/build --parallel
 <T06>/workspace/cpp/build/dxrt_sync \
   <T06>/workspace/models/resnet50_224x224.dxnn
 ~~~
+
+如需 C++ 中的异步、回调、多线程、多输入和性能分析程序,请从 `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/cpp` 中的 SDK 示例入手(例如 `run_async_model`、`run_async_model_thread`、`run_batch_model`、`multi_input_model_inference`)。
 
 <!-- cell: 68c92258 src: 34a1319a55 -->
 ## 9. 选择执行方式
@@ -187,18 +222,19 @@ cmake --build <T06>/workspace/cpp/build --parallel
 
 正确的选择取决于完整的应用。如果队列过深,更高的推理 FPS 仍可能导致用户可见的延迟变差。
 
-<!-- cell: 3fd7908b-0ab7-49ad-a0a4-2513fcb1771d src: 04785bad99 -->
+<!-- cell: 3fd7908b-0ab7-49ad-a0a4-2513fcb1771d src: 9921b5ad10 -->
 ## 10. 故障排除
 
 | 症状 | 看到的内容 | 可能原因 | 解决方法 |
 |---|---|---|---|
 | 缺少 `uv` 或 `cmake` | `[MISSING] uv` 或 `[MISSING] cmake` | 未安装 | `curl -LsSf https://astral.sh/uv/install.sh | sh`;`sudo apt install cmake build-essential` |
 | 没有适用于此 Python 的 wheel | `No dx_engine wheel for cp3XY` | `/usr/share/libdxrt-bin/python` 下没有与内核 Python 版本匹配的 wheel | 使用受支持的 Python 版本创建教程的 `.venv` |
-| `import dx_engine` 失败 | `ImportError` 或版本不匹配的消息 | `workspace/.venv-dxrt` 中的 wheel 比 `libdxrt.so` 旧 | 重新运行第 2 节以重新安装 wheel |
+| `import dx_engine` 失败 | 导入时出现关于版本不匹配的 `RuntimeError`,或出现 `ImportError` | 自 DX-RT v3.5.0 起,当 wheel 的 major.minor 版本与已安装的 `libdxrt.so` 不同时,`import dx_engine` 会中止;`workspace/.venv-dxrt` 中的 wheel 来自较旧的运行时 | 重新运行第 2 节以安装匹配的 wheel。`DX_ENGINE_SKIP_VERSION_CHECK=1` 会跳过该检查;仅在诊断时使用 |
+| 回调始终没有到达 | `TimeoutError: Only N of 8 callbacks arrived` | 回调内部发生异常,或在作业完成之前就清除了回调 | 保持回调简短且不抛出异常;仅在最后一个作业之后才用 `register_callback(None)` 清除它 |
 | CMake 找不到 DX-RT | `Could not find a package configuration file provided by "dxrt"` | DX-RT 安装在自定义前缀下,因此 `dxrtConfig.cmake` 不在默认搜索路径中 | 在 `cmake -S ... -B ...` 行中添加 `-DCMAKE_PREFIX_PATH=<prefix>` |
 | 异步输出看起来不正确 | `wait()` 之后出现垃圾值 | 输入缓冲区在 `wait()` 返回之前被释放或复用 | 在 `wait()` 返回之前保持输入数组存活 |
 
-<!-- cell: b69fd536 src: 8d0b95c249 -->
+<!-- cell: b69fd536 src: 5b51c96421 -->
 ## 11. 总结
 
 ### 11.1 已完成的 API 工作流
@@ -206,7 +242,8 @@ cmake --build <T06>/workspace/cpp/build --parallel
 **读取张量元数据**  
 → **按精确的 dtype 和形状分配**  
 → **同步运行**  
-→ **异步提交并等待**  
+→ **对真实图像进行分类**  
+→ **异步提交并等待,或通过回调完成**  
 → **将相互独立的样本分组**  
 → **用 C++ 构建相同的流程**
 
@@ -227,6 +264,8 @@ cmake --build <T06>/workspace/cpp/build --parallel
 - [ ] 安装与 Jupyter Python ABI 匹配的 wheel
 - [ ] 根据运行时元数据分配连续张量
 - [ ] 测量同步模式下的主机、运行时和 NPU 计时
+- [ ] 对真实图像进行分类,并与 DX-APP 示例的结果一致
+- [ ] 通过带 `user_arg` 的线程安全回调完成异步作业
 - [ ] 在 <code>wait()</code> 返回之前保持异步输入的生命周期
 - [ ] 在不改变模型批处理大小的情况下使用批处理 API
 - [ ] 说明 <code>buffer_count</code> 的内存/吞吐量权衡
@@ -235,6 +274,15 @@ cmake --build <T06>/workspace/cpp/build --parallel
 
 > **请记住:** 缓冲区所有权是正确性的一部分。性能调优应在验证形状、dtype、布局、生命周期和输出映射之后进行。
 
-### 11.4 下一步
+### 11.4 SDK 示例
+
+SDK 为本笔记本中的每个 API 都提供了可运行的示例,是编写您自己代码的良好起点:
+
+| 语言 | 目录 | 示例 |
+|---|---|---|
+| Python | `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python` | `run_sync_model.py`、`run_async_model_wait.py`、`run_async_model_callback.py`、`run_async_model_thread.py`、`run_batch_model.py`、`run_sync_model_bufcount.py`、`multi_input_model_inference.py` |
+| C++ | `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/cpp` | `run_sync_model`、`run_async_model_wait`、`run_async_model_thread`、`run_batch_model`、`run_async_model_bufcount`、`multi_input_model_inference` |
+
+### 11.5 下一步
 
 继续学习**高级教程**,绑定设备和核心、分析各个阶段的性能、监控设备健康状态、测试内存加载和多输入模型,并构建可复现的发布证据。

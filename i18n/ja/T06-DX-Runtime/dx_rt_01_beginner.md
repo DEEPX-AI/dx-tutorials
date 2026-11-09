@@ -161,6 +161,18 @@ cd <T06-DX-Runtime>/workspace
 dxrun -m models/resnet50_224x224.dxnn --single --loops 1 --verbose
 ```
 
+<!-- cell: single-run-verbose-fields src: 1a06dd41a8 -->
+`--verbose` を付けると、`dxrun` は **Benchmark Result** の下に、そのリクエストについて 4 つの時間を報告します(DX-RT v3.5.0)。
+
+| フィールド | 測定対象 |
+|---|---|
+| NPU Processing Time | 1 リクエスト分の NPU コアの計算 |
+| Queue Wait Time | NPU と CPU のタスクキューで待機した時間。E2E Response Time の一部です |
+| E2E Response Time | 投入から結果までの時間。データ転送とランタイムのオーバーヘッドを含みます |
+| Latency | Core latency: E2E Response Time からバッファプールとキューの待ち時間を除いたもの |
+
+E2E Response Time と Latency の差が大きい場合、リクエストは遅く実行されているのではなく、ランタイム内で待たされていることを意味します。DX-RT v3.5.0 以降、Latency にはこれらの待ち時間が含まれなくなりました。チュートリアル 06-2 第 4 節では、同じ値を Python API で読み取ります。
+
 <!-- cell: a0ae40f8 src: 126816c0da -->
 ### 5.2 最大スループットを測定する
 

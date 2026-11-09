@@ -161,6 +161,18 @@ cd <T06-DX-Runtime>/workspace
 dxrun -m models/resnet50_224x224.dxnn --single --loops 1 --verbose
 ```
 
+<!-- cell: single-run-verbose-fields src: 1a06dd41a8 -->
+使用 `--verbose` 时,`dxrun` 会在 **Benchmark Result** 下报告该请求的四项计时(DX-RT v3.5.0):
+
+| 字段 | 测量内容 |
+|---|---|
+| NPU Processing Time | 一次请求的 NPU 核心计算时间 |
+| Queue Wait Time | 在 NPU 和 CPU 任务队列中等待的时间;属于 E2E Response Time 的一部分 |
+| E2E Response Time | 从提交到得到结果的时间,包括数据传输和运行时开销 |
+| Latency | Core latency: 去除缓冲池等待和队列等待后的 E2E Response Time |
+
+如果 E2E Response Time 与 Latency 之间差距很大,说明请求是在运行时内部等待,而不是运行得慢。自 DX-RT v3.5.0 起,Latency 不再包含这些等待时间。教程 06-2 第 4 节通过 Python API 读取相同的值。
+
 <!-- cell: a0ae40f8 src: 126816c0da -->
 ### 5.2 测量最大吞吐量
 

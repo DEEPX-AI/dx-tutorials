@@ -58,10 +58,10 @@
 
 设备选择的是一个物理加速器。绑定选项选择的是每个选定设备内部的核心。不要混淆这两个层级。
 
-<!-- cell: 01c44f7b src: b4e173b1c2 -->
+<!-- cell: 01c44f7b src: 013dc3df60 -->
 ### 2.1 绑定安全
 
-如果已有的引擎实例已经预留了单独的 NPU 核心,再以 <code>NPU_ALL</code> 创建另一个引擎可能会阻塞,直到所有所需核心都被释放。在多线程和多进程服务中,请保持资源归属明确。
+绑定只是选择核心,并不会预留核心。在使用 DX-RT v3.5.0 的测试中,当同一进程中的另一个引擎绑定到 <code>NPU_0</code> 时,绑定到 <code>NPU_ALL</code> 的引擎仍能被创建并运行。因此,绑定相互重叠的引擎会共享这些核心,每个引擎的吞吐量和延迟都取决于其他引擎。当两条流水线的计时不能相互影响时,请为它们分配互不重叠的绑定或不同的设备,并在多线程和多进程服务中保持这种资源归属明确。
 
 | 目标 | 典型起点 |
 |---|---|
@@ -133,10 +133,10 @@ python <DX_RT_DIR>/tool/profiler/plot.py \
 
 NPU 任务总时间涵盖格式处理、传输、计算和输出处理。它比单纯的 NPU 核心计算范围更广。
 
-<!-- cell: 100ed5cc src: 4831be0e8a -->
+<!-- cell: 100ed5cc src: 9a5ed5b8e3 -->
 ## 5. 通过 Python API 读取每个任务的指标
 
-DX-RT v3.4 新增了 <code>get_job_metrics(job_id)</code>。请在 <code>wait(job_id)</code> 之后立即调用它。旧的性能数据方法已被弃用。
+自 v3.4 起,DX-RT 提供 <code>get_job_metrics(job_id)</code>。请在 <code>wait(job_id)</code> 之后立即调用它。旧的性能数据方法已被弃用。
 
 下面的代码启用性能分析,运行 20 个异步任务,并打印最后一个任务的有效指标。重复运行的任务也为 5.1 节的 CoV 表提供了足够的样本。
 
@@ -173,7 +173,7 @@ CoV (%) = standard deviation / mean × 100
 
 当模型来自加密存储、软件包、网络服务或其他托管数据源时,从内存加载非常有用。NumPy 数组必须是 C 连续的,并且在引擎的整个生命周期内必须保持有效。
 
-<!-- cell: bf637c62 src: 8a0360883c -->
+<!-- cell: bf637c62 src: 69d0072886 -->
 ## 8. 多输入模型契约
 
 对于多输入模型,最安全的接口是以精确张量名称为键的字典:
@@ -188,6 +188,15 @@ outputs = engine.run_multi_input(inputs)
 
 DX-RT 也支持有序列表和单个拼接缓冲区,但命名输入可以减少顺序错误。
 
+对应的异步版本接受同样的字典,并返回一个任务 ID:
+
+~~~python
+job_id = engine.run_async_multi_input(inputs, user_arg=frame_index)
+outputs = engine.wait(job_id)   # or receive the outputs in a registered callback (Tutorial 06-2 section 5.1)
+~~~
+
+SDK 示例 `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python/multi_input_model_inference.py` 展示了所有输入格式、批处理和异步变体。
+
 本实验会复用 T05 高级教程第 8 节创建的双输入 DXNN(如果存在)。它不会编译模型,也不会在 T06 之外创建文件。链接放在 `workspace/multi_input/` 而不是 `workspace/models/` 下,这样第 11 节的目录基准测试仍然只比较单输入分类模型。
 
 <!-- cell: d7f33ae1 src: c7292df319 -->
@@ -197,10 +206,10 @@ DX-RT 也支持有序列表和单个拼接缓冲区,但命名输入可以减少�
 
 下一个单元格注册一个处理器并派发一个**合成的教程事件**以验证路由。它不会模拟真实的硬件故障。
 
-<!-- cell: 068ed27c src: 82e871f553 -->
+<!-- cell: 068ed27c src: 522d68b64a -->
 ### 9.1 ABI 与 IPC 边界
 
-DX-RT v3.4 将公开集成接口与内部实现分离开来:
+自 v3.4 起,DX-RT 将公开集成接口与内部实现分离开来:
 
 | 层 | 用途 | 产品指引 |
 |---|---|---|
@@ -377,12 +386,12 @@ dxbenchmark --dir <T06>/workspace/models \
             --order desc
 ~~~
 
-<!-- cell: 669618a2 src: 39da7d0246 -->
+<!-- cell: 669618a2 src: 64c11dff76 -->
 ## 12. 创建发布验证记录
 
 <img src="assets/dx-rt-release-loop.svg" style="max-width: 1100px; width: 100%;" alt="生产运行时验证循环">
 
-运行时发布记录应当把确切的二进制文件和环境与测得的证据关联起来。下一个单元格会在 T06 内写入一份精简的 JSON 记录。在做出真正的发布决策之前,请补充产品精度、端到端延迟、主机 CPU、内存和热测试结果。
+运行时发布记录应当把确切的二进制文件和环境与测得的证据关联起来。下一个单元格会在 T06 内写入一份精简的 JSON 记录。它会记录运行时库、驱动、PCIe 驱动和固件的版本(来自 `Configuration` 和 `dxcli --status`),并对照已安装的 DX-RT 所需的最低版本进行检查(`dxcli --version`;对于 DX-RT v3.5.0: 驱动和 PCIe 驱动为 2.7.0,固件为 2.7.6)。在做出真正的发布决策之前,请补充产品精度、端到端延迟、主机 CPU、内存和热测试结果。
 
 <!-- cell: b2f25d6a-8d4f-4316-9883-6a704948cc37 src: 921089640f -->
 ## 13. 故障排除
@@ -395,7 +404,7 @@ dxbenchmark --dir <T06>/workspace/models \
 | Python 与 `dxrun` 报告的加速支持不一致 | Python 中为 `available`,`dxrun` 中为 `No acceleration options` | 两个二进制文件使用了不同的选项构建 | 以您将用于部署的那个为准;按需使用所需选项重新构建 DX-RT(第 10 节) |
 | `dxbenchmark --warmup` 似乎被忽略 | 预热运行次数不匹配 | `--warmup` 的单位是秒,而不是运行次数 | 使用 `--warmup <seconds>`;`--warmup-runs` 属于 `dxrun` |
 
-<!-- cell: 703286a9 src: d75aea9e39 -->
+<!-- cell: 703286a9 src: 30ac69868f -->
 ## 14. 总结
 
 ### 14.1 已完成的生产工作流
@@ -444,10 +453,13 @@ dxbenchmark --dir <T06>/workspace/models \
 - [ ] 区分加速功能的构建支持与运行时启用
 - [ ] 将 NFH 和 CPU 算子加速对应到 C++、Python 和 `dxrun` 的控制方式
 - [ ] 在 T06 下生成基准测试和发布记录产物
+- [ ] 记录运行时、驱动和固件版本,并对照所需的最低版本进行检查
 - [ ] 使用真实的预处理和后处理运行同样的测试
 - [ ] 用有代表性的标注数据验证任务精度
 - [ ] 在部署主机上运行热浸泡测试和尾延迟测试
 
 > **请记住:** 优化性能分析器所指出的那个阶段。孤立的 NPU 结果再快,在精度、端到端延迟、CPU 负载、内存、稳定性和热行为被一并验证之前,都不算发布结果。
+
+> **SDK 示例:** `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python` 和 `examples/cpp` 包含本笔记本各主题的可运行程序,例如 `run_async_model_bound`、`run_async_model_profiler`、`device_monitoring` 和 `multi_input_model_inference`。
 
 > **下一步:** 继续学习演示教程(教程 10 为 Python OCR 流水线,教程 20-24 为 C++ 应用),将运行时应用到完整的应用程序中。

@@ -58,10 +58,10 @@
 
 장치는 물리적 가속기를 선택합니다. 바인딩 옵션은 선택된 각 장치 안의 코어를 선택합니다. 이 두 수준을 혼동하지 마세요.
 
-<!-- cell: 01c44f7b src: b4e173b1c2 -->
+<!-- cell: 01c44f7b src: 013dc3df60 -->
 ### 2.1 바인딩 안전성
 
-기존 엔진 인스턴스가 이미 개별 NPU 코어를 예약하고 있다면, <code>NPU_ALL</code>로 엔진을 하나 더 만들 때 필요한 코어가 모두 해제될 때까지 블로킹될 수 있습니다. 다중 스레드 및 다중 프로세스 서비스에서는 리소스 소유권을 명시적으로 관리하세요.
+바인딩은 코어를 선택할 뿐 예약하지는 않습니다. DX-RT v3.5.0에서 테스트한 결과, 같은 프로세스의 다른 엔진이 <code>NPU_0</code>에 바인딩된 상태에서도 <code>NPU_ALL</code>에 바인딩된 엔진이 생성되어 실행되었습니다. 따라서 바인딩이 겹치는 엔진들은 해당 코어를 공유하며, 각 엔진의 처리량과 지연 시간은 다른 엔진에 따라 달라집니다. 두 파이프라인이 서로의 타이밍에 영향을 주면 안 된다면 겹치지 않는 바인딩이나 별도의 장치를 할당하고, 다중 스레드 및 다중 프로세스 서비스에서는 그 소유권을 명시적으로 관리하세요.
 
 | 목표 | 일반적인 시작점 |
 |---|---|
@@ -133,10 +133,10 @@ python <DX_RT_DIR>/tool/profiler/plot.py \
 
 전체 NPU 태스크는 포맷 처리, 전송, 연산, 출력 처리를 포함합니다. NPU 코어 연산만 따로 보는 것보다 범위가 넓습니다.
 
-<!-- cell: 100ed5cc src: 4831be0e8a -->
+<!-- cell: 100ed5cc src: 9a5ed5b8e3 -->
 ## 5. Python API로 작업별 지표 읽기
 
-DX-RT v3.4는 <code>get_job_metrics(job_id)</code>를 추가했습니다. <code>wait(job_id)</code> 직후에 호출하세요. 이전의 성능 데이터 메서드는 더 이상 사용되지 않습니다(deprecated).
+DX-RT는 v3.4부터 <code>get_job_metrics(job_id)</code>를 제공합니다. <code>wait(job_id)</code> 직후에 호출하세요. 이전의 성능 데이터 메서드는 더 이상 사용되지 않습니다(deprecated).
 
 아래 코드는 프로파일링을 활성화하고, 비동기 작업 20개를 실행한 뒤, 마지막 작업의 유효한 지표를 출력합니다. 반복된 작업은 5.1절의 CoV 표에 필요한 충분한 샘플도 제공합니다.
 
@@ -173,7 +173,7 @@ CoV (%) = standard deviation / mean × 100
 
 메모리 로딩은 모델이 암호화된 저장소, 패키지, 네트워크 서비스 또는 다른 관리형 데이터 소스에서 올 때 유용합니다. NumPy 배열은 C-연속(C-contiguous)이어야 하며 엔진이 살아 있는 동안 계속 유지되어야 합니다.
 
-<!-- cell: bf637c62 src: 8a0360883c -->
+<!-- cell: bf637c62 src: 69d0072886 -->
 ## 8. 다중 입력 모델 계약
 
 다중 입력 모델에서 가장 안전한 인터페이스는 정확한 텐서 이름을 키로 하는 딕셔너리입니다.
@@ -188,6 +188,15 @@ outputs = engine.run_multi_input(inputs)
 
 DX-RT는 순서가 있는 리스트와 하나로 이어 붙인 버퍼도 지원하지만, 이름 기반 입력은 순서 실수를 줄여 줍니다.
 
+비동기 버전은 같은 딕셔너리를 받아 작업 ID를 반환합니다.
+
+~~~python
+job_id = engine.run_async_multi_input(inputs, user_arg=frame_index)
+outputs = engine.wait(job_id)   # or receive the outputs in a registered callback (Tutorial 06-2 section 5.1)
+~~~
+
+SDK 예제 `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python/multi_input_model_inference.py`는 모든 입력 형식과 배치, 비동기 변형을 보여 줍니다.
+
 이 실습은 T05 고급 8절에서 만든 두 입력 DXNN이 있으면 재사용합니다. 모델을 컴파일하거나 T06 바깥에 파일을 만들지 않습니다. 링크는 `workspace/models/`가 아니라 `workspace/multi_input/` 아래에 두어, 11절의 디렉터리 벤치마크가 단일 입력 분류 모델만 계속 비교하도록 합니다.
 
 <!-- cell: d7f33ae1 src: c7292df319 -->
@@ -197,10 +206,10 @@ DX-RT는 순서가 있는 리스트와 하나로 이어 붙인 버퍼도 지원�
 
 다음 셀은 핸들러를 등록하고 **합성 튜토리얼 이벤트** 하나를 디스패치해 경로를 검증합니다. 실제 하드웨어 장애를 시뮬레이션하지는 않습니다.
 
-<!-- cell: 068ed27c src: 82e871f553 -->
+<!-- cell: 068ed27c src: 522d68b64a -->
 ### 9.1 ABI와 IPC 경계
 
-DX-RT v3.4는 공개 통합 계층과 내부 구현을 분리합니다.
+DX-RT는 v3.4부터 공개 통합 계층과 내부 구현을 분리합니다.
 
 | 계층 | 목적 | 제품 적용 지침 |
 |---|---|---|
@@ -377,12 +386,12 @@ dxbenchmark --dir <T06>/workspace/models \
             --order desc
 ~~~
 
-<!-- cell: 669618a2 src: 39da7d0246 -->
+<!-- cell: 669618a2 src: 64c11dff76 -->
 ## 12. 릴리즈 검증 기록 생성
 
 <img src="assets/dx-rt-release-loop.svg" style="max-width: 1100px; width: 100%;" alt="운영 런타임 검증 루프">
 
-런타임 릴리즈 기록은 정확한 바이너리와 환경을 측정된 증거와 연결해야 합니다. 다음 셀은 T06 안에 간결한 JSON 기록을 기록합니다. 실제 릴리즈 결정 전에 제품 정확도, 엔드투엔드 지연 시간, 호스트 CPU, 메모리, 열 결과를 추가하세요.
+런타임 릴리즈 기록은 정확한 바이너리와 환경을 측정된 증거와 연결해야 합니다. 다음 셀은 T06 안에 간결한 JSON 기록을 기록합니다. 이 기록에는 런타임 라이브러리, 드라이버, PCIe 드라이버, 펌웨어 버전(`Configuration`과 `dxcli --status`에서 읽음)이 담기며, 이 버전들이 설치된 DX-RT가 요구하는 최소 버전(`dxcli --version`; DX-RT v3.5.0의 경우 드라이버와 PCIe 드라이버 2.7.0, 펌웨어 2.7.6)을 충족하는지 확인합니다. 실제 릴리즈 결정 전에 제품 정확도, 엔드투엔드 지연 시간, 호스트 CPU, 메모리, 열 결과를 추가하세요.
 
 <!-- cell: b2f25d6a-8d4f-4316-9883-6a704948cc37 src: 921089640f -->
 ## 13. 문제 해결
@@ -395,7 +404,7 @@ dxbenchmark --dir <T06>/workspace/models \
 | Python과 `dxrun`이 보고하는 가속 지원이 다름 | Python에서는 `available`, `dxrun`에서는 `No acceleration options` | 두 바이너리가 서로 다른 옵션으로 빌드됨 | 배포에 사용할 쪽을 기준으로 삼고, 필요한 옵션으로 DX-RT를 다시 빌드(10절) |
 | `dxbenchmark --warmup`이 무시되는 것처럼 보임 | 워밍업 실행 횟수가 맞지 않음 | `--warmup`은 실행 횟수가 아니라 초 단위 | `--warmup <seconds>` 사용. `--warmup-runs`는 `dxrun`의 옵션 |
 
-<!-- cell: 703286a9 src: d75aea9e39 -->
+<!-- cell: 703286a9 src: 30ac69868f -->
 ## 14. 요약
 
 ### 14.1 완료한 운영 워크플로
@@ -444,10 +453,13 @@ dxbenchmark --dir <T06>/workspace/models \
 - [ ] 가속 기능의 빌드 지원과 런타임 활성화 구분
 - [ ] NFH 및 CPU 연산 가속을 C++, Python, `dxrun` 제어 수단에 대응
 - [ ] T06 아래에 벤치마크와 릴리즈 기록 산출물 생성
+- [ ] 런타임, 드라이버, 펌웨어 버전을 기록하고 요구되는 최소 버전과 비교해 확인
 - [ ] 실제 전처리와 후처리를 포함해 같은 테스트 실행
 - [ ] 대표성 있는 레이블 데이터로 태스크 정확도 검증
 - [ ] 배포 호스트에서 열 소크(soak) 테스트와 꼬리 지연 시간 테스트 실행
 
 > **기억하세요:** 프로파일러가 지목한 단계를 최적화하세요. 단독으로 측정한 NPU 결과가 빨라졌더라도 정확도, 엔드투엔드 지연 시간, CPU 부하, 메모리, 안정성, 열 동작을 함께 검증하기 전까지는 릴리즈 결과가 아닙니다.
+
+> **SDK 예제:** `<DX_ALL_SUITE_DIR>/dx-runtime/dx_rt/examples/python`과 `examples/cpp`에는 이 노트북에서 다룬 주제의 실행 가능한 프로그램이 들어 있습니다. 예를 들어 `run_async_model_bound`, `run_async_model_profiler`, `device_monitoring`, `multi_input_model_inference`가 있습니다.
 
 > **다음:** 데모 튜토리얼(Python OCR 파이프라인은 튜토리얼 10, C++ 애플리케이션은 튜토리얼 20~24)로 이어서 런타임을 완전한 애플리케이션에 적용해 보세요.
