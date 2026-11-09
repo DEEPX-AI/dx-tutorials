@@ -29,7 +29,7 @@
 <!-- cell: 2dcfff26-61ce-46f1-b08f-5669e3ead9a8 src: d3372f2340 -->
 ## DXNN® - DEEPX NPU SDK 简介 (DX-AS: DX-All Suite)
 
-<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: f040d4a409 -->
+<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: 8965a1d314 -->
 DX-AS(DX-All Suite)是一个集成了框架与工具的环境,用于在 DEEPX 设备上编译和推理 AI 模型。用户也可以逐个安装工具来搭建环境,但 DX-AS 通过统一各工具的版本来保持最佳兼容性。
 
 <img src="assets/DXNN-SDK-Full-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="DEEPX SDK 架构:AI 模型编译环境与 AI 模型运行时环境">
@@ -41,9 +41,6 @@ DEEPX SDK 主要分为两个关键部分。
 第二部分是 AI 模型运行时环境,它在实际的 DEEPX NPU 硬件上执行编译后的 AI 模型并生成结果。
 
 借助 DX-All Suite,您无需分别管理这两个组件即可一次性完成配置。
-
-![](https://github.com/DEEPX-AI/dx-all-suite/raw/main/docs/source/img/dx-as.png)
-
 
 <img src="assets/DXNN-SDK-Simple-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="简化的 DEEPX SDK 架构:从 ONNX 模型经 DX-COM 和 DX-RT 到 NPU">
 
@@ -129,8 +126,10 @@ DX-Runtime 提供:
 <!-- cell: 912db406-4064-4ea1-b075-c455abeab01f src: b20e1b138c -->
 ## 2. 安装 DX-Compiler
 
-<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 652cd9a15d -->
+<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 53b548de4d -->
 更多细节请参阅 [DX-All Suite 安装指南](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)。
+
+> **注意:** 安装指南位于 GitHub 上,仅对已登录的用户可见。如果打开链接时显示 *404 - Page not found*,请先在 https://github.com/login 登录,然后重新打开链接。
 
 DX-Compiler 环境提供预构建的二进制文件,不包含源代码。安装程序会从远程服务器下载各个模块:
 
@@ -223,9 +222,11 @@ dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
 
 让我们看看保存的日志信息:
 
-<!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: bcd38bb9d2 -->
+<!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: f08994ac38 -->
 ## 3. 安装 DX-Runtime
 更多细节请参阅 [DX-All Suite 安装指南](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)。
+
+> **注意:** 安装指南位于 GitHub 上,仅对已登录的用户可见。如果打开链接时显示 *404 - Page not found*,请先在 https://github.com/login 登录,然后重新打开链接。
 
 <!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: 39302d5b84 -->
 ### 安装前的平台说明(可选)

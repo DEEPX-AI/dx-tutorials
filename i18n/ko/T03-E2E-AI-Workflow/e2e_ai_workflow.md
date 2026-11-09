@@ -92,13 +92,13 @@ Kaggle에서 지게차-사람 라벨링 데이터셋을 다운로드합니다.
 <!-- cell: f7dd943a-796f-4aec-8341-a524c71c4e2f src: 9802354bde -->
 ## 4. AI 워크플로 - DX-Compiler를 이용한 최적화
 
-<!-- cell: 6347d2b0-3fd8-4a96-bc0e-84c5885586eb src: 70970cc292 -->
+<!-- cell: 6347d2b0-3fd8-4a96-bc0e-84c5885586eb src: 8e1d910c66 -->
 사전 학습된 AI 모델을 DXNN 형식으로 컴파일해 보겠습니다.
 
 전체 과정은 다음과 같습니다.
 1. pytorch 프레임워크의 사전 학습된 모델 준비
 2. ONNX 형식으로 변환
-3. ONNX를 DXNN으로 컴파일 (DX-Compiler의 자세한 내용은 [여기](https://developer.deepx.ai/download/?id=581)의 사용자 가이드를 참고하세요
+3. ONNX를 DXNN으로 컴파일 (DX-Compiler의 자세한 내용은 [여기](https://developer.deepx.ai/download/?id=741)의 사용자 가이드를 참고하세요
                                                                                              
 > **참고:** 사용자 가이드를 다운로드하려면 먼저 https://developer.deepx.ai/ 에 로그인해야 합니다.
 

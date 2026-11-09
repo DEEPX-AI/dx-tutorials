@@ -41,7 +41,7 @@
 
 第 2 节的设置单元格会定位 SDK、检查这些要求并打印状态表。任何标记为 `MISSING` 的项目都会附上提供它的步骤。
 
-<!-- cell: dxcom-workflow-overview src: 44853a9f8f -->
+<!-- cell: dxcom-workflow-overview src: 0092f13c48 -->
 ## 1. 编译工作流程
 
 整体编译过程包括以下三个步骤:
@@ -54,7 +54,7 @@
 
 本入门教程以 MobileNetV2 为例遵循同一工作流程:PyTorch → ONNX → DXNN。
 
-更多细节请参阅 DX-Compiler 用户指南 [下载](https://developer.deepx.ai/download/?id=581)
+更多细节请参阅 DX-Compiler 用户指南 [下载](https://developer.deepx.ai/download/?id=741)
 
 > **注意:** 下载用户指南前,必须先登录 https://developer.deepx.ai/。
 

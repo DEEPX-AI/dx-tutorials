@@ -41,7 +41,7 @@ DX-COM の設定とキャリブレーションをすでに理解している場�
 
 第 2 節のセットアップセルが SDK を探し、これらの要件を確認してステータス表を表示します。`MISSING` と表示された項目には、それを提供する手順が併記されます。
 
-<!-- cell: dxcom-workflow-overview src: 44853a9f8f -->
+<!-- cell: dxcom-workflow-overview src: 0092f13c48 -->
 ## 1. コンパイルワークフロー
 
 全体のコンパイルプロセスは次の 3 つのステップで構成されます。
@@ -54,7 +54,7 @@ DX-COM の設定とキャリブレーションをすでに理解している場�
 
 この入門チュートリアルでは、MobileNetV2 を使って同じワークフロー(PyTorch → ONNX → DXNN)をたどります。
 
-詳細は DX-Compiler ユーザーガイドを参照してください [ダウンロード](https://developer.deepx.ai/download/?id=581)
+詳細は DX-Compiler ユーザーガイドを参照してください [ダウンロード](https://developer.deepx.ai/download/?id=741)
 
 > **注:** ユーザーガイドをダウンロードするには、まず https://developer.deepx.ai/ にログインする必要があります。
 

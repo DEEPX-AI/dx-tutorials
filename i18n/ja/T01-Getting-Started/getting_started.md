@@ -29,7 +29,7 @@
 <!-- cell: 2dcfff26-61ce-46f1-b08f-5669e3ead9a8 src: d3372f2340 -->
 ## DXNN® - DEEPX NPU SDK の紹介 (DX-AS: DX-All Suite)
 
-<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: f040d4a409 -->
+<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: 8965a1d314 -->
 DX-AS(DX-All Suite)は、DEEPX デバイスを使って AI モデルのコンパイルと推論を行うためのフレームワークとツールの統合環境です。個別のツールをインストールして統合環境を構築することもできますが、DX-AS は各ツールのバージョンを揃えることで最適な互換性を維持します。
 
 <img src="assets/DXNN-SDK-Full-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="DEEPX SDK のアーキテクチャ: AI モデルのコンパイル環境と AI モデルのランタイム環境">
@@ -41,9 +41,6 @@ DEEPX SDK は大きく 2 つの部分に分かれています。
 2 つ目は AI モデルランタイム環境で、コンパイル済みの AI モデルを実際の DEEPX NPU ハードウェア上で実行して結果を生成します。
 
 DX-All Suite を使えば、両方のコンポーネントを個別に管理することなく、まとめてセットアップできます。
-
-![](https://github.com/DEEPX-AI/dx-all-suite/raw/main/docs/source/img/dx-as.png)
-
 
 <img src="assets/DXNN-SDK-Simple-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="簡略化した DEEPX SDK のアーキテクチャ: ONNX モデルから DX-COM と DX-RT を経て NPU まで">
 
@@ -129,8 +126,10 @@ DX-Runtime は次を提供します。
 <!-- cell: 912db406-4064-4ea1-b075-c455abeab01f src: b20e1b138c -->
 ## 2. DX-Compiler のインストール
 
-<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 652cd9a15d -->
+<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 53b548de4d -->
 詳細は [DX-All Suite インストールガイド](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)を参照してください。
+
+> **注:** インストールガイドは GitHub 上にあり、サインインしたユーザーにのみ表示されます。リンク先に *404 - Page not found* と表示される場合は、まず https://github.com/login でログインしてから、もう一度リンクを開いてください。
 
 DX-Compiler 環境はビルド済みのバイナリを提供し、ソースコードは含みません。インストーラーは各モジュールをリモートサーバーからダウンロードします。
 
@@ -223,9 +222,11 @@ dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
 
 保存されたログメッセージを見てみましょう。
 
-<!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: bcd38bb9d2 -->
+<!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: f08994ac38 -->
 ## 3. DX-Runtime のインストール
 詳細は [DX-All Suite インストールガイド](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)を参照してください。
+
+> **注:** インストールガイドは GitHub 上にあり、サインインしたユーザーにのみ表示されます。リンク先に *404 - Page not found* と表示される場合は、まず https://github.com/login でログインしてから、もう一度リンクを開いてください。
 
 <!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: 39302d5b84 -->
 ### インストール前のプラットフォーム別の注意 (任意)

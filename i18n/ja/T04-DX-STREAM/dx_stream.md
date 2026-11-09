@@ -19,7 +19,7 @@
 - メタデータ駆動の人数カウントオーバーレイを追加する
 - メタデータを調べ、GStreamer パイプラインを診断する
 
-<!-- cell: 32d7336d-3f4d-4c4a-aa70-2662f4558edc src: 6645080682 -->
+<!-- cell: 32d7336d-3f4d-4c4a-aa70-2662f4558edc src: b3cbb5e6d6 -->
 ## 1. DX-STREAM の概要
 
 DX-STREAM は、DEEPX NPU 上で Vision AI パイプラインを構築するための GStreamer エレメント群です。
@@ -46,7 +46,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 | `dxscale` | フレームの解像度を変更します |
 | `dxconvert` | フレームのカラーフォーマットを変更します |
 
-エレメントとプロパティの完全なリファレンスは、[DEEPX Developer Portal](https://developer.deepx.ai/download/?id=583) から入手できる DX-STREAM User Manual を参照してください。ログインが必要です。
+エレメントとプロパティの完全なリファレンスは、[DEEPX Developer Portal](https://developer.deepx.ai/download/?id=743) から入手できる DX-STREAM User Manual を参照してください。ログインが必要です。
 
 <!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: 476739e28b -->
 ## 2. 前提条件

@@ -92,13 +92,13 @@ Kaggle からフォークリフトと人物のラベル付きデータセット�
 <!-- cell: f7dd943a-796f-4aec-8341-a524c71c4e2f src: 9802354bde -->
 ## 4. AI ワークフロー - DX-Compiler による最適化
 
-<!-- cell: 6347d2b0-3fd8-4a96-bc0e-84c5885586eb src: 70970cc292 -->
+<!-- cell: 6347d2b0-3fd8-4a96-bc0e-84c5885586eb src: 8e1d910c66 -->
 学習済みの AI モデルを DXNN 形式にコンパイルしましょう。
 
 全体の流れは次のとおりです。
 1. pytorch フレームワークで学習済みモデルを用意する
 2. ONNX 形式に変換する
-3. ONNX を DXNN にコンパイルする(DX-Compiler の詳細はユーザーガイド [こちら](https://developer.deepx.ai/download/?id=581) を参照してください)
+3. ONNX を DXNN にコンパイルする(DX-Compiler の詳細はユーザーガイド [こちら](https://developer.deepx.ai/download/?id=741) を参照してください)
                                                                                              
 > **注:** ユーザーガイドをダウンロードするには、まず https://developer.deepx.ai/ にログインする必要があります。
 

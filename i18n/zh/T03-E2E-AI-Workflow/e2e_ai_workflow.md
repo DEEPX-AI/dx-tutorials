@@ -92,13 +92,13 @@ DX-Compiler 帮助模型变得更快、更轻量(INT8),以适配 DX NPU。
 <!-- cell: f7dd943a-796f-4aec-8341-a524c71c4e2f src: 9802354bde -->
 ## 4. AI 工作流 - 使用 DX-Compiler 进行优化
 
-<!-- cell: 6347d2b0-3fd8-4a96-bc0e-84c5885586eb src: 70970cc292 -->
+<!-- cell: 6347d2b0-3fd8-4a96-bc0e-84c5885586eb src: 8e1d910c66 -->
 让我们把预训练的 AI 模型编译为 DXNN 格式。
 
 总体流程如下:
 1. 获取一个基于 pytorch 框架的预训练模型
 2. 将其转换为 ONNX 格式
-3. 将 ONNX 编译为 DXNN(有关 DX-Compiler 的更多细节,请参阅[此处](https://developer.deepx.ai/download/?id=581)的用户指南
+3. 将 ONNX 编译为 DXNN(有关 DX-Compiler 的更多细节,请参阅[此处](https://developer.deepx.ai/download/?id=741)的用户指南
                                                                                              
 > **注意:** 下载用户指南前,必须先登录 https://developer.deepx.ai/。
 

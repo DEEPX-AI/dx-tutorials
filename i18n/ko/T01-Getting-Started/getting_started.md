@@ -29,7 +29,7 @@
 <!-- cell: 2dcfff26-61ce-46f1-b08f-5669e3ead9a8 src: d3372f2340 -->
 ## DXNN® - DEEPX NPU SDK 소개 (DX-AS: DX-All Suite)
 
-<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: f040d4a409 -->
+<!-- cell: 52b3f559-cb24-4e41-8286-6802b4d96c4d src: 8965a1d314 -->
 DX-AS(DX-All Suite)는 DEEPX 장치로 AI 모델을 컴파일하고 추론할 수 있게 해 주는 프레임워크와 도구의 통합 환경입니다. 개별 도구를 하나씩 설치해 통합 환경을 구성할 수도 있지만, DX-AS는 개별 도구의 버전을 서로 맞춰 최적의 호환성을 유지합니다.
 
 <img src="assets/DXNN-SDK-Full-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="DEEPX SDK 아키텍처: AI 모델 컴파일 환경과 AI 모델 런타임 환경">
@@ -41,9 +41,6 @@ DEEPX SDK는 크게 두 부분으로 나뉩니다.
 두 번째는 AI 모델 런타임 환경으로, 컴파일된 AI 모델을 실제 DEEPX NPU 하드웨어에서 실행해 결과를 생성합니다.
 
 DX-All Suite를 사용하면 두 구성 요소를 따로 관리하지 않고도 한 번에 설정할 수 있습니다.
-
-![](https://github.com/DEEPX-AI/dx-all-suite/raw/main/docs/source/img/dx-as.png)
-
 
 <img src="assets/DXNN-SDK-Simple-Architecture-dark.png" style="max-width: 1000px; width: 100%;" alt="간략한 DEEPX SDK 아키텍처: ONNX 모델에서 DX-COM과 DX-RT를 거쳐 NPU까지">
 
@@ -129,8 +126,10 @@ DX-Runtime은 다음을 제공합니다.
 <!-- cell: 912db406-4064-4ea1-b075-c455abeab01f src: b20e1b138c -->
 ## 2. DX-Compiler 설치
 
-<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 652cd9a15d -->
+<!-- cell: c342f780-67f2-4914-a52d-321b5fe55b72 src: 53b548de4d -->
 자세한 내용은 [DX-All Suite 설치 가이드](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)를 참고하세요.
+
+> **참고:** 설치 가이드는 GitHub에 있으며 로그인한 사용자에게만 보입니다. 링크를 열었을 때 *404 - Page not found*가 표시되면 먼저 https://github.com/login 에서 로그인한 뒤 링크를 다시 여세요.
 
 DX-Compiler 환경은 사전 빌드된 바이너리를 제공하며 소스 코드는 포함하지 않습니다. 설치 스크립트는 각 모듈을 원격 서버에서 다운로드합니다.
 
@@ -223,9 +222,11 @@ dxcom -m sample_models/onnx/MobileNetV2-1.onnx \
 
 저장된 로그 메시지를 확인해 보겠습니다.
 
-<!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: bcd38bb9d2 -->
+<!-- cell: e8158e1f-0476-46b1-b72a-94006d838653 src: f08994ac38 -->
 ## 3. DX-Runtime 설치
 자세한 내용은 [DX-All Suite 설치 가이드](https://github.com/DEEPX-AI/dx-all-suite/blob/main/docs/source/02_Setting_Up_Environment.md)를 참고하세요.
+
+> **참고:** 설치 가이드는 GitHub에 있으며 로그인한 사용자에게만 보입니다. 링크를 열었을 때 *404 - Page not found*가 표시되면 먼저 https://github.com/login 에서 로그인한 뒤 링크를 다시 여세요.
 
 <!-- cell: 1dee6063-b928-4c16-8100-bbde4cc779db src: 39302d5b84 -->
 ### 설치 전 플랫폼별 참고 사항 (선택)

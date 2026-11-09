@@ -19,7 +19,7 @@
 - 메타데이터 기반 인원 수 오버레이 추가
 - 메타데이터 검사와 GStreamer 파이프라인 진단
 
-<!-- cell: 32d7336d-3f4d-4c4a-aa70-2662f4558edc src: 6645080682 -->
+<!-- cell: 32d7336d-3f4d-4c4a-aa70-2662f4558edc src: b3cbb5e6d6 -->
 ## 1. DX-STREAM 개요
 
 DX-STREAM은 DEEPX NPU에서 비전 AI 파이프라인을 구성하기 위한 GStreamer 요소(element) 모음입니다.
@@ -46,7 +46,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 | `dxscale` | 프레임 해상도 변경 |
 | `dxconvert` | 프레임 색상 형식 변경 |
 
-전체 요소 및 속성 레퍼런스는 [DEEPX Developer Portal](https://developer.deepx.ai/download/?id=583)에서 제공하는 DX-STREAM User Manual을 참고하세요. 로그인이 필요합니다.
+전체 요소 및 속성 레퍼런스는 [DEEPX Developer Portal](https://developer.deepx.ai/download/?id=743)에서 제공하는 DX-STREAM User Manual을 참고하세요. 로그인이 필요합니다.
 
 <!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: 476739e28b -->
 ## 2. 사전 요구 사항

@@ -19,7 +19,7 @@
 - 添加由元数据驱动的人数统计叠加层
 - 检查元数据并诊断 GStreamer 流水线
 
-<!-- cell: 32d7336d-3f4d-4c4a-aa70-2662f4558edc src: 6645080682 -->
+<!-- cell: 32d7336d-3f4d-4c4a-aa70-2662f4558edc src: b3cbb5e6d6 -->
 ## 1. DX-STREAM 概述
 
 DX-STREAM 是一组用于在 DEEPX NPU 上构建视觉 AI 流水线的 GStreamer 元素。
@@ -46,7 +46,7 @@ Source → Decode → DxPreprocess → DxInfer → DxPostprocess → DxTracker �
 | `dxscale` | 更改帧分辨率 |
 | `dxconvert` | 更改帧颜色格式 |
 
-完整的元素与属性参考,请参阅 [DEEPX Developer Portal](https://developer.deepx.ai/download/?id=583) 提供的 DX-STREAM 用户手册。需要登录。
+完整的元素与属性参考,请参阅 [DEEPX Developer Portal](https://developer.deepx.ai/download/?id=743) 提供的 DX-STREAM 用户手册。需要登录。
 
 <!-- cell: 2d53a070-40a1-4658-950d-62c7c796af9b src: 476739e28b -->
 ## 2. 前提条件

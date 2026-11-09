@@ -25,13 +25,13 @@
 <!-- cell: 6c593151-97c1-49c9-ac7b-d9149c7e58ba src: ffff5dd049 -->
 ## DX-APP이란?
 
-<!-- cell: 4a8fc6e5-dd5e-4014-a9bd-1aacde11dea1 src: f4bca1a566 -->
+<!-- cell: 4a8fc6e5-dd5e-4014-a9bd-1aacde11dea1 src: 86d7942ef3 -->
 **DX-APP**은 DEEPX NPU용 참조 애플리케이션입니다. 가장 큰 특징은 커버리지입니다. **[DEEPX Model Zoo](https://developer.deepx.ai/modelzoo/)에 공개된 모든 모델에는 바로 실행할 수 있는 예제**가 C++과 Python 양쪽으로 준비되어 있으며, 작업(object detection, classification, face detection, pose, segmentation, depth 등)별로 정리되어 있습니다. Model Zoo 페이지에서 모델을 고르면 DX-APP에 이미 그 모델을 실행하는 코드가 들어 있습니다. DX-APP은 개발자가 런타임 환경을 빠르게 구성하도록 돕고,
 자신만의 AI 애플리케이션을 만들고 커스터마이즈하기 위한 템플릿 역할을 합니다.
 
 이 튜토리얼은 DX-All Suite v2.5.0에 포함된 버전인 **DX-APP v3.3.0**을 사용합니다.
 
-자세한 내용은 [dx_app git 저장소](https://github.com/DEEPX-AI/dx_app/blob/main/README.md)의 개요를 참고하거나, [여기](https://developer.deepx.ai/download/?id=580)에서 DX-APP User Guide를 다운로드하세요!
+자세한 내용은 [dx_app git 저장소](https://github.com/DEEPX-AI/dx_app/blob/main/README.md)의 개요를 참고하거나, [여기](https://developer.deepx.ai/download/?id=744)에서 DX-APP User Guide를 다운로드하세요!
 
 > **참고:** User Guide를 다운로드하려면 먼저 https://developer.deepx.ai/ 에 로그인해야 합니다.
 

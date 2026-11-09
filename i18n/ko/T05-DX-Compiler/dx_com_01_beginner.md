@@ -41,7 +41,7 @@ DX-COM 설정과 캘리브레이션을 이미 이해하고 있지 않다면 노�
 
 2절의 설정 셀은 SDK 위치를 찾고, 이 요구 사항을 확인한 뒤 상태 표를 출력합니다. `MISSING`으로 표시된 항목에는 그것을 제공하는 단계가 함께 안내됩니다.
 
-<!-- cell: dxcom-workflow-overview src: 44853a9f8f -->
+<!-- cell: dxcom-workflow-overview src: 0092f13c48 -->
 ## 1. 컴파일 워크플로
 
 전체 컴파일 프로세스는 다음 세 단계로 구성됩니다.
@@ -54,7 +54,7 @@ DX-COM 설정과 캘리브레이션을 이미 이해하고 있지 않다면 노�
 
 이 초급 튜토리얼은 MobileNetV2로 같은 워크플로를 따라갑니다: PyTorch → ONNX → DXNN.
 
-자세한 내용은 DX-Compiler 사용자 가이드를 참고하세요. [다운로드](https://developer.deepx.ai/download/?id=581)
+자세한 내용은 DX-Compiler 사용자 가이드를 참고하세요. [다운로드](https://developer.deepx.ai/download/?id=741)
 
 > **참고:** 사용자 가이드를 다운로드하려면 먼저 https://developer.deepx.ai/ 에 로그인해야 합니다.
 
